@@ -5,19 +5,28 @@ export interface Recipe {
   tags: string[];
   source: string;
   language: "en" | "ch";
-  totalTime: string;
-  yield: string;
+  totalTime: number; // in min
+  yieldServings: number; // in serving
   equipments: string[];
-  cruisine: string;
-  ingredients: string[];
-  picture: string;
+  cuisine: string;
+  ingredients: Ingredient[];
+  pictureUrl: string;
   steps: {
     prep: string[];
     steps: Step[];
   };
+  createdAt?: Date;
+  updatedAt?: Date;
+  authorId?: string;
 }
 
 export interface Step {
   detail: string;
-  image?: string;
+  imageUrl?: string;
+}
+
+export interface Ingredient {
+  name: string;
+  amount: number | string;
+  unit?: string;
 }
