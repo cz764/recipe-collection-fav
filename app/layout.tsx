@@ -1,5 +1,7 @@
 import './globals.css';
 import { Providers } from './providers';
+import NavigationBar from './components/NavigationBar';
+import Footer from './components/Footer';
 
 export default function RootLayout({
   children,
@@ -9,7 +11,11 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <NavigationBar />
+          <main>{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
