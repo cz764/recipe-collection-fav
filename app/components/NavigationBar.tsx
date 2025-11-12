@@ -30,27 +30,14 @@ export default function NavigationBar() {
           className='h-14 w-14 rounded-full object-contain'
         />
       </NavbarBrand>
-      <NavbarContent className='hidden gap-4 sm:flex' justify='center'>
-        <NavbarItem>
-          <Link color='foreground' href='#'>
-            About
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive>
-          <Link aria-current='page' href='#'>
-            All Recipes
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color='foreground' href='#'>
-            Chinese
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color='foreground' href='#'>
-            Bake
-          </Link>
-        </NavbarItem>
+      <NavbarContent className='flex gap-16' justify='center'>
+        {menuItems.map((item) => (
+          <NavbarItem key={`${item}-nav`}>
+            <Link className='text-2xl' color='foreground' href='#' size='lg'>
+              {item}
+            </Link>
+          </NavbarItem>
+        ))}
       </NavbarContent>
       <NavbarContent justify='end'>
         <NavbarMenuToggle
@@ -59,7 +46,7 @@ export default function NavigationBar() {
       </NavbarContent>
       <NavbarMenu>
         {menuItems.map((item) => (
-          <NavbarMenuItem key={`${item}`}>
+          <NavbarMenuItem key={`${item}-menu`}>
             <Link className='w-full' size='lg'>
               {item}
             </Link>
