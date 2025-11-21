@@ -21,7 +21,7 @@ export default function NavigationBar() {
     <Navbar
       isBordered
       onMenuOpenChange={setIsMenuOpen}
-      className='bg-amber-500'
+      className='bg-nav-background'
     >
       <NavbarBrand>
         <img

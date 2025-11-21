@@ -5,4 +5,5 @@
 
 @theme {
   --font-sans: var(--font-inria-sans), ui-sans-serif, system-ui, sans-serif;
+  --color-nav-background: #f4aa09;
 }

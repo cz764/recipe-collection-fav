@@ -1,3 +1,5 @@
 export default function Footer() {
-  return <footer>footer should be on bottom</footer>;
+  return (
+    <footer className='bg-nav-background'>footer should be on bottom</footer>
+  );
 }
