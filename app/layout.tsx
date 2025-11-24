@@ -24,7 +24,7 @@ export default function RootLayout({
         <Providers>
           <div className='flex min-h-screen flex-col'>
             <NavigationBar />
-            <main className='mx-auto max-w-7xl flex-grow px-4 py-8 sm:px-6 lg:px-8'>
+            <main className='mx-auto max-w-3/4 flex-grow place-items-center px-4 py-8 sm:px-6 lg:px-8'>
               {children}
             </main>
             <Footer />

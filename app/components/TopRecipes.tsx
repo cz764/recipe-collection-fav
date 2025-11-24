@@ -7,7 +7,7 @@ interface TopRecipesProps {
 
 export default function TopRecipes({ topRecipes }: TopRecipesProps) {
   return (
-    <div className='flex flex-row gap-8'>
+    <div className='flex gap-8'>
       <TodayRecipe recipe={topRecipes[0]} />
       <div>Other inspiration</div>
     </div>
