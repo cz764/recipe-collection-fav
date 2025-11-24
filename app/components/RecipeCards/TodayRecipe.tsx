@@ -1,7 +1,7 @@
-import { Card, CardHeader, CardBody, CardFooter } from '@heroui/card';
+import { Card, CardBody } from '@heroui/card';
 import { Image } from '@heroui/image';
-
 import type { Recipe } from '@/data/recipe';
+import { DESCRIPTION_LIMIT, INGREDIENTS_LIMIT } from '@/constants/constants';
 
 interface TodayRecipeProps {
   recipe: Recipe;
@@ -27,12 +27,12 @@ export default function TodayRecipe({ recipe }: TodayRecipeProps) {
             <div>
               <h1>Today's recipe</h1>
               <h2>{name}</h2>
-              <p>{description}</p>
+              <p>{description.slice(0, DESCRIPTION_LIMIT)}</p>
               <p>Ingredients:</p>
               <p>
                 {ingredients
                   .map(({ name }) => name)
-                  .slice(0, 4)
+                  .slice(0, INGREDIENTS_LIMIT)
                   .join(', ')}
               </p>
             </div>
