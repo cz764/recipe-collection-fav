@@ -23,10 +23,10 @@ export default function TodayRecipe({ recipe }: TodayRecipeProps) {
               width={300}
             />
           </div>
-          <div className='flex-1 flex-col justify-between'>
+          <div className='flex flex-1 flex-col justify-between'>
             <div>
-              <h1>Today's recipe</h1>
-              <h2>{name}</h2>
+              <h1 className='text-2xl'>Today's recipe</h1>
+              <h2 className='text-xl'>{name}</h2>
               <p>{description.slice(0, DESCRIPTION_LIMIT)}</p>
               <p>Ingredients:</p>
               <p>
