@@ -1,3 +1,5 @@
+// Generic
+export const TAGS_LIMIT = 3;
 // Today's recipe
 export const DESCRIPTION_LIMIT = 200;
 export const TITLE_LIMIT = 20;
