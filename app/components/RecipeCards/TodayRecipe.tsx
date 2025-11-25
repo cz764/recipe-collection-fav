@@ -15,7 +15,7 @@ interface TodayRecipeProps {
 export default function TodayRecipe({ recipe }: TodayRecipeProps) {
   const { name, pictureUrl, description, ingredients, tags } = recipe;
   return (
-    <Card className='md:max-w-3/5' fullWidth>
+    <Card isPressable className='md:max-w-3/5' fullWidth>
       <CardBody>
         <div className='flex gap-6'>
           <Image

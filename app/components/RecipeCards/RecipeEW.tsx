@@ -11,7 +11,7 @@ interface RecipeEWProps {
 export default function RecipeEW({ recipe }: RecipeEWProps) {
   const { name, pictureUrl, tags } = recipe;
   return (
-    <Card fullWidth>
+    <Card isPressable fullWidth>
       <CardBody>
         <div className='flex gap-6'>
           <Image
