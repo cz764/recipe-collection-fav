@@ -2,6 +2,7 @@ import { Card, CardBody } from '@heroui/card';
 import { Image } from '@heroui/image';
 import type { Recipe } from '@/data/recipe';
 import { DESCRIPTION_LIMIT, INGREDIENTS_LIMIT } from '@/constants/constants';
+import Tag from '../Tag/Tag';
 
 interface TodayRecipeProps {
   recipe: Recipe;
@@ -36,7 +37,11 @@ export default function TodayRecipe({ recipe }: TodayRecipeProps) {
                   .join(', ')}
               </p>
             </div>
-            <div>{tags.join(', ')}</div>
+            <div className='flex gap-2'>
+              {tags.map((tag) => (
+                <Tag key={`${name}-tag-${tag}`} name={tag} />
+              ))}
+            </div>
           </div>
         </div>
       </CardBody>
