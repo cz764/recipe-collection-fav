@@ -6,7 +6,7 @@ import {
   INGREDIENTS_LIMIT,
   TAGS_LIMIT,
 } from '@/constants/constants';
-import Tag from '@/components/Tag/Tag';
+import Tag from '@/components/Tag';
 
 interface TodayRecipeProps {
   recipe: Recipe;

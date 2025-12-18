@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardBody, CardFooter } from '@heroui/card';
 import { Image } from '@heroui/image';
 import { Recipe } from '@/data/recipe';
-import Tag from '@/components/Tag/Tag';
+import Tag from '@/components/Tag';
 import { TAGS_LIMIT } from '@/constants/constants';
 
 interface RecipeEWProps {

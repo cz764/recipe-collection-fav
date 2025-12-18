@@ -1,5 +1,6 @@
 import { Divider } from '@heroui/divider';
 import TopRecipes from './components/TopRecipes';
+import SearchAndFilterBar from './components/SearchAndFilterBar';
 import { fetchRecipes } from '@/api/recipes';
 import type { Recipe } from '@/data/recipe';
 
@@ -10,7 +11,7 @@ export default function Home() {
     <div className='flex flex-col'>
       <TopRecipes topRecipes={recipeData} />
       <Divider />
-      <div>Filters</div>
+      <SearchAndFilterBar />
       <div>Recipes display</div>
     </div>
   );
