@@ -18,7 +18,7 @@ export default function RecipeEW({ recipe }: RecipeEWProps) {
             className='object-cover'
             alt={`${name}-image`}
             src={pictureUrl}
-            height={100}
+            height={120}
           />
           <div className='flex max-w-1/2 flex-col justify-between'>
             <h2 className='text-lg'>{name}</h2>
