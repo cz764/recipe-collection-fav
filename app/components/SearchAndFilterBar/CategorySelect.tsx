@@ -2,20 +2,16 @@
 
 import { Select, SelectSection, SelectItem } from '@heroui/select';
 
-export const animals = [
-  { key: 'cat', label: 'Cat' },
-  { key: 'dog', label: 'Dog' },
-  { key: 'elephant', label: 'Elephant' },
-  { key: 'lion', label: 'Lion' },
-  { key: 'tiger', label: 'Tiger' },
-  { key: 'giraffe', label: 'Giraffe' },
-  { key: 'dolphin', label: 'Dolphin' },
-  { key: 'penguin', label: 'Penguin' },
-  { key: 'zebra', label: 'Zebra' },
-  { key: 'shark', label: 'Shark' },
-  { key: 'whale', label: 'Whale' },
-  { key: 'otter', label: 'Otter' },
-  { key: 'crocodile', label: 'Crocodile' },
+// Todo: state management: search for Recipe.name, tags, and cuisine
+export const categories = [
+  { key: 'chinese', label: 'Chinese' },
+  { key: 'bake', label: 'Bake' },
+  { key: 'vegeterian', label: 'Vegeterian' },
+  { key: 'italian', label: 'Italian' },
+  { key: 'onePot', label: 'One Pot' },
+  { key: 'noodle', label: 'Noodle' },
+  { key: 'breakfast', label: 'Breakfast' },
+  { key: 'healthy', label: 'Healthy' },
 ];
 
 export default function CategorySelect() {
@@ -25,8 +21,8 @@ export default function CategorySelect() {
       area-label='Category'
       placeholder='Select a category'
     >
-      {animals.map((animal) => (
-        <SelectItem key={animal.key}>{animal.label}</SelectItem>
+      {categories.map((category) => (
+        <SelectItem key={category.key}>{category.label}</SelectItem>
       ))}
     </Select>
   );
