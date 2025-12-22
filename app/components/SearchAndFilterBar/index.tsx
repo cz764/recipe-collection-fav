@@ -8,7 +8,7 @@ import FilterIcon from '@/components/Icons/FilterIcon';
 export default function SearchAndFilterBar() {
   return (
     <div className='flex flex-col gap-1'>
-      <div className='mt-4 flex justify-between'>
+      <div className='flex justify-between'>
         <div className='flex w-xl items-center gap-6'>
           <Input
             className='w-sm'

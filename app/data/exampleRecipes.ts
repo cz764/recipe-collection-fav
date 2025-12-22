@@ -1,6 +1,5 @@
 import type { Recipe } from './recipe';
 
-// 2. Add pictures under public
 export const exampleRecipes: Recipe[] = [
   {
     id: '1',
@@ -14,6 +13,7 @@ export const exampleRecipes: Recipe[] = [
     yieldServings: 4,
     equipments: ['oven', 'pizza stone', 'rolling pin'],
     cuisine: 'Italian',
+    type: 'lunch',
     ingredients: [
       { name: 'pizza dough', amount: 1, unit: 'ball' },
       { name: 'tomato sauce', amount: 1, unit: 'cup' },
@@ -56,6 +56,7 @@ export const exampleRecipes: Recipe[] = [
     yieldServings: 3,
     equipments: ['wok', 'knife', 'cutting board'],
     cuisine: 'Chinese',
+    type: 'dinner',
     ingredients: [
       { name: '嫩豆腐', amount: 400, unit: 'g' },
       { name: '猪肉末', amount: 100, unit: 'g' },
@@ -90,6 +91,7 @@ export const exampleRecipes: Recipe[] = [
     yieldServings: 24,
     equipments: ['mixing bowl', 'baking sheet', 'electric mixer', 'oven'],
     cuisine: 'American',
+    type: 'snack',
     ingredients: [
       { name: 'all-purpose flour', amount: 2.25, unit: 'cups' },
       { name: 'butter', amount: 1, unit: 'cup' },
@@ -137,6 +139,7 @@ export const exampleRecipes: Recipe[] = [
     yieldServings: 4,
     equipments: ['large pot', 'knife', 'cutting board'],
     cuisine: 'Thai',
+    type: 'dinner',
     ingredients: [
       { name: 'green curry paste', amount: 3, unit: 'tbsp' },
       { name: 'coconut milk', amount: 400, unit: 'ml' },
@@ -180,6 +183,7 @@ export const exampleRecipes: Recipe[] = [
     yieldServings: 2,
     equipments: ['toaster', 'small pot', 'fork'],
     cuisine: 'Modern',
+    type: 'breakfast',
     ingredients: [
       { name: 'bread slices', amount: 4 },
       { name: 'ripe avocados', amount: 2 },

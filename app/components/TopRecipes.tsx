@@ -9,7 +9,7 @@ interface TopRecipesProps {
 export default function TopRecipes({ topRecipes }: TopRecipesProps) {
   const otherRecipes = topRecipes.slice(-2);
   return (
-    <div className='mb-4 flex flex-col place-content-center gap-8 md:flex-row md:gap-12'>
+    <div className='flex flex-col place-content-center gap-8 md:gap-6 lg:flex-row'>
       <TodayRecipe recipe={topRecipes[0]} />
       <div className='flex flex-col gap-8'>
         {otherRecipes.map((recipe) => (
