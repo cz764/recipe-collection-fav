@@ -27,7 +27,7 @@ export default function SearchAndFilterBar() {
           </Button>
           <CategorySelect />
         </div>
-        <Button as={Link} color='primary' href='/add'>
+        <Button as={Link} area-label='Add Recipe' color='primary' href='/add'>
           Add
         </Button>
       </div>

@@ -4,11 +4,12 @@ export interface Recipe {
   description: string; // max: 200
   tags: string[];
   source: string;
-  language: "en" | "ch";
+  language: 'en' | 'ch';
   totalTime: number; // in min
   yieldServings: number; // in serving
   equipments: string[];
   cuisine: string;
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack' | 'desert';
   ingredients: Ingredient[];
   pictureUrl: string;
   steps: {
