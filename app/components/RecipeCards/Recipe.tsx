@@ -3,6 +3,7 @@ import { Image } from '@heroui/image';
 import type { Recipe as RecipeType } from '@/data/recipe';
 import { DESCRIPTION_LIMIT, TAGS_LIMIT } from '@/constants/constants';
 import Tag from '@/components/Tag';
+import _ from 'lodash';
 
 interface RecipeProps {
   recipeData: RecipeType;
@@ -23,7 +24,11 @@ export default function Recipe({ recipeData }: RecipeProps) {
           />
           <div className='flex flex-col'>
             <h2 className='text-lg'>{name}</h2>
-            <p>{description.slice(0, DESCRIPTION_LIMIT)}</p>
+            <p>
+              {_.truncate(description, {
+                length: DESCRIPTION_LIMIT,
+              })}
+            </p>
           </div>
         </div>
         <div className='flex gap-2'>

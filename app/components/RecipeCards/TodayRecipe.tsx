@@ -7,6 +7,7 @@ import {
   TAGS_LIMIT,
 } from '@/constants/constants';
 import Tag from '@/components/Tag';
+import _ from 'lodash';
 
 interface TodayRecipeProps {
   recipe: Recipe;
@@ -30,7 +31,11 @@ export default function TodayRecipe({ recipe }: TodayRecipeProps) {
             <div>
               <h1 className='text-2xl'>Today's recipe</h1>
               <h2 className='text-xl'>{name}</h2>
-              <p>{description.slice(0, DESCRIPTION_LIMIT)}</p>
+              <p>
+                {_.truncate(description, {
+                  length: DESCRIPTION_LIMIT,
+                })}
+              </p>
               <p>Ingredients:</p>
               <p>
                 {ingredients
