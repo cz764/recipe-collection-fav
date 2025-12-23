@@ -19,6 +19,7 @@ export interface Recipe {
   createdAt?: Date;
   updatedAt?: Date;
   authorId?: string;
+  creditTo?: string;
 }
 
 export interface Step {
