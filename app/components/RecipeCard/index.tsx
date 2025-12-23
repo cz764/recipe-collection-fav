@@ -5,10 +5,10 @@ import { DESCRIPTION_LIMIT, TAGS_LIMIT } from '@/constants/constants';
 import Tag from '@/components/Tag';
 import _ from 'lodash';
 
-interface RecipeProps {
+interface RecipeCardProps {
   recipeData: RecipeType;
 }
-export default function Recipe({ recipeData }: RecipeProps) {
+export default function RecipeCard({ recipeData }: RecipeCardProps) {
   const { pictureUrl, name, description, ingredients, tags } = recipeData;
   return (
     <Card isPressable className='w-full'>

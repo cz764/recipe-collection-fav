@@ -3,7 +3,7 @@ import TopRecipes from '@/components/TopRecipes';
 import SearchAndFilterBar from '@/components/SearchAndFilterBar';
 import { fetchRecipes } from '@/api/recipes';
 import type { Recipe as RecipeType } from '@/data/recipe';
-import Recipe from '@/components/RecipeCards/Recipe';
+import RecipeCard from '@/components/RecipeCard';
 
 export default function Home() {
   const recipeList: RecipeType[] = fetchRecipes();
@@ -17,7 +17,7 @@ export default function Home() {
         {recipeList.map((recipeData) => {
           const { name } = recipeData;
 
-          return <Recipe key={`${name}-card`} recipeData={recipeData} />;
+          return <RecipeCard key={`${name}-card`} recipeData={recipeData} />;
         })}
       </div>
     </div>

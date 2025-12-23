@@ -1,6 +1,6 @@
-import TodayRecipe from './RecipeCards/TodayRecipe';
+import TodayRecipe from './TopRecipe';
 import type { Recipe } from '@/data/recipe';
-import RecipeEW from './RecipeCards/RecipeEW';
+import RecipeEW from './RecipeEW';
 
 interface TopRecipesProps {
   topRecipes: Recipe[];
