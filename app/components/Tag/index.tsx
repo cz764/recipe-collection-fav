@@ -5,5 +5,9 @@ interface TagProps {
 }
 
 export default function Tag({ name }: TagProps) {
-  return <Chip color='secondary'>{name}</Chip>;
+  return (
+    <Chip color='secondary' data-testid='recipe-tags'>
+      {name}
+    </Chip>
+  );
 }

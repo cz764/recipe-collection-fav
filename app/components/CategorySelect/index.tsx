@@ -18,7 +18,7 @@ export default function CategorySelect() {
   return (
     <Select
       className='max-w-xs'
-      area-label='Category'
+      aria-label='Category'
       placeholder='Select a category'
     >
       {categories.map((category) => (

@@ -1,7 +1,7 @@
 import { Button } from '@heroui/button';
 import { Link } from '@heroui/link';
 import { Input } from '@heroui/input';
-import CategorySelect from './CategorySelect';
+import CategorySelect from '@/components/CategorySelect';
 import SearchIcon from '@/components/Icons/SearchIcon';
 import FilterIcon from '@/components/Icons/FilterIcon';
 
@@ -13,6 +13,7 @@ export default function SearchAndFilterBar() {
           <Input
             className='w-sm'
             label='Search'
+            aria-label='Search'
             size='sm'
             endContent={<SearchIcon className='pointer-events-none size-6' />}
           />
