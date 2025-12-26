@@ -1,16 +1,24 @@
+'use client';
+
 import TodayRecipe from './TopRecipe';
 import type { Recipe } from '@/data/recipe';
 import RecipeEW from './RecipeEW';
+import { randomRecipeIndexFromDate } from '@/utils';
 
 interface TopRecipesProps {
   topRecipes: Recipe[];
 }
 
 export default function TopRecipes({ topRecipes }: TopRecipesProps) {
-  const otherRecipes = topRecipes.slice(-2);
+  const todayRecipeIndex = randomRecipeIndexFromDate(topRecipes.length);
+  const otherRecipes = [
+    topRecipes[(todayRecipeIndex + 1) % topRecipes.length],
+    topRecipes[(todayRecipeIndex + 2) % topRecipes.length],
+  ];
+
   return (
-    <div className='flex flex-col place-content-center gap-8 md:gap-6 lg:flex-row'>
-      <TodayRecipe recipe={topRecipes[0]} />
+    <div className='flex flex-col place-content-center gap-2 md:gap-6 lg:flex-row'>
+      <TodayRecipe recipe={topRecipes[todayRecipeIndex]} />
       <div className='flex flex-col gap-8'>
         {otherRecipes.map((recipe) => (
           <RecipeEW key={`other-recipe-${recipe.id}`} recipe={recipe} />

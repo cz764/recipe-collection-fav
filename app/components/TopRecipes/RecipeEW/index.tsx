@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardBody, CardFooter } from '@heroui/card';
+import { Card, CardBody } from '@heroui/card';
 import { Image } from '@heroui/image';
 import { Recipe } from '@/data/recipe';
 import Tag from '@/components/Tag';
@@ -19,6 +19,7 @@ export default function RecipeEW({ recipe }: RecipeEWProps) {
             alt={`${name}-image`}
             src={pictureUrl}
             height={120}
+            width={120}
           />
           <div className='flex max-w-1/2 flex-col justify-between'>
             <h2 className='text-lg'>{name}</h2>

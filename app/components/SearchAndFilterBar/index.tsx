@@ -37,7 +37,7 @@ export default function SearchAndFilterBar() {
           <p>Filter item1</p>
           <p>Filter item2</p>
         </div>
-        <p className='text-gray-700'>20 recipes</p>
+        <p className='text-gray-700'>5 recipes</p>
       </div>
     </div>
   );
