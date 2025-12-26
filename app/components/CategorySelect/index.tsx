@@ -1,5 +1,3 @@
-'use client';
-
 import { Select, SelectSection, SelectItem } from '@heroui/select';
 
 // Todo: state management: search for Recipe.name, tags, and cuisine

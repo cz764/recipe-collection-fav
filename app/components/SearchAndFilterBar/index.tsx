@@ -5,22 +5,47 @@ import CategorySelect from '@/components/CategorySelect';
 import SearchIcon from '@/components/Icons/SearchIcon';
 import FilterIcon from '@/components/Icons/FilterIcon';
 
-export default function SearchAndFilterBar() {
+interface SearchAndFilterBarProps {
+  searchText: string;
+  onSearchTextChange: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export default function SearchAndFilterBar({
+  searchText,
+  onSearchTextChange,
+}: SearchAndFilterBarProps) {
   return (
     <div className='flex flex-col gap-1'>
       <div className='flex justify-between'>
         <div className='flex w-xl items-center gap-6'>
           <Input
-            className='w-sm'
-            label='Search'
-            aria-label='Search'
+            isClearable
+            className='max-w-sm'
+            aria-label='Search Input'
             size='sm'
-            endContent={<SearchIcon className='pointer-events-none size-6' />}
+            maxLength={100}
+            value={searchText}
+            onValueChange={onSearchTextChange}
+            startContent={
+              <Button
+                isIconOnly
+                aria-label='Search'
+                variant={'light'}
+                onPress={() => console.log(`button: can search!`)}
+              >
+                <SearchIcon className='pointer-events-none size-6' />
+              </Button>
+            }
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                console.log(`enter: can search!`);
+              }
+            }}
           />
-
           <Button
             isIconOnly
-            aria-label='Filter'
+            aria-label='Open Filters'
             color='primary'
             variant='faded'
           >
