@@ -1,7 +1,8 @@
-export const randomRecipeIndexFromDate = (srcArrayLength) => {
+export const randomRecipeIndexFromDate = (srcArrayLength: number): number => {
   const date = new Date();
-  return (
-    (date.getFullYear() * date.getDate() * (date.getMonth() + 1)) %
-    srcArrayLength
-  );
+  const startOfYear = new Date(date.getFullYear(), 0, 0);
+  const diff = date.getTime() - startOfYear.getTime();
+  const oneDay = 1000 * 60 * 60 * 24;
+  const dayOfYear = Math.floor(diff / oneDay);
+  return dayOfYear % srcArrayLength;
 };

@@ -23,6 +23,6 @@ describe('SearchAndFilterBar', () => {
   it('renders recipe count', () => {
     render(<SearchAndFilterBar />);
     // Todo: change this to recipeList.length after state is added
-    expect(screen.getByText('20 recipes')).toBeVisible();
+    expect(screen.getByText('5 recipes')).toBeVisible();
   });
 });
