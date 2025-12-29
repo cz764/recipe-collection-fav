@@ -8,11 +8,13 @@ import FilterIcon from '@/components/Icons/FilterIcon';
 interface SearchAndFilterBarProps {
   searchText: string;
   onSearchTextChange: React.Dispatch<React.SetStateAction<string>>;
+  onSearch: () => void;
 }
 
 export default function SearchAndFilterBar({
   searchText,
   onSearchTextChange,
+  onSearch,
 }: SearchAndFilterBarProps) {
   return (
     <div className='flex flex-col gap-1'>
@@ -31,7 +33,7 @@ export default function SearchAndFilterBar({
                 isIconOnly
                 aria-label='Search'
                 variant={'light'}
-                onPress={() => console.log(`button: can search!`)}
+                onPress={onSearch}
               >
                 <SearchIcon className='pointer-events-none size-6' />
               </Button>
@@ -39,7 +41,7 @@ export default function SearchAndFilterBar({
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
-                console.log(`enter: can search!`);
+                onSearch();
               }
             }}
           />

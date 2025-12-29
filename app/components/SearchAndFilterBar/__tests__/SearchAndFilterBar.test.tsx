@@ -7,6 +7,7 @@ describe('SearchAndFilterBar', () => {
   const defaultProps = {
     searchText: '',
     onSearchTextChange: vi.fn(),
+    onSearch: vi.fn(),
   };
 
   it('renders search input', () => {
@@ -50,5 +51,21 @@ describe('SearchAndFilterBar', () => {
     const input = screen.getByLabelText('Search Input');
     await userEvent.type(input, 'a');
     expect(onSearchTextChange).toHaveBeenCalledWith('a');
+  });
+
+  it('calls onSearch when search button is clicked', async () => {
+    const onSearch = vi.fn();
+    render(<SearchAndFilterBar {...defaultProps} onSearch={onSearch} />);
+    const searchButton = screen.getByLabelText('Search');
+    await userEvent.click(searchButton);
+    expect(onSearch).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls onSearch when Enter key is pressed in input', async () => {
+    const onSearch = vi.fn();
+    render(<SearchAndFilterBar {...defaultProps} onSearch={onSearch} />);
+    const input = screen.getByLabelText('Search Input');
+    await userEvent.type(input, '{Enter}');
+    expect(onSearch).toHaveBeenCalledTimes(1);
   });
 });
