@@ -9,12 +9,14 @@ interface SearchAndFilterBarProps {
   searchText: string;
   onSearchTextChange: React.Dispatch<React.SetStateAction<string>>;
   onSearch: () => void;
+  totalRecipes: number;
 }
 
 export default function SearchAndFilterBar({
   searchText,
   onSearchTextChange,
   onSearch,
+  totalRecipes,
 }: SearchAndFilterBarProps) {
   return (
     <div className='flex flex-col gap-1'>
@@ -64,7 +66,7 @@ export default function SearchAndFilterBar({
           <p>Filter item1</p>
           <p>Filter item2</p>
         </div>
-        <p className='text-gray-700'>5 recipes</p>
+        <p className='text-gray-600'>{totalRecipes} recipes</p>
       </div>
     </div>
   );

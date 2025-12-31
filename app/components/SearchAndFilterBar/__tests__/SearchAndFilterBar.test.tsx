@@ -8,6 +8,7 @@ describe('SearchAndFilterBar', () => {
     searchText: '',
     onSearchTextChange: vi.fn(),
     onSearch: vi.fn(),
+    totalRecipes: 0,
   };
 
   it('renders search input', () => {
@@ -33,9 +34,11 @@ describe('SearchAndFilterBar', () => {
   });
 
   it('renders recipe count', () => {
-    render(<SearchAndFilterBar {...defaultProps} />);
-    // Todo: change this to recipeList.length after state is added
-    expect(screen.getByText('5 recipes')).toBeVisible();
+    const totalRecipes = 38;
+    render(
+      <SearchAndFilterBar {...defaultProps} totalRecipes={totalRecipes} />,
+    );
+    expect(screen.getByText(`${totalRecipes} recipes`)).toBeVisible();
   });
 
   it('displays the searchText value in the input', () => {
@@ -46,7 +49,10 @@ describe('SearchAndFilterBar', () => {
   it('calls onSearchTextChange when typing in search input', async () => {
     const onSearchTextChange = vi.fn();
     render(
-      <SearchAndFilterBar {...defaultProps} onSearchTextChange={onSearchTextChange} />
+      <SearchAndFilterBar
+        {...defaultProps}
+        onSearchTextChange={onSearchTextChange}
+      />,
     );
     const input = screen.getByLabelText('Search Input');
     await userEvent.type(input, 'a');
