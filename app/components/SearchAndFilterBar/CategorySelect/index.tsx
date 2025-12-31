@@ -1,26 +1,44 @@
-import { Select, SelectSection, SelectItem } from '@heroui/select';
+import { Select, SelectItem } from '@heroui/select';
+import { parseCategorySelection } from '@/utils';
 
-// Todo: state management: search for Recipe.name, tags, and cuisine
 export const categories = [
   { key: 'chinese', label: 'Chinese' },
-  { key: 'bake', label: 'Bake' },
-  { key: 'vegeterian', label: 'Vegeterian' },
+  { key: 'dessert', label: 'Dessert' },
+  { key: 'vegetarian', label: 'Vegetarian' },
   { key: 'italian', label: 'Italian' },
-  { key: 'onePot', label: 'One Pot' },
+  { key: 'one-pot', label: 'One Pot' },
   { key: 'noodle', label: 'Noodle' },
   { key: 'breakfast', label: 'Breakfast' },
   { key: 'healthy', label: 'Healthy' },
 ];
 
-export default function CategorySelect() {
+export const CATEGORY_LIMIT = 3;
+const DELIMITER = ',';
+
+interface CategorySelectProps {
+  onCategoryChange: React.Dispatch<React.SetStateAction<Set<string>>>;
+}
+
+export default function CategorySelect({
+  onCategoryChange,
+}: CategorySelectProps) {
+  const handleSelectionChange = (e) => {
+    const result = parseCategorySelection(e.target.value, CATEGORY_LIMIT, DELIMITER);
+    if (result !== null) {
+      onCategoryChange(result);
+    }
+  };
+
   return (
     <Select
       className='max-w-xs'
       aria-label='Category'
-      placeholder='Select a category'
+      placeholder='Select up to 3 categories'
+      selectionMode='multiple'
+      onChange={handleSelectionChange}
     >
-      {categories.map((category) => (
-        <SelectItem key={category.key}>{category.label}</SelectItem>
+      {categories.map(({ key, label }) => (
+        <SelectItem key={key}>{label}</SelectItem>
       ))}
     </Select>
   );

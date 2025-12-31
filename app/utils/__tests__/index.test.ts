@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
-import { randomRecipeIndexFromDate, matchRecipe } from '../index';
+import {
+  randomRecipeIndexFromDate,
+  matchRecipe,
+  parseCategorySelection,
+} from '../index';
 import { makeRecipe } from '@/components/__tests__/mockData';
 
 describe('randomRecipeIndexFromDate', () => {
@@ -129,5 +133,50 @@ describe('matchRecipe', () => {
       equipments: ['Pot'],
     });
     expect(matchRecipe(recipe, 'chicken')).toBe(false);
+  });
+});
+
+describe('parseCategorySelection', () => {
+  const LIMIT = 3;
+  const DELIMITER = ',';
+
+  it('returns empty Set for empty string', () => {
+    const result = parseCategorySelection('', LIMIT, DELIMITER);
+    expect(result).toEqual(new Set());
+  });
+
+  it('returns empty Set for falsy value', () => {
+    const result = parseCategorySelection(undefined as unknown as string, LIMIT, DELIMITER);
+    expect(result).toEqual(new Set());
+  });
+
+  it('returns Set with single category', () => {
+    const result = parseCategorySelection('chinese', LIMIT, DELIMITER);
+    expect(result).toEqual(new Set(['chinese']));
+  });
+
+  it('returns Set with multiple categories within limit', () => {
+    const result = parseCategorySelection('chinese,italian', LIMIT, DELIMITER);
+    expect(result).toEqual(new Set(['chinese', 'italian']));
+  });
+
+  it('returns Set when exactly at limit', () => {
+    const result = parseCategorySelection('chinese,italian,breakfast', LIMIT, DELIMITER);
+    expect(result).toEqual(new Set(['chinese', 'italian', 'breakfast']));
+  });
+
+  it('returns null when exceeding limit', () => {
+    const result = parseCategorySelection('chinese,italian,breakfast,healthy', LIMIT, DELIMITER);
+    expect(result).toBeNull();
+  });
+
+  it('uses default comma delimiter when not specified', () => {
+    const result = parseCategorySelection('chinese,italian', LIMIT);
+    expect(result).toEqual(new Set(['chinese', 'italian']));
+  });
+
+  it('works with custom delimiter', () => {
+    const result = parseCategorySelection('chinese|italian|breakfast', LIMIT, '|');
+    expect(result).toEqual(new Set(['chinese', 'italian', 'breakfast']));
   });
 });

@@ -9,6 +9,7 @@ interface SearchAndFilterBarProps {
   onSearchTextChange: React.Dispatch<React.SetStateAction<string>>;
   onSearch: () => void;
   totalRecipes: number;
+  onCategoryChange: React.Dispatch<React.SetStateAction<Set<string>>>;
 }
 
 export default function SearchAndFilterBar({
@@ -16,6 +17,7 @@ export default function SearchAndFilterBar({
   onSearchTextChange,
   onSearch,
   totalRecipes,
+  onCategoryChange,
 }: SearchAndFilterBarProps) {
   return (
     <div className='flex flex-col gap-1'>
@@ -34,7 +36,7 @@ export default function SearchAndFilterBar({
           >
             <FilterIcon className='size-6' />
           </Button>
-          <CategorySelect />
+          <CategorySelect onCategoryChange={onCategoryChange} />
         </div>
         <Button as={Link} area-label='Add Recipe' color='primary' href='/add'>
           Add

@@ -132,7 +132,7 @@ export const exampleRecipes: Recipe[] = [
     name: 'Thai Green Curry',
     description:
       'Aromatic and creamy Thai curry with vegetables and your choice of protein. A perfect balance of spicy, sweet, and savory flavors.',
-    tags: ['thai', 'curry', 'spicy', 'dinner', 'coconut'],
+    tags: ['thai', 'curry', 'spicy', 'dinner', 'coconut', 'one-pot'],
     source: 'Thai Cooking Class',
     language: 'en',
     totalTime: 40,
