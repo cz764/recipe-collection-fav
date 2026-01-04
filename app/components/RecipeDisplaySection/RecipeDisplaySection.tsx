@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { Pagination } from '@heroui/pagination';
 import { SearchAndFilterBar } from '@/components/SearchAndFilterBar';
 import { RecipeCard } from '@/components/RecipeCard';
 import { Recipe } from '@/data/recipe';
 import { matchRecipe, matchCategory } from '@/utils';
+import { ITEMS_PER_PAGE } from '@/constants';
 import _ from 'lodash';
 
 interface RecipeDisplaySectionProps {
@@ -17,6 +19,7 @@ export function RecipeDisplaySection({
   const [searchText, setSearchText] = useState('');
   const [appliedSearchText, setAppliedSearchText] = useState('');
   const [categoryValue, setCategoryValue] = useState(new Set<string>([]));
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredRecipeList = useMemo(() => {
     let result = recipeList;
@@ -39,7 +42,7 @@ export function RecipeDisplaySection({
   };
 
   return (
-    <div>
+    <div className='flex flex-col gap-2'>
       <SearchAndFilterBar
         searchText={searchText}
         onSearchTextChange={setSearchText}
@@ -48,11 +51,25 @@ export function RecipeDisplaySection({
         onCategoryChange={setCategoryValue}
       />
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-        {filteredRecipeList.map((recipeData) => {
-          const { name } = recipeData;
-          return <RecipeCard key={`${name}-card`} recipeData={recipeData} />;
-        })}
+        {filteredRecipeList
+          .slice(
+            (currentPage - 1) * ITEMS_PER_PAGE,
+            currentPage * ITEMS_PER_PAGE,
+          )
+          .map((recipeData) => {
+            const { name } = recipeData;
+            return <RecipeCard key={`${name}-card`} recipeData={recipeData} />;
+          })}
       </div>
+      {filteredRecipeList.length > ITEMS_PER_PAGE ? (
+        <Pagination
+          className='mx-auto'
+          color='secondary'
+          page={currentPage}
+          total={Math.ceil(filteredRecipeList.length / ITEMS_PER_PAGE)}
+          onChange={setCurrentPage}
+        />
+      ) : null}
     </div>
   );
 }

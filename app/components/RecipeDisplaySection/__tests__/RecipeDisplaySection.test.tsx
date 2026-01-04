@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RecipeDisplaySection } from '..';
 import { makeRecipe } from '@/components/__tests__/mockData';
+import { ITEMS_PER_PAGE } from '@/constants';
 
 describe('RecipeDisplaySection', () => {
   const mockRecipeList = [
@@ -79,5 +80,89 @@ describe('RecipeDisplaySection', () => {
     const input = getSearchInput();
     await userEvent.type(input, 'spaghetti{Enter}');
     expect(screen.getByText('1 recipes')).toBeVisible();
+  });
+
+  describe('pagination', () => {
+    const createManyRecipes = (count: number) =>
+      Array.from({ length: count }, (_, i) =>
+        makeRecipe({ id: `${i + 1}`, name: `Recipe ${i + 1}` }),
+      );
+
+    it('does not show pagination when recipes fit on one page', () => {
+      const recipes = createManyRecipes(ITEMS_PER_PAGE);
+      render(<RecipeDisplaySection recipeList={recipes} />);
+
+      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+    });
+
+    it('shows pagination when recipes exceed one page', () => {
+      const recipes = createManyRecipes(ITEMS_PER_PAGE + 1);
+      render(<RecipeDisplaySection recipeList={recipes} />);
+
+      expect(screen.getByRole('navigation')).toBeVisible();
+    });
+
+    it('displays correct items on first page', () => {
+      const recipes = createManyRecipes(ITEMS_PER_PAGE + 3);
+      render(<RecipeDisplaySection recipeList={recipes} />);
+
+      expect(screen.getByText('Recipe 1')).toBeVisible();
+      expect(screen.getByText(`Recipe ${ITEMS_PER_PAGE}`)).toBeVisible();
+      expect(
+        screen.queryByText(`Recipe ${ITEMS_PER_PAGE + 1}`),
+      ).not.toBeInTheDocument();
+    });
+
+    it('displays correct items on second page', async () => {
+      const recipes = createManyRecipes(ITEMS_PER_PAGE + 3);
+      render(<RecipeDisplaySection recipeList={recipes} />);
+
+      const pagination = screen.getByRole('navigation');
+      await userEvent.click(
+        within(pagination).getByRole('button', { name: /pagination item 2/ }),
+      );
+
+      expect(screen.getByText(`Recipe ${ITEMS_PER_PAGE + 1}`)).toBeVisible();
+      expect(screen.getByText(`Recipe ${ITEMS_PER_PAGE + 3}`)).toBeVisible();
+      expect(screen.queryByText('Recipe 1')).not.toBeInTheDocument();
+    });
+
+    it('calculates total pages correctly', () => {
+      // 2 full pages + 1 partial = 3 pages
+      const recipes = createManyRecipes(ITEMS_PER_PAGE * 2 + 1);
+      render(<RecipeDisplaySection recipeList={recipes} />);
+
+      const pagination = screen.getByRole('navigation');
+      expect(
+        within(pagination).getByRole('button', { name: /pagination item 1/ }),
+      ).toBeVisible();
+      expect(
+        within(pagination).getByRole('button', { name: /pagination item 2/ }),
+      ).toBeVisible();
+      expect(
+        within(pagination).getByRole('button', { name: /pagination item 3/ }),
+      ).toBeVisible();
+      expect(
+        within(pagination).queryByRole('button', { name: /pagination item 4/ }),
+      ).not.toBeInTheDocument();
+    });
+
+    it.only('calculates total pages correctly when evenly divisible', () => {
+      const recipes = createManyRecipes(ITEMS_PER_PAGE * 2);
+      render(<RecipeDisplaySection recipeList={recipes} />);
+
+      const pagination = screen.getByRole('navigation');
+      expect(
+        within(pagination).getByRole('button', {
+          name: /pagination item 1/,
+        }),
+      ).toBeVisible();
+      expect(
+        within(pagination).getByRole('button', { name: /pagination item 2/ }),
+      ).toBeVisible();
+      expect(
+        within(pagination).queryByRole('button', { name: /pagination item 3/ }),
+      ).not.toBeInTheDocument();
+    });
   });
 });
