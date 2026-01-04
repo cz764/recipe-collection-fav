@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import Tag from '..';
+import { Tag } from '..';
 
 describe('Tag', () => {
   it('renders the tag name', () => {

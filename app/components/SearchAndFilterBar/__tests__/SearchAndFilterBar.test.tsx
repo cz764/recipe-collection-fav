@@ -1,28 +1,33 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import SearchAndFilterBar from '..';
+import { SearchAndFilterBar } from '..';
 
 describe('SearchAndFilterBar', () => {
-  it('renders search input', () => {
-    render(<SearchAndFilterBar />);
-    expect(screen.getByLabelText('Search')).toBeVisible();
-  });
+  const defaultProps = {
+    searchText: '',
+    onSearchTextChange: vi.fn(),
+    onSearch: vi.fn(),
+    onCategoryChange: vi.fn(),
+    totalRecipes: 0,
+  };
 
   it('renders filter button', () => {
-    render(<SearchAndFilterBar />);
-    expect(screen.getByLabelText('Filter')).toBeVisible();
+    render(<SearchAndFilterBar {...defaultProps} />);
+    expect(screen.getByLabelText('Open Filters')).toBeVisible();
   });
 
   it('renders add button with link to /add', () => {
-    render(<SearchAndFilterBar />);
+    render(<SearchAndFilterBar {...defaultProps} />);
     const addButton = screen.getByText('Add');
     expect(addButton).toBeVisible();
     expect(addButton).toHaveAttribute('href', '/add');
   });
 
   it('renders recipe count', () => {
-    render(<SearchAndFilterBar />);
-    // Todo: change this to recipeList.length after state is added
-    expect(screen.getByText('5 recipes')).toBeVisible();
+    const totalRecipes = 38;
+    render(
+      <SearchAndFilterBar {...defaultProps} totalRecipes={totalRecipes} />,
+    );
+    expect(screen.getByText(`${totalRecipes} recipes`)).toBeVisible();
   });
 });
