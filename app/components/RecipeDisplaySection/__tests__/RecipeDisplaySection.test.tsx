@@ -147,7 +147,7 @@ describe('RecipeDisplaySection', () => {
       ).not.toBeInTheDocument();
     });
 
-    it.only('calculates total pages correctly when evenly divisible', () => {
+    it('calculates total pages correctly when evenly divisible', () => {
       const recipes = createManyRecipes(ITEMS_PER_PAGE * 2);
       render(<RecipeDisplaySection recipeList={recipes} />);
 

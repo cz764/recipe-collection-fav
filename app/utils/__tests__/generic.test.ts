@@ -61,7 +61,7 @@ describe('randomRecipeIndexFromDate', () => {
   });
 
   it('returns the same index for the same date', () => {
-    vi.setSystemTime(new Date('2025-12-16'));
+    vi.setSystemTime(new Date('2025-12-16T12:00:00'));
 
     const arrayLength = 10;
     const result1 = randomRecipeIndexFromDate(arrayLength);
@@ -73,10 +73,10 @@ describe('randomRecipeIndexFromDate', () => {
   it('returns different indices for different dates', () => {
     const arrayLength = 10;
 
-    vi.setSystemTime(new Date('2025-06-15'));
+    vi.setSystemTime(new Date('2025-06-15T12:00:00'));
     const result1 = randomRecipeIndexFromDate(arrayLength);
 
-    vi.setSystemTime(new Date('2025-06-16'));
+    vi.setSystemTime(new Date('2025-06-16T12:00:00'));
     const result2 = randomRecipeIndexFromDate(arrayLength);
 
     expect(result1).not.toEqual(result2);
@@ -88,12 +88,12 @@ describe('randomRecipeIndexFromDate', () => {
   });
 
   it('computes index correctly based on day of year', () => {
-    vi.setSystemTime(new Date('2025-03-10')); // day 68 of year
+    vi.setSystemTime(new Date('2025-03-10T12:00:00')); // day 69 of year
 
     const arrayLength = 7;
-    // Expected: 68 % 7 = 5
+    // Expected: 69 % 7 = 6
     const result = randomRecipeIndexFromDate(arrayLength);
-    expect(result).toEqual(5);
+    expect(result).toEqual(6);
   });
 });
 
