@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import CategorySelect, { categories, CATEGORY_LIMIT } from '..';
+import { CategorySelect, categories, CATEGORY_LIMIT } from '..';
 
 describe('CategorySelect', () => {
   const defaultProps = {

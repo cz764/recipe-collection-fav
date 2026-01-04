@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import RecipeCard from '../index';
+import { RecipeCard } from '../index';
 import { makeRecipe } from '@/components/__tests__/mockData';
-import { TAGS_LIMIT } from '@/constants/constants';
+import { TAGS_LIMIT } from '@/constants';
 
 describe('RecipeCard', () => {
   it('renders recipe name', () => {

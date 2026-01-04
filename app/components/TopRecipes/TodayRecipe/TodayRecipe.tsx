@@ -1,19 +1,15 @@
 import { Card, CardBody } from '@heroui/card';
 import { Image } from '@heroui/image';
 import type { Recipe } from '@/data/recipe';
-import {
-  DESCRIPTION_LIMIT,
-  INGREDIENTS_LIMIT,
-  TAGS_LIMIT,
-} from '@/constants/constants';
-import Tag from '@/components/Tag';
+import { DESCRIPTION_LIMIT, INGREDIENTS_LIMIT, TAGS_LIMIT } from '@/constants';
+import { Tag } from '@/components/Tag';
 import _ from 'lodash';
 
 interface TodayRecipeProps {
   recipe: Recipe;
 }
 
-export default function TodayRecipe({ recipe }: TodayRecipeProps) {
+export function TodayRecipe({ recipe }: TodayRecipeProps) {
   const { name, pictureUrl, description, ingredients, tags } = recipe;
   return (
     <Card isPressable className='lg:max-w-3/5' fullWidth>

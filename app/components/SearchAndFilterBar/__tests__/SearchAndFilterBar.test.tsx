@@ -1,12 +1,13 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import SearchAndFilterBar from '..';
+import { SearchAndFilterBar } from '..';
 
 describe('SearchAndFilterBar', () => {
   const defaultProps = {
     searchText: '',
     onSearchTextChange: vi.fn(),
     onSearch: vi.fn(),
+    onCategoryChange: vi.fn(),
     totalRecipes: 0,
   };
 

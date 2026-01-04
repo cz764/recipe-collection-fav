@@ -1,8 +1,8 @@
 import { Divider } from '@heroui/divider';
 import { fetchRecipes } from '@/api/recipes';
 import type { Recipe as RecipeType } from '@/data/recipe';
-import TopRecipes from '@/components/TopRecipes';
-import RecipeDisplaySection from '@/components/RecipeDisplaySection';
+import { TopRecipes } from '@/components/TopRecipes';
+import { RecipeDisplaySection } from '@/components/RecipeDisplaySection';
 
 async function getRecipes() {
   const response = await fetchRecipes();
