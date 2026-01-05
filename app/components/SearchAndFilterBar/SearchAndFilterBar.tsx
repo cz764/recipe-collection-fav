@@ -10,6 +10,7 @@ interface SearchAndFilterBarProps {
   onSearch: () => void;
   totalRecipes: number;
   onCategoryChange: React.Dispatch<React.SetStateAction<Set<string>>>;
+  onOpenFilter: () => void;
 }
 
 export function SearchAndFilterBar({
@@ -18,6 +19,7 @@ export function SearchAndFilterBar({
   onSearch,
   totalRecipes,
   onCategoryChange,
+  onOpenFilter,
 }: SearchAndFilterBarProps) {
   return (
     <div className='flex flex-col gap-1'>
@@ -33,6 +35,7 @@ export function SearchAndFilterBar({
             aria-label='Open Filters'
             color='primary'
             variant='faded'
+            onPress={onOpenFilter}
           >
             <FilterIcon className='size-6' />
           </Button>
