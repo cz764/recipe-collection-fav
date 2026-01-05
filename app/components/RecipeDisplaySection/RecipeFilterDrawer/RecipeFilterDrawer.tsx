@@ -6,11 +6,14 @@ import {
   DrawerFooter,
 } from '@heroui/drawer';
 import { Button } from '@heroui/button';
+import { CheckboxGroup, Checkbox } from '@heroui/checkbox';
 
 interface RecipeFilterDrawerProps {
   isOpen: boolean;
   onOpenChange: () => void;
 }
+
+const checkboxGroupClasses = 'rounded-md border p-4';
 
 export function RecipeFilterDrawer({
   isOpen,
@@ -25,9 +28,29 @@ export function RecipeFilterDrawer({
               Filter Recipes
             </DrawerHeader>
             <DrawerBody>
-              <p>type</p>
-              <p>breakfast</p>
-              <p>lunch</p>
+              <CheckboxGroup
+                color='secondary'
+                className={checkboxGroupClasses}
+                defaultValue={['breakfast']}
+                label='Type'
+                orientation='horizontal'
+              >
+                <Checkbox value='breakfast'>Breakfast</Checkbox>
+                <Checkbox value='lunch'>Lunch</Checkbox>
+                <Checkbox value='dinner'>Dinner</Checkbox>
+                <Checkbox value='dessert'>Dessert</Checkbox>
+                <Checkbox value='snack'>Snack</Checkbox>
+              </CheckboxGroup>
+              <CheckboxGroup
+                color='secondary'
+                className={checkboxGroupClasses}
+                defaultValue={['en']}
+                label='Language'
+                orientation='horizontal'
+              >
+                <Checkbox value='en'>English</Checkbox>
+                <Checkbox value='ch'>中文</Checkbox>
+              </CheckboxGroup>
             </DrawerBody>
             <DrawerFooter>
               <Button color='danger' variant='light' onPress={onClose}>
