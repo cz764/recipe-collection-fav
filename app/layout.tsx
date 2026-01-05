@@ -1,8 +1,8 @@
 import './globals.css';
 import { Inria_Sans } from 'next/font/google';
-import { Providers } from './providers';
-import { NavigationBar } from './components/NavigationBar';
-import { Footer } from './components/Footer';
+import { Providers } from '@/providers';
+import { NavigationBar } from '@/components/NavigationBar';
+import { Footer } from '@/components/Footer';
 
 const inriaSans = Inria_Sans({
   weight: ['300', '400', '700'],
