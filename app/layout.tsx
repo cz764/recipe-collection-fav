@@ -1,4 +1,4 @@
-import './globals.css';
+import '@/globals.css';
 import { Inria_Sans } from 'next/font/google';
 import { Providers } from '@/providers';
 import { NavigationBar } from '@/components/NavigationBar';
