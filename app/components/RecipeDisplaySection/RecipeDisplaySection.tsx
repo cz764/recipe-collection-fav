@@ -7,7 +7,8 @@ import { Pagination } from '@heroui/pagination';
 import { SearchAndFilterBar } from '@/components/SearchAndFilterBar';
 import { RecipeFilterDrawer } from './RecipeFilterDrawer';
 import { RecipeCard } from '@/components/RecipeCard';
-import { Recipe } from '@/data/recipe';
+import type { Recipe } from '@/data/recipe';
+import type { FilterMap } from '@/data/filter';
 import { matchRecipe, matchCategory } from '@/utils';
 import { ITEMS_PER_PAGE } from '@/constants';
 import _ from 'lodash';
@@ -23,6 +24,7 @@ export function RecipeDisplaySection({
   const [appliedSearchText, setAppliedSearchText] = useState('');
   const [categoryValue, setCategoryValue] = useState(new Set<string>([]));
   const [currentPage, setCurrentPage] = useState(1);
+  const [filterMap, setFilterMap] = useState<FilterMap>(new Map());
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -55,8 +57,13 @@ export function RecipeDisplaySection({
         totalRecipes={filteredRecipeList.length}
         onCategoryChange={setCategoryValue}
         onOpenFilter={onOpen}
+        filterMap={filterMap}
       />
-      <RecipeFilterDrawer isOpen={isOpen} onOpenChange={onOpenChange} />
+      <RecipeFilterDrawer
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        onDrawerAction={setFilterMap}
+      />
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
         {filteredRecipeList
           .slice(

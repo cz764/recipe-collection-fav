@@ -7,10 +7,12 @@ import {
 } from '@heroui/drawer';
 import { Button } from '@heroui/button';
 import { CheckboxGroup, Checkbox } from '@heroui/checkbox';
+import type { FilterMap } from '@/data/filter';
 
 interface RecipeFilterDrawerProps {
   isOpen: boolean;
   onOpenChange: () => void;
+  onDrawerAction: React.Dispatch<React.SetStateAction<FilterMap>>;
 }
 
 const checkboxGroupClasses = 'rounded-md border p-4';
@@ -18,7 +20,14 @@ const checkboxGroupClasses = 'rounded-md border p-4';
 export function RecipeFilterDrawer({
   isOpen,
   onOpenChange,
+  onDrawerAction,
 }: RecipeFilterDrawerProps) {
+  const handleAction = (onClose: () => void) => () => {
+    const nextFilterMap: FilterMap = new Map();
+    nextFilterMap.set('type', ['breakfast']);
+    onDrawerAction(nextFilterMap);
+    onClose();
+  };
   return (
     <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
       <DrawerContent>
@@ -56,7 +65,7 @@ export function RecipeFilterDrawer({
               <Button color='danger' variant='light' onPress={onClose}>
                 Close
               </Button>
-              <Button color='primary' onPress={onClose}>
+              <Button color='primary' onPress={handleAction(onClose)}>
                 Filter
               </Button>
             </DrawerFooter>
