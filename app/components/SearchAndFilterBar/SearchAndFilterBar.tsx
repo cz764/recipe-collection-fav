@@ -3,6 +3,7 @@ import { Link } from '@heroui/link';
 import { SearchInput } from './SearchInput';
 import { CategorySelect } from '@/components/SearchAndFilterBar/CategorySelect';
 import FilterIcon from '@/components/Icons/FilterIcon';
+import { FilterMap } from '@/data/filter';
 
 interface SearchAndFilterBarProps {
   searchText: string;
@@ -10,6 +11,8 @@ interface SearchAndFilterBarProps {
   onSearch: () => void;
   totalRecipes: number;
   onCategoryChange: React.Dispatch<React.SetStateAction<Set<string>>>;
+  onOpenFilter: () => void;
+  filterMap: FilterMap;
 }
 
 export function SearchAndFilterBar({
@@ -18,6 +21,8 @@ export function SearchAndFilterBar({
   onSearch,
   totalRecipes,
   onCategoryChange,
+  onOpenFilter,
+  filterMap,
 }: SearchAndFilterBarProps) {
   return (
     <div className='flex flex-col gap-1'>
@@ -33,6 +38,7 @@ export function SearchAndFilterBar({
             aria-label='Open Filters'
             color='primary'
             variant='faded'
+            onPress={onOpenFilter}
           >
             <FilterIcon className='size-6' />
           </Button>
@@ -44,8 +50,11 @@ export function SearchAndFilterBar({
       </div>
       <div className='flex justify-between'>
         <div className='flex gap-4'>
-          <p>Filter item1</p>
-          <p>Filter item2</p>
+          {[...filterMap.keys()].map((filterBy) => (
+            <p
+              key={`${filterBy}`}
+            >{`${filterBy}: ${filterMap.get(filterBy)}`}</p>
+          ))}
         </div>
         <p className='text-gray-600'>{totalRecipes} recipes</p>
       </div>
