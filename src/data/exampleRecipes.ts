@@ -3,44 +3,70 @@ import type { Recipe } from './recipe';
 export const exampleRecipes: Recipe[] = [
   {
     id: '1',
-    name: 'Classic Margherita Pizza',
+    name: 'Sourdough',
     description:
-      'A simple and delicious Italian pizza with fresh tomatoes, mozzarella, and basil. Perfect for a quick dinner with authentic flavors.',
-    tags: ['vegetarian', 'italian', 'dinner'],
-    source: 'Traditional Italian Recipe',
+      'European style sourdough that does not require a starter. Instead, we develop the flavor by using "Poolish". Perfect slice can be used to make sandwich, or just spread some butter!',
+    tags: ['vegetarian', 'european', 'breakfast', 'lunch'],
+    source: 'https://youtu.be/5mehXzl7yHA?si=8y-2iZecgYxvN1kM',
     language: 'en',
-    totalTime: 30,
-    yieldServings: 4,
-    equipments: ['oven', 'pizza stone', 'rolling pin'],
-    cuisine: 'Italian',
-    type: 'lunch',
+    totalTime: 120,
+    yieldServings: 5,
+    equipments: ['oven', 'mixing bowl', 'scale', 'bread basket'],
+    cuisine: 'European',
+    type: 'breakfast',
     ingredients: [
-      { name: 'pizza dough', amount: 1, unit: 'ball' },
-      { name: 'tomato sauce', amount: 1, unit: 'cup' },
-      { name: 'fresh mozzarella', amount: 8, unit: 'oz' },
-      { name: 'fresh basil', amount: '1 handful' },
-      { name: 'olive oil', amount: 2, unit: 'tbsp' },
-      { name: 'salt', amount: 'to taste' },
+      { name: 'bread flour', amount: 100, unit: 'g' },
+      { name: 'water', amount: 100, unit: 'g' },
+      { name: 'warm water', amount: 187, unit: 'g' },
+      { name: 'yeast', amount: '1/2', unit: 'tsp' },
+      { name: 'bread flour', amount: 233, unit: 'g' },
+      { name: 'whole wheat flour', amount: 33, unit: 'g' },
+      { name: 'almond flour or oats(Optional)', amount: 30, unit: 'g' },
+      { name: 'salt', amount: 1, unit: 'tsp' },
     ],
-    pictureUrl: '/exampleRecipes/ClassicMargheritaPizza.webp',
+    pictureUrl: '/exampleRecipes/Sourdough.jpg',
     steps: {
       prep: [
-        'Preheat oven to 475°F (245°C)',
-        'Roll out pizza dough to 12-inch circle',
-        'Tear mozzarella into small pieces',
+        'Mix 100g water and 100g flour together',
+        'Let it sit for more than 4 hours',
       ],
       steps: [
         {
-          detail:
-            'Spread tomato sauce evenly over dough, leaving 1-inch border',
+          detail: 'In a mixing bowl, add 187g warm water. Sprinkle the yeast.',
         },
-        { detail: 'Distribute mozzarella pieces evenly over sauce' },
-        { detail: 'Drizzle with olive oil and season with salt' },
+        { detail: 'Add poolish we made above, swirl a little to loosen it.' },
         {
           detail:
-            'Bake for 12-15 minutes until crust is golden and cheese is bubbly',
+            'Add 233g bread flour, 33g whole wheat flour, optional almond flour or oats. Add 6.7g salt.',
         },
-        { detail: 'Top with fresh basil leaves and serve immediately' },
+        {
+          detail: 'Mix to a shaggy dough.',
+        },
+        {
+          detail:
+            'Set 30min timer to let the dough sit. Then shape and layer the gluten. Let sit for another 30min.',
+        },
+        {
+          detail:
+            'Shape and layer the gluten again. This round can be done the day before. Then put the dough to fridge until you are ready to bake it.',
+        },
+        {
+          detail:
+            'Flour the bread basket, shape and pinch the dough, gently drop the dough to bread basket, cover with cloth, let sit for 1hr.',
+        },
+        {
+          detail: 'Preheat the oven to 500F, put the dutch oven in, for 45min.',
+        },
+        {
+          detail:
+            'Line a parchment paper, gently drop the dough to the parchment paper, lift it to put in the preheated dutch oven. Scorch the dough.',
+        },
+        { detail: 'Drop temperature to 485F, bake with lid on for 18min.' },
+        { detail: 'Remove lid, bake another 25min.' },
+        {
+          detail:
+            'Remove from the oven, put on baking cooling rack. You should be able to hear the bread still sizzling. That means success!',
+        },
       ],
     },
   },
