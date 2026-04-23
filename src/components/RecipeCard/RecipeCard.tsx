@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { Card, CardBody } from '@heroui/card';
 import { Image } from '@heroui/image';
 import type { Recipe as RecipeType } from '@/data/recipe';
@@ -9,9 +10,15 @@ interface RecipeCardProps {
   recipeData: RecipeType;
 }
 export function RecipeCard({ recipeData }: RecipeCardProps) {
-  const { pictureUrl, name, description, tags } = recipeData;
+  const { id, pictureUrl, name, description, tags } = recipeData;
+  const router = useRouter();
+
   return (
-    <Card isPressable className='w-full'>
+    <Card
+      isPressable
+      className='w-full'
+      onPress={() => router.push(`/details/${encodeURIComponent(id)}`)}
+    >
       <CardBody className='flex flex-col justify-between gap-2'>
         <div className='flex flex-col gap-2'>
           <Image

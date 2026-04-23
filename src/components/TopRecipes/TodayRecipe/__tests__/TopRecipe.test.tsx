@@ -1,10 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { TodayRecipe } from '..';
 import { makeRecipe } from '@/components/__tests__/mockData';
 import { TAGS_LIMIT, INGREDIENTS_LIMIT } from '@/constants';
+import { pushMock } from '../../../../../vitest.setup';
 
 describe('TodayRecipe', () => {
+  beforeEach(() => {
+    pushMock.mockClear();
+  });
+
   it('renders "Today\'s recipe" heading', () => {
     const recipe = makeRecipe();
     render(<TodayRecipe recipe={recipe} />);
@@ -76,5 +82,13 @@ describe('TodayRecipe', () => {
       .map(({ name }) => name)
       .join(', ');
     expect(screen.getByText(expectedIngredients)).toBeVisible();
+  });
+
+  it('navigates to recipe details on press', async () => {
+    const user = userEvent.setup();
+    const recipe = makeRecipe({ id: '99' });
+    render(<TodayRecipe recipe={recipe} />);
+    await user.click(screen.getByRole('button'));
+    expect(pushMock).toHaveBeenCalledWith('/details/99');
   });
 });

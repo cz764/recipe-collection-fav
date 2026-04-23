@@ -1,10 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { RecipeEW } from '../index';
 import { makeRecipe } from '@/components/__tests__/mockData';
 import { TAGS_LIMIT } from '@/constants';
+import { pushMock } from '../../../../../vitest.setup';
 
 describe('RecipeEW', () => {
+  beforeEach(() => {
+    pushMock.mockClear();
+  });
+
   it('renders recipe name', () => {
     const name = 'Grilled Salmon';
     const recipe = makeRecipe({ name });
@@ -34,5 +40,13 @@ describe('RecipeEW', () => {
     render(<RecipeEW recipe={recipe} />);
     const items = screen.getAllByTestId('recipe-tags');
     expect(items).toHaveLength(TAGS_LIMIT);
+  });
+
+  it('navigates to recipe details on press', async () => {
+    const user = userEvent.setup();
+    const recipe = makeRecipe({ id: '7' });
+    render(<RecipeEW recipe={recipe} />);
+    await user.click(screen.getByRole('button'));
+    expect(pushMock).toHaveBeenCalledWith('/details/7');
   });
 });

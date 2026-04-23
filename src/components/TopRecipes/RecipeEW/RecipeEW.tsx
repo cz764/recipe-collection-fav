@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { Card, CardBody } from '@heroui/card';
 import { Image } from '@heroui/image';
 import { Recipe } from '@/data/recipe';
@@ -9,9 +10,15 @@ interface RecipeEWProps {
 }
 
 export function RecipeEW({ recipe }: RecipeEWProps) {
-  const { name, pictureUrl, tags } = recipe;
+  const { id, name, pictureUrl, tags } = recipe;
+  const router = useRouter();
+
   return (
-    <Card isPressable fullWidth>
+    <Card
+      isPressable
+      fullWidth
+      onPress={() => router.push(`/details/${encodeURIComponent(id)}`)}
+    >
       <CardBody>
         <div className='flex gap-6'>
           <Image

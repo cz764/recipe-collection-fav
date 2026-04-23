@@ -1,10 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { RecipeCard } from '../index';
 import { makeRecipe } from '@/components/__tests__/mockData';
 import { TAGS_LIMIT } from '@/constants';
+import { pushMock } from '../../../../vitest.setup';
 
 describe('RecipeCard', () => {
+  beforeEach(() => {
+    pushMock.mockClear();
+  });
+
   it('renders recipe name', () => {
     const name = 'Spaghetti Carbonara';
     const recipe = makeRecipe({ name });
@@ -41,5 +47,21 @@ describe('RecipeCard', () => {
     render(<RecipeCard recipeData={recipe} />);
     const items = screen.getAllByTestId('recipe-tags');
     expect(items).toHaveLength(TAGS_LIMIT);
+  });
+
+  it('navigates to recipe details on press', async () => {
+    const user = userEvent.setup();
+    const recipe = makeRecipe({ id: '42' });
+    render(<RecipeCard recipeData={recipe} />);
+    await user.click(screen.getByRole('button'));
+    expect(pushMock).toHaveBeenCalledWith('/details/42');
+  });
+
+  it('encodes ids with special characters in the URL', async () => {
+    const user = userEvent.setup();
+    const recipe = makeRecipe({ id: 'a b/c' });
+    render(<RecipeCard recipeData={recipe} />);
+    await user.click(screen.getByRole('button'));
+    expect(pushMock).toHaveBeenCalledWith('/details/a%20b%2Fc');
   });
 });
