@@ -5,5 +5,5 @@ export function fetchRecipes() {
 }
 
 export function getRecipe(id) {
-  return exampleRecipes[id];
+  return exampleRecipes.find((e) => e.id === id);
 }

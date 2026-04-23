@@ -7,7 +7,16 @@ export default async function Page({
   params: Promise<{ recipeId: string }>;
 }) {
   const { recipeId } = await params;
-  const recipe = await getRecipe(recipeId);
+  let recipe;
+  try {
+    recipe = await getRecipe(recipeId);
+  } catch (ex) {
+    console.error(ex);
+  }
 
-  return <RecipeContent recipe={recipe} />;
+  return recipe ? (
+    <RecipeContent recipe={recipe} />
+  ) : (
+    <div>Something went wrong.</div>
+  );
 }
