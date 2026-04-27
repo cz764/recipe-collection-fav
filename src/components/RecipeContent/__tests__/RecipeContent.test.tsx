@@ -8,9 +8,7 @@ describe('RecipeContent', () => {
     const name = 'Sourdough Bread';
     render(<RecipeContent recipe={makeRecipe({ name })} />);
     expect(screen.getAllByText(name).length).toBeGreaterThanOrEqual(2);
-    expect(
-      screen.getByRole('heading', { level: 2, name }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument();
   });
 
   it('renders a link back to all recipes', () => {
@@ -22,9 +20,7 @@ describe('RecipeContent', () => {
   it('renders the recipe picture with alt text', () => {
     const name = 'Pizza';
     render(
-      <RecipeContent
-        recipe={makeRecipe({ name, pictureUrl: '/pizza.jpg' })}
-      />,
+      <RecipeContent recipe={makeRecipe({ name, pictureUrl: '/pizza.jpg' })} />,
     );
     expect(screen.getByAltText(`${name}-picture`)).toBeInTheDocument();
   });
@@ -33,6 +29,15 @@ describe('RecipeContent', () => {
     const description = 'A classic Italian pasta dish';
     render(<RecipeContent recipe={makeRecipe({ description })} />);
     expect(screen.getByText(description)).toBeVisible();
+  });
+
+  it('renders the source', () => {
+    const source = 'https://dummy.link';
+    render(<RecipeContent recipe={makeRecipe({ source })} />);
+    expect(screen.getByText('Recipe Reference')).toHaveAttribute(
+      'href',
+      source,
+    );
   });
 
   it('renders equipment joined by commas', () => {
@@ -69,9 +74,7 @@ describe('RecipeContent', () => {
   it('renders prep steps', () => {
     const prep = ['Preheat oven to 200C', 'Line baking tray'];
     render(
-      <RecipeContent
-        recipe={makeRecipe({ steps: { prep, steps: [] } })}
-      />,
+      <RecipeContent recipe={makeRecipe({ steps: { prep, steps: [] } })} />,
     );
     prep.forEach((line) => {
       expect(screen.getByText(line)).toBeVisible();
@@ -85,9 +88,7 @@ describe('RecipeContent', () => {
       { detail: 'Bake for 30 minutes' },
     ];
     const { container } = render(
-      <RecipeContent
-        recipe={makeRecipe({ steps: { prep: [], steps } })}
-      />,
+      <RecipeContent recipe={makeRecipe({ steps: { prep: [], steps } })} />,
     );
 
     const list = container.querySelector('ol.list-decimal');
@@ -105,9 +106,7 @@ describe('RecipeContent', () => {
       { detail: 'Without image' },
     ];
     render(
-      <RecipeContent
-        recipe={makeRecipe({ steps: { prep: [], steps } })}
-      />,
+      <RecipeContent recipe={makeRecipe({ steps: { prep: [], steps } })} />,
     );
 
     expect(screen.getByAltText('step-0')).toHaveAttribute('src', '/mix.jpg');

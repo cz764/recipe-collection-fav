@@ -5,6 +5,7 @@ import { Breadcrumbs, BreadcrumbItem } from '@heroui/breadcrumbs';
 import { Image } from '@heroui/image';
 import { Divider } from '@heroui/divider';
 import { Checkbox } from '@heroui/checkbox';
+import { Link } from '@heroui/link';
 
 interface RecipeContentProps {
   recipe: Recipe;
@@ -14,7 +15,6 @@ const h3ClassName = 'text-xl font-medium';
 
 export function RecipeContent({ recipe }: RecipeContentProps) {
   const {
-    id,
     name,
     pictureUrl,
     description,
@@ -23,6 +23,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
     yieldServings,
     ingredients,
     steps,
+    source,
   } = recipe;
   return (
     <div className='flex flex-col gap-2 p-2'>
@@ -36,6 +37,11 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       </div>
       <Divider />
       <span>{description}</span>
+      {source && (
+        <Link href={source} isExternal showAnchorIcon>
+          Recipe Reference
+        </Link>
+      )}
       <div>
         <h3 className={h3ClassName}>Equipment</h3>
         <Divider />
