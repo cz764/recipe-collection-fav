@@ -9,7 +9,7 @@ import { RecipeFilterDrawer } from './RecipeFilterDrawer';
 import { RecipeCard } from '@/components/RecipeCard';
 import type { Recipe } from '@/data/recipe';
 import type { FilterMap } from '@/data/filter';
-import { matchRecipe, matchCategory } from '@/utils';
+import { matchRecipe, matchCategory, matchFilters } from '@/utils';
 import { ITEMS_PER_PAGE } from '@/constants';
 import _ from 'lodash';
 
@@ -41,8 +41,12 @@ export function RecipeDisplaySection({
       result = result.filter((recipe) => matchCategory(recipe, categoryValue));
     }
 
+    if (!_.isEmpty(filterMap)) {
+      result = result.filter((recipe) => matchFilters(recipe, filterMap));
+    }
+
     return result;
-  }, [recipeList, appliedSearchText, categoryValue]);
+  }, [recipeList, appliedSearchText, categoryValue, filterMap]);
 
   const applySearch = () => {
     setAppliedSearchText(searchText);

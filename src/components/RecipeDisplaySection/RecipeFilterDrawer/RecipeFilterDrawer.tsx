@@ -8,6 +8,7 @@ import {
 import { Button } from '@heroui/button';
 import { CheckboxGroup, Checkbox } from '@heroui/checkbox';
 import type { FilterMap } from '@/data/filter';
+import { useState } from 'react';
 
 interface RecipeFilterDrawerProps {
   isOpen: boolean;
@@ -22,12 +23,22 @@ export function RecipeFilterDrawer({
   onOpenChange,
   onDrawerAction,
 }: RecipeFilterDrawerProps) {
+  const [typeValue, setTypeValue] = useState([]);
+  const [languageValue, setLanguageValue] = useState([]);
+
   const handleAction = (onClose: () => void) => () => {
     const nextFilterMap: FilterMap = new Map();
-    nextFilterMap.set('type', ['breakfast']);
+    nextFilterMap.set('type', typeValue);
+    nextFilterMap.set('language', languageValue);
     onDrawerAction(nextFilterMap);
     onClose();
   };
+
+  const handleReset = (onClose: () => void) => () => {
+    onDrawerAction(new Map());
+    onClose();
+  };
+
   return (
     <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
       <DrawerContent>
@@ -40,9 +51,10 @@ export function RecipeFilterDrawer({
               <CheckboxGroup
                 color='secondary'
                 className={checkboxGroupClasses}
-                defaultValue={['breakfast']}
                 label='Type'
                 orientation='horizontal'
+                value={typeValue}
+                onValueChange={setTypeValue}
               >
                 <Checkbox value='breakfast'>Breakfast</Checkbox>
                 <Checkbox value='lunch'>Lunch</Checkbox>
@@ -53,17 +65,25 @@ export function RecipeFilterDrawer({
               <CheckboxGroup
                 color='secondary'
                 className={checkboxGroupClasses}
-                defaultValue={['en']}
                 label='Language'
                 orientation='horizontal'
+                value={languageValue}
+                onValueChange={setLanguageValue}
               >
                 <Checkbox value='en'>English</Checkbox>
                 <Checkbox value='ch'>中文</Checkbox>
               </CheckboxGroup>
             </DrawerBody>
             <DrawerFooter>
-              <Button color='danger' variant='light' onPress={onClose}>
+              <Button color='secondary' variant='light' onPress={onClose}>
                 Close
+              </Button>
+              <Button
+                color='danger'
+                variant='light'
+                onPress={handleReset(onClose)}
+              >
+                Reset
               </Button>
               <Button color='primary' onPress={handleAction(onClose)}>
                 Filter

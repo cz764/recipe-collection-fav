@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { matchRecipe, matchCategory } from '../index';
+import { matchRecipe, matchCategory, matchFilters } from '../index';
 import { makeRecipe } from '@/components/__tests__/mockData';
+import type { FilterMap } from '@/data/filter';
 
 describe('matchRecipe', () => {
   it('matches recipe by name (partial match)', () => {
@@ -148,5 +149,88 @@ describe('matchCategory', () => {
     expect(
       matchCategory(recipe, new Set(['Quick', 'Easy', 'Italian', 'breakfast'])),
     ).toBe(false);
+  });
+});
+
+describe('matchFilters', () => {
+  it('returns true for empty filterMap', () => {
+    const recipe = makeRecipe();
+    const filterMap: FilterMap = new Map();
+    expect(matchFilters(recipe, filterMap)).toBe(true);
+  });
+
+  it('returns true when all filter values are empty arrays', () => {
+    const recipe = makeRecipe({ type: 'dinner', language: 'en' });
+    const filterMap: FilterMap = new Map();
+    filterMap.set('type', []);
+    filterMap.set('language', []);
+    expect(matchFilters(recipe, filterMap)).toBe(true);
+  });
+
+  it('matches recipe by type filter', () => {
+    const recipe = makeRecipe({ type: 'breakfast' });
+    const filterMap: FilterMap = new Map();
+    filterMap.set('type', ['breakfast']);
+    expect(matchFilters(recipe, filterMap)).toBe(true);
+  });
+
+  it('matches recipe by language filter', () => {
+    const recipe = makeRecipe({ language: 'ch' });
+    const filterMap: FilterMap = new Map();
+    filterMap.set('language', ['ch']);
+    expect(matchFilters(recipe, filterMap)).toBe(true);
+  });
+
+  it('returns false when type does not match', () => {
+    const recipe = makeRecipe({ type: 'dinner' });
+    const filterMap: FilterMap = new Map();
+    filterMap.set('type', ['breakfast']);
+    expect(matchFilters(recipe, filterMap)).toBe(false);
+  });
+
+  it('returns false when language does not match', () => {
+    const recipe = makeRecipe({ language: 'en' });
+    const filterMap: FilterMap = new Map();
+    filterMap.set('language', ['ch']);
+    expect(matchFilters(recipe, filterMap)).toBe(false);
+  });
+
+  it('matches when filter has multiple values (OR within key)', () => {
+    const recipe = makeRecipe({ type: 'lunch' });
+    const filterMap: FilterMap = new Map();
+    filterMap.set('type', ['breakfast', 'lunch', 'dinner']);
+    expect(matchFilters(recipe, filterMap)).toBe(true);
+  });
+
+  it('requires all keys to match (AND logic across keys)', () => {
+    const recipe = makeRecipe({ type: 'breakfast', language: 'en' });
+    const filterMap: FilterMap = new Map();
+    filterMap.set('type', ['breakfast']);
+    filterMap.set('language', ['en']);
+    expect(matchFilters(recipe, filterMap)).toBe(true);
+  });
+
+  it('returns false when one of multiple keys does not match', () => {
+    const recipe = makeRecipe({ type: 'breakfast', language: 'en' });
+    const filterMap: FilterMap = new Map();
+    filterMap.set('type', ['breakfast']);
+    filterMap.set('language', ['ch']);
+    expect(matchFilters(recipe, filterMap)).toBe(false);
+  });
+
+  it('skips keys with empty arrays and applies the rest', () => {
+    const recipe = makeRecipe({ type: 'breakfast', language: 'en' });
+    const filterMap: FilterMap = new Map();
+    filterMap.set('type', []);
+    filterMap.set('language', ['en']);
+    expect(matchFilters(recipe, filterMap)).toBe(true);
+  });
+
+  it('returns false when non-empty key fails even if other keys are empty', () => {
+    const recipe = makeRecipe({ type: 'breakfast', language: 'en' });
+    const filterMap: FilterMap = new Map();
+    filterMap.set('type', []);
+    filterMap.set('language', ['ch']);
+    expect(matchFilters(recipe, filterMap)).toBe(false);
   });
 });
