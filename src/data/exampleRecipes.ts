@@ -238,4 +238,56 @@ export const exampleRecipes: Recipe[] = [
       ],
     },
   },
+  {
+    id: '6',
+    name: 'Egg Bites with Bacon & Gruyère',
+    description:
+      'If you like the sous vide egg bites from Starbucks, you’ll love this copycat version—no sous vide equipment required!',
+    tags: ['breakfast', 'healthy', 'high-protein'],
+    source:
+      'https://www.onceuponachef.com/recipes/bacon-gruyere-egg-bites.html',
+    language: 'en',
+    totalTime: 35,
+    yieldServings: 12,
+    equipments: ['blender', 'pot', 'muffin pan', 'oven'],
+    cuisine: 'Modern',
+    type: 'breakfast',
+    ingredients: [
+      { name: 'bacon slices', amount: 4 },
+      { name: 'large eggs', amount: 6 },
+      { name: 'cottage cheese(can sub yogurt)', amount: 300, unit: 'g' },
+      { name: 'Gruyère cheese', amount: 150, unit: 'g' },
+      { name: 'corn starch', amount: 2, unit: 'tbsp' },
+      { name: 'salt', amount: '1/4', unit: 'tsp' },
+      { name: 'black pepper', amount: '1/8', unit: 'tsp' },
+      { name: 'hot saucer(optional)', amount: '1/2', unit: 'tsp' },
+    ],
+    pictureUrl: '/exampleRecipes/bacon-gruyere-egg-bites.webp',
+    steps: {
+      prep: [
+        'Boil a kettle of water',
+        'Preheat oven to 300F',
+        'Place a 9x13 inch baking dish on the lower rack and fill it halfway with boiling water',
+        'Butter the muffin pan',
+        'Cut bacon to small pieces',
+      ],
+      steps: [
+        { detail: 'Cook bacon in skillet until crisp' },
+        {
+          detail:
+            'In a blender, combine eggs, cottage cheese, Gruyère, cornstarch, salt, pepper, and hot sauce',
+        },
+        { detail: 'Blend to completely smooth, about 30 seconds' },
+        {
+          detail:
+            'Pour the mixture evenly into the prepared muffin pan, filling 3/4 full. Sprinkle bacon over each muffin',
+        },
+        { detail: 'Bake on middle rack for 20-25mins, until the eggs are set' },
+        {
+          detail:
+            'Remove from oven and let rest in the pan for 5mins, carefully remove from the pan, serve',
+        },
+      ],
+    },
+  },
 ];
