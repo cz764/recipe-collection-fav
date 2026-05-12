@@ -107,48 +107,55 @@ export const exampleRecipes: Recipe[] = [
   },
   {
     id: '3',
-    name: 'Chocolate Chip Cookies',
+    name: 'Chocolate Guinness Cake',
     description:
-      'Crispy on the outside, chewy on the inside chocolate chip cookies. The perfect American classic dessert that everyone loves.',
-    tags: ['dessert', 'baking', 'cookies', 'chocolate'],
-    source: 'Family Recipe',
+      'For me, a chocolate cake is the basic unit of celebration. The chocolate Guinness cake here is simple but deeply pleasurable, and has earned its place as a stand-alone treat.',
+    tags: ['dessert', 'baking', 'cake', 'chocolate'],
+    source: 'https://cooking.nytimes.com/recipes/1875-chocolate-guinness-cake',
     language: 'en',
-    totalTime: 45,
-    yieldServings: 24,
-    equipments: ['mixing bowl', 'baking sheet', 'electric mixer', 'oven'],
+    totalTime: 90,
+    yieldServings: 12,
+    equipments: ['mixing bowl', 'baking sheet', '9-inch cake pan', 'oven'],
     cuisine: 'American',
-    type: 'snack',
+    type: 'desert',
     ingredients: [
-      { name: 'all-purpose flour', amount: 2.25, unit: 'cups' },
-      { name: 'butter', amount: 1, unit: 'cup' },
-      { name: 'granulated sugar', amount: 0.75, unit: 'cup' },
-      { name: 'brown sugar', amount: 0.75, unit: 'cup' },
-      { name: 'eggs', amount: 2 },
-      { name: 'vanilla extract', amount: 2, unit: 'tsp' },
-      { name: 'baking soda', amount: 1, unit: 'tsp' },
-      { name: 'salt', amount: 1, unit: 'tsp' },
-      { name: 'chocolate chips', amount: 2, unit: 'cups' },
+      { name: 'Guinness stout', amount: 1, unit: 'cup' },
+      { name: 'unsalted butter', amount: 10, unit: 'tbsp' },
+      { name: 'unsweetened cocoa', amount: '3/4', unit: 'cup' },
+      { name: 'superfine sugar', amount: 2, unit: 'cups' },
+      { name: 'sour cream', amount: '3/4', unit: 'cup' },
+      { name: 'large eggs', amount: 2 },
+      { name: 'vanilla extract', amount: 1, unit: 'tbsp' },
+      { name: 'all-purpose flour', amount: 2, unit: 'cups' },
+      { name: 'baking soda', amount: '2 1/2', unit: 'tsp' },
     ],
-    pictureUrl: '/exampleRecipes/ChocolateChipCookie.jpg',
+    pictureUrl: '/exampleRecipes/GuinnesCake.webp',
     steps: {
       prep: [
-        'Preheat oven to 375°F (190°C)',
-        'Soften butter to room temperature',
-        'Line baking sheets with parchment paper',
+        'Preheat oven to 350°F (180°C)',
+        'Butter a 9-inch springform pan and line with parchment paper.',
       ],
       steps: [
-        { detail: 'Cream together butter and both sugars until fluffy' },
-        { detail: 'Beat in eggs and vanilla extract' },
-        { detail: 'Mix flour, baking soda, and salt in separate bowl' },
-        { detail: 'Gradually blend dry ingredients into butter mixture' },
-        { detail: 'Fold in chocolate chips' },
-        {
-          detail: 'Drop rounded tablespoons onto baking sheet, 2 inches apart',
-        },
-        { detail: 'Bake 9-11 minutes until golden brown' },
         {
           detail:
-            'Cool on baking sheet for 2 minutes, then transfer to wire rack',
+            'For the cake: In a large saucepan, combine Guinness and butter. Place over medium-low heat until butter melts, then remove from heat. Add cocoa and superfine sugar, and whisk to blend.',
+        },
+        {
+          detail:
+            'In a small bowl, combine sour cream, eggs and vanilla; mix well. Add to Guinness mixture.',
+        },
+        { detail: 'Add flour and baking soda, and whisk again until smooth.' },
+        {
+          detail:
+            'Pour batter into buttered pan, bake until risen and firm, about 45min to 1hour. Place pan on a wire rack and cool completely.',
+        },
+        {
+          detail:
+            'Optional topping: mix 1 1/4 cups of confectioner sugar, and 8 ounces room temperature cream cheese, until smooth. Add 1/2 cup heavy cream, mix until smooth and spreadable.',
+        },
+        {
+          detail:
+            'Remove cake from pan, place on a cake stand. Ice top of cake only, so that it resembles a frothy pint of Guinness.',
         },
       ],
     },
