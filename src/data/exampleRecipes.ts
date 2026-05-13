@@ -13,6 +13,7 @@ export const exampleRecipes: Recipe[] = [
     yieldServings: 5,
     equipments: ['oven', 'mixing bowl', 'scale', 'bread basket'],
     cuisine: 'European',
+    creditTo: 'Brian Lagerstrom',
     type: 'breakfast',
     ingredients: [
       { name: 'bread flour', amount: 100, unit: 'g' },
@@ -107,9 +108,9 @@ export const exampleRecipes: Recipe[] = [
   },
   {
     id: '3',
-    name: 'Chocolate Guinness Cake',
+    name: 'Chocolate Guinness Cake by NYT',
     description:
-      'For me, a chocolate cake is the basic unit of celebration. The chocolate Guinness cake here is simple but deeply pleasurable, and has earned its place as a stand-alone treat.',
+      "This is recipe from New York Times, I had this cake at my mother-in-law's home once, and immediately fall in love with the flavor. Personally I prefer the cake without the topping, so I put it as optional.",
     tags: ['dessert', 'baking', 'cake', 'chocolate'],
     source: 'https://cooking.nytimes.com/recipes/1875-chocolate-guinness-cake',
     language: 'en',
@@ -117,6 +118,7 @@ export const exampleRecipes: Recipe[] = [
     yieldServings: 12,
     equipments: ['mixing bowl', 'baking sheet', '9-inch cake pan', 'oven'],
     cuisine: 'American',
+    creditTo: 'Nigella Lawson',
     type: 'desert',
     ingredients: [
       { name: 'Guinness stout', amount: 1, unit: 'cup' },
