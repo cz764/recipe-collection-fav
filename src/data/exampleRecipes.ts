@@ -73,36 +73,61 @@ export const exampleRecipes: Recipe[] = [
   },
   {
     id: '2',
-    name: '麻婆豆腐',
+    name: 'Mexican Cheese Cornbread Biscuits',
     description:
-      '经典川菜，麻辣鲜香的豆腐料理。嫩滑的豆腐搭配麻辣的肉末酱汁，是一道令人难忘的家常菜。',
-    tags: ['spicy', 'sichuan', 'dinner', 'meat'],
-    source: '传统川菜',
-    language: 'ch',
-    totalTime: 25,
-    yieldServings: 3,
-    equipments: ['wok', 'knife', 'cutting board'],
-    cuisine: 'Chinese',
+      'I watched a video from Mike G on Youtube about this $50 budget meal prepping, this Mexican cheese cornbread caught my eye. It looks easy to make and delicious. It is between a dinner roll and biscuit. ',
+    tags: ['mexican', 'desert', 'dinner', 'bread'],
+    source: 'https://www.youtube.com/watch?v=3Bhd6NcqVJI',
+    language: 'en',
+    totalTime: 50,
+    yieldServings: 4,
+    equipments: ['oven', '9 inch cast iron pan'],
+    cuisine: 'Mexican',
     type: 'dinner',
+    creditTo: 'LifebyMikeG',
     ingredients: [
-      { name: '嫩豆腐', amount: 400, unit: 'g' },
-      { name: '猪肉末', amount: 100, unit: 'g' },
-      { name: '豆瓣酱', amount: 2, unit: 'tbsp' },
-      { name: '花椒粉', amount: 1, unit: 'tsp' },
-      { name: '葱姜蒜', amount: '适量' },
-      { name: '酱油', amount: 1, unit: 'tbsp' },
-      { name: '淀粉水', amount: 2, unit: 'tbsp' },
+      { name: 'sour cream', amount: 1, unit: 'cup' },
+      { name: 'eggs', amount: 2 },
+      { name: 'sugar', amount: '1/4', unit: 'cup' },
+      { name: 'butter or oil', amount: 2, unit: 'tsp' },
+      { name: 'corn kennel canned or frozen', amount: 1, unit: 'cup' },
+      { name: 'corn juice or water', amount: '1/4', unit: 'cup' },
+      { name: 'masa harina', amount: '2/3', unit: 'cup' },
+      { name: 'baking soda', amount: '1/2', unit: 'tsp' },
+      { name: 'baking powder', amount: 1, unit: 'tsp' },
+      { name: 'salt', amount: 1, unit: 'tsp' },
+      { name: 'shredded monterey jack cheese', amount: '1/2', unit: 'cup' },
+      { name: 'finely diced jalapeno', amount: 1, unit: 'tsp' },
     ],
-    pictureUrl: '/exampleRecipes/MapoTofu.jpg',
+    pictureUrl: '/exampleRecipes/MexicanCornbread.png',
     steps: {
-      prep: ['豆腐切小块，用热水焯一下', '葱姜蒜切末备用'],
+      prep: [],
       steps: [
-        { detail: '热锅下油，炒香葱姜蒜' },
-        { detail: '加入肉末炒至变色' },
-        { detail: '加入豆瓣酱炒出红油' },
-        { detail: '加水和豆腐块，小火煮5分钟' },
-        { detail: '加酱油调味，用淀粉水勾芡' },
-        { detail: '撒上花椒粉和葱花即可' },
+        {
+          detail:
+            'To a large mixing bowl, add the sour cream, eggs, sugar, oil, corn, and the juice, mix well.',
+        },
+        {
+          detail:
+            'Add the masa harina, baking powder, baking soda, and salt. Whisk until combined.',
+        },
+        {
+          detail:
+            'Fold in the shredded cheese and the diced jalapeno. Let the batter sit for 5 - 10 mins to allow baking powder and soda to activate.',
+        },
+        {
+          detail:
+            'Preheat the cast iron pan on medium heat. Add butter, it should bubble but not burn.',
+        },
+        {
+          detail:
+            'Using a 1/2 cup ice cream scoop(optional), add the batter one scoop at a time until the pan is full or the batter is gone.',
+        },
+        {
+          detail:
+            'Place in the oven and bake at 400F for 30 - 40min, until golden brown and the interior reaches 210F.',
+        },
+        { detail: 'Let cool slightly and then remove from the pan.' },
       ],
     },
   },
