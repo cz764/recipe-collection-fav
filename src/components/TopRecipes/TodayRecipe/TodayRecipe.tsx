@@ -22,14 +22,13 @@ export function TodayRecipe({ recipe }: TodayRecipeProps) {
       onPress={() => router.push(`/details/${encodeURIComponent(id)}`)}
     >
       <CardBody>
-        <div className='flex gap-6'>
+        <div className='flex flex-col gap-6 lg:flex-row'>
           <Image
             isZoomed
-            className='object-cover'
+            className='h-auto object-cover'
             alt={`${name}-image`}
-            src={pictureUrl}
-            height={300}
             width={300}
+            src={pictureUrl}
           />
           <div className='flex flex-1 flex-col justify-between'>
             <div>

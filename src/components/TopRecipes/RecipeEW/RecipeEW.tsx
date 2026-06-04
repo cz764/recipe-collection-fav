@@ -20,17 +20,17 @@ export function RecipeEW({ recipe }: RecipeEWProps) {
       onPress={() => router.push(`/details/${encodeURIComponent(id)}`)}
     >
       <CardBody>
-        <div className='flex gap-6'>
+        <div className='flex flex-col gap-6 lg:flex-row'>
           <Image
-            className='object-cover'
+            isZoomed
+            className='h-auto object-cover'
             alt={`${name}-image`}
             src={pictureUrl}
-            height={120}
             width={120}
           />
           <div className='flex max-w-1/2 flex-col justify-between'>
             <h2 className='text-lg'>{name}</h2>
-            <div className='flex gap-2'>
+            <div className='flex flex-col gap-2 lg:flex-row'>
               {tags.slice(0, TAGS_LIMIT).map((tag) => (
                 <Tag key={`${name}-tag-${tag}`} name={tag} />
               ))}

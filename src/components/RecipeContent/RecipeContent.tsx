@@ -31,7 +31,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
         <BreadcrumbItem href='/'>All Recipes</BreadcrumbItem>
         <BreadcrumbItem>{name}</BreadcrumbItem>
       </Breadcrumbs>
-      <div className='flex items-center justify-center gap-4'>
+      <div className='flex flex-col items-center justify-center gap-4 lg:flex-row'>
         <Image alt={`${name}-picture`} src={pictureUrl} height={300} />
         <h2 className='text-3xl font-semibold'>{name}</h2>
       </div>
@@ -56,8 +56,8 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
         </div>
       </div>
       <Divider />
-      <div className='flex gap-2'>
-        <div className='flex flex-col'>
+      <div className='flex flex-col gap-2 lg:flex-row'>
+        <div className='flex min-w-2xs flex-col'>
           <h4 className='font-medium'>Ingredients</h4>
           {ingredients.map((ingredient, index) => (
             <Checkbox key={`${ingredient}-${index}-checkbox`}>

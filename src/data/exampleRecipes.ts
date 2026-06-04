@@ -133,9 +133,9 @@ export const exampleRecipes: Recipe[] = [
   },
   {
     id: '3',
-    name: 'Chocolate Guinness Cake by NYT',
+    name: 'Chocolate Guinness Cake',
     description:
-      "This is recipe from New York Times, I had this cake at my mother-in-law's home once, and immediately fall in love with the flavor. Personally I prefer the cake without the topping, so I put it as optional.",
+      "This is recipe inspired from New York Times, I had this cake at my mother-in-law's home once, and immediately fall in love with the flavor. Personally I prefer the cake without the topping, so I put it as optional.",
     tags: ['dessert', 'baking', 'cake', 'chocolate'],
     source: 'https://cooking.nytimes.com/recipes/1875-chocolate-guinness-cake',
     language: 'en',
@@ -146,15 +146,17 @@ export const exampleRecipes: Recipe[] = [
     creditTo: 'Nigella Lawson',
     type: 'desert',
     ingredients: [
-      { name: 'Guinness stout', amount: 1, unit: 'cup' },
-      { name: 'unsalted butter', amount: 10, unit: 'tbsp' },
+      { name: 'Guinness stout', amount: 1, unit: 'bottle' },
+      { name: 'unsalted butter', amount: 1, unit: 'stick' },
       { name: 'unsweetened cocoa', amount: '3/4', unit: 'cup' },
-      { name: 'superfine sugar', amount: 2, unit: 'cups' },
-      { name: 'sour cream', amount: '3/4', unit: 'cup' },
+      { name: 'superfine sugar', amount: '1 1/2', unit: 'cups' },
+      { name: 'buttermilk', amount: '3/4', unit: 'cup' },
+      { name: 'greek yogurt', amount: 2, unit: 'tbsp' },
       { name: 'large eggs', amount: 2 },
       { name: 'vanilla extract', amount: 1, unit: 'tbsp' },
       { name: 'all-purpose flour', amount: 2, unit: 'cups' },
       { name: 'baking soda', amount: '2 1/2', unit: 'tsp' },
+      { name: 'salt', amount: '1', unit: 'pinch' },
     ],
     pictureUrl: '/exampleRecipes/GuinnesCake.webp',
     steps: {
@@ -165,24 +167,26 @@ export const exampleRecipes: Recipe[] = [
       steps: [
         {
           detail:
-            'For the cake: In a large saucepan, combine Guinness and butter. Place over medium-low heat until butter melts, then remove from heat. Add cocoa and superfine sugar, and whisk to blend.',
+            'For the cake: In a large saucepan, pour Guinness and bring to a boil. Reduce it to one cup. Then combine Guinness and butter. Place over medium-low heat until butter melts, then remove from heat.',
+        },
+        {
+          detail: 'Add cocoa and superfine sugar, and whisk to blend.',
         },
         {
           detail:
-            'In a small bowl, combine sour cream, eggs and vanilla; mix well. Add to Guinness mixture.',
-        },
-        { detail: 'Add flour and baking soda, and whisk again until smooth.' },
-        {
-          detail:
-            'Pour batter into buttered pan, bake until risen and firm, about 45min to 1hour. Place pan on a wire rack and cool completely.',
+            'In a small bowl, combine buttermilk, eggs and vanilla; mix well. Add to Guinness mixture.',
         },
         {
           detail:
-            'Optional topping: mix 1 1/4 cups of confectioner sugar, and 8 ounces room temperature cream cheese, until smooth. Add 1/2 cup heavy cream, mix until smooth and spreadable.',
+            'Add flour and baking soda, a pinch of salt, and whisk again until smooth.',
         },
         {
           detail:
-            'Remove cake from pan, place on a cake stand. Ice top of cake only, so that it resembles a frothy pint of Guinness.',
+            'Pour batter into buttered pan, bake until risen and firm, about 45min or longer. Place pan on a wire rack and cool completely.',
+        },
+        {
+          detail:
+            'Optional topping: mix 1 1/4 cups of confectioner sugar, and 8 ounces room temperature cream cheese, until smooth. Add 1/2 cup heavy cream, mix until smooth and spreadable.Remove cake from pan, place on a cake stand. Ice top of cake only, so that it resembles a frothy pint of Guinness.',
         },
       ],
     },
