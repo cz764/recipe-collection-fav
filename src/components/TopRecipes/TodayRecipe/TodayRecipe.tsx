@@ -25,9 +25,8 @@ export function TodayRecipe({ recipe }: TodayRecipeProps) {
         <div className='flex flex-col gap-6 lg:flex-row'>
           <Image
             isZoomed
-            className='h-auto object-cover'
+            className='h-auto max-h-72 w-full max-w-72 object-cover'
             alt={`${name}-image`}
-            width={300}
             src={pictureUrl}
           />
           <div className='flex flex-1 flex-col justify-between'>

@@ -27,7 +27,7 @@ export function SearchAndFilterBar({
   return (
     <div className='flex flex-col gap-1'>
       <div className='flex justify-between'>
-        <div className='flex w-xl items-center gap-6'>
+        <div className='flex w-full max-w-xl flex-col items-center gap-6 lg:flex-row'>
           <SearchInput
             searchText={searchText}
             onSearchTextChange={onSearchTextChange}
@@ -44,9 +44,6 @@ export function SearchAndFilterBar({
           </Button>
           <CategorySelect onCategoryChange={onCategoryChange} />
         </div>
-        <Button as={Link} area-label='Add Recipe' color='primary' href='/add'>
-          Add
-        </Button>
       </div>
       <div className='flex justify-between'>
         <div className='flex gap-4'>

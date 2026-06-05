@@ -23,11 +23,9 @@ export function RecipeCard({ recipeData }: RecipeCardProps) {
         <div className='flex flex-col gap-2'>
           <Image
             isZoomed
-            className='object-cover'
+            className='aspect-square w-full object-cover'
             alt={`${name}-image`}
             src={pictureUrl}
-            height={300}
-            width={300}
           />
           <div className='flex flex-col'>
             <h2 className='text-lg'>{name}</h2>

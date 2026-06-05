@@ -22,18 +22,13 @@ describe('SearchAndFilterBar', () => {
 
   it('calls onOpenFilter when filter button is clicked', async () => {
     const onOpenFilter = vi.fn();
-    render(<SearchAndFilterBar {...defaultProps} onOpenFilter={onOpenFilter} />);
+    render(
+      <SearchAndFilterBar {...defaultProps} onOpenFilter={onOpenFilter} />,
+    );
 
     await userEvent.click(screen.getByLabelText('Open Filters'));
 
     expect(onOpenFilter).toHaveBeenCalledTimes(1);
-  });
-
-  it('renders add button with link to /add', () => {
-    render(<SearchAndFilterBar {...defaultProps} />);
-    const addButton = screen.getByText('Add');
-    expect(addButton).toBeVisible();
-    expect(addButton).toHaveAttribute('href', '/add');
   });
 
   it('renders recipe count', () => {

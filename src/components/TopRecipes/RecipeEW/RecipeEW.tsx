@@ -28,9 +28,9 @@ export function RecipeEW({ recipe }: RecipeEWProps) {
             src={pictureUrl}
             width={120}
           />
-          <div className='flex max-w-1/2 flex-col justify-between'>
+          <div className='flex flex-col justify-between lg:max-w-1/2'>
             <h2 className='text-lg'>{name}</h2>
-            <div className='flex flex-col gap-2 lg:flex-row'>
+            <div className='flex flex-row gap-2'>
               {tags.slice(0, TAGS_LIMIT).map((tag) => (
                 <Tag key={`${name}-tag-${tag}`} name={tag} />
               ))}
