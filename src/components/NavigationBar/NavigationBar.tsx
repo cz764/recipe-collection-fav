@@ -11,17 +11,16 @@ import {
   NavbarMenuItem,
 } from '@heroui/navbar';
 import { Link } from '@heroui/link';
+import { defaultMenuItems, type MenuItem } from './menuItems';
 
-export function NavigationBar() {
+interface NavigationBarProps {
+  menuItems?: MenuItem[];
+}
+
+export function NavigationBar({
+  menuItems = defaultMenuItems,
+}: NavigationBarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const menuItems = [
-    { name: 'About', link: '/about' },
-    { name: 'All Recipes', link: '/' },
-    { name: 'Chinese', link: '/?cuisine=chinese' },
-    { name: 'Desert', link: '/?type=desert' },
-    { name: 'Breakfast', link: '/?type=breakfast' },
-  ];
 
   return (
     <Navbar

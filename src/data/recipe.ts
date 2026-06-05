@@ -9,7 +9,7 @@ export interface Recipe {
   yieldServings: number; // in serving
   equipments: string[];
   cuisine: string;
-  type: 'breakfast' | 'lunch' | 'dinner' | 'snack' | 'desert';
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack' | 'dessert';
   ingredients: Ingredient[];
   pictureUrl: string;
   steps: {

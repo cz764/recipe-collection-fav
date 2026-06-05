@@ -76,7 +76,7 @@ export const exampleRecipes: Recipe[] = [
     name: 'Mexican Cheese Cornbread Biscuits',
     description:
       'I watched a video from Mike G on Youtube about this $50 budget meal prepping, this Mexican cheese cornbread caught my eye. It looks easy to make and delicious. It is between a dinner roll and biscuit. ',
-    tags: ['mexican', 'desert', 'dinner', 'bread'],
+    tags: ['mexican', 'dessert', 'dinner', 'bread'],
     source: 'https://www.youtube.com/watch?v=3Bhd6NcqVJI',
     language: 'en',
     totalTime: 50,
@@ -144,7 +144,7 @@ export const exampleRecipes: Recipe[] = [
     equipments: ['mixing bowl', 'baking sheet', '9-inch cake pan', 'oven'],
     cuisine: 'American',
     creditTo: 'Nigella Lawson',
-    type: 'desert',
+    type: 'dessert',
     ingredients: [
       { name: 'Guinness stout', amount: 1, unit: 'bottle' },
       { name: 'unsalted butter', amount: 1, unit: 'stick' },
