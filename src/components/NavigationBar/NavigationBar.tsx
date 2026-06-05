@@ -15,7 +15,13 @@ import { Link } from '@heroui/link';
 export function NavigationBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const menuItems = ['About', 'All Recipes', 'Chinese', 'Bake'];
+  const menuItems = [
+    { name: 'About', link: '/about' },
+    { name: 'All Recipes', link: '/' },
+    { name: 'Chinese', link: '/?cuisine=chinese' },
+    { name: 'Desert', link: '/?type=desert' },
+    { name: 'Breakfast', link: '/?type=breakfast' },
+  ];
 
   return (
     <Navbar
@@ -24,17 +30,19 @@ export function NavigationBar() {
       className='bg-nav-background'
     >
       <NavbarBrand>
-        <img
-          src='/logo.png'
-          alt='logo'
-          className='h-14 w-14 rounded-full object-contain'
-        />
+        <Link href='/'>
+          <img
+            src='/logo.png'
+            alt='logo'
+            className='h-14 w-14 rounded-full object-contain'
+          />
+        </Link>
       </NavbarBrand>
-      <NavbarContent className='flex gap-16' justify='center'>
-        {menuItems.map((item) => (
-          <NavbarItem key={`${item}-nav`}>
-            <Link className='text-2xl' color='foreground' href='#' size='lg'>
-              {item}
+      <NavbarContent className='hidden gap-16 sm:flex' justify='center'>
+        {menuItems.map(({ name, link }) => (
+          <NavbarItem key={`${name}-nav`}>
+            <Link className='text-2xl' color='foreground' href={link} size='lg'>
+              {name}
             </Link>
           </NavbarItem>
         ))}
@@ -45,10 +53,10 @@ export function NavigationBar() {
         />
       </NavbarContent>
       <NavbarMenu>
-        {menuItems.map((item) => (
-          <NavbarMenuItem key={`${item}-menu`}>
-            <Link className='w-full' size='lg'>
-              {item}
+        {menuItems.map(({ name, link }) => (
+          <NavbarMenuItem key={`${name}-menu`}>
+            <Link className='w-full' size='lg' href={link}>
+              {name}
             </Link>
           </NavbarMenuItem>
         ))}

@@ -11,7 +11,7 @@ interface RecipeContentProps {
   recipe: Recipe;
 }
 
-const h3ClassName = 'text-xl font-medium';
+const h3ClassName = 'text-xl font-bold';
 
 export function RecipeContent({ recipe }: RecipeContentProps) {
   const {
@@ -58,7 +58,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       <Divider />
       <div className='flex flex-col gap-2 lg:flex-row'>
         <div className='flex min-w-2xs flex-col'>
-          <h4 className='font-medium'>Ingredients</h4>
+          <h4 className='font-semibold'>Ingredients</h4>
           {ingredients.map((ingredient, index) => (
             <Checkbox key={`${ingredient}-${index}-checkbox`}>
               {ingredient.name} {ingredient.amount} {ingredient.unit}
@@ -67,9 +67,9 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
         </div>
         <Divider orientation='vertical' />
         <div className='flex flex-col gap-1'>
-          <h4 className='font-medium'>Steps</h4>
+          <h4 className='font-semibold'>Steps</h4>
           <div className='flex flex-col'>
-            <h5 className='font-medium'>Prep</h5>
+            <h5 className='font-semibold'>Prep</h5>
             {steps.prep.map((step, index) => (
               <span key={`prep-${index}`}>{step}</span>
             ))}
