@@ -193,45 +193,70 @@ export const exampleRecipes: Recipe[] = [
   },
   {
     id: '4',
-    name: 'Thai Green Curry',
+    name: 'Japanese Milk Bread',
     description:
-      'Aromatic and creamy Thai curry with vegetables and your choice of protein. A perfect balance of spicy, sweet, and savory flavors.',
-    tags: ['thai', 'curry', 'spicy', 'dinner', 'coconut', 'one-pot'],
-    source: 'Thai Cooking Class',
+      "I had this bread ordered from a bakery in San francisco while I stayed at my friend's house, it blow my mind of how airy and fluffy the milk bread texture can be. After I come back home, I still remembered it. I've tried bake this tangzhong bread myself by following this King Authur blog post, the result is awesome. And plus it saves a lot money since I remember it cost a fortune from the bakery my friend ordered from. The end result is same! The secrete is tangzhong(汤种).",
+    tags: ['bread', 'breakfast', 'dough', 'tangzhong', 'japanese', 'oven'],
+    source:
+      'https://www.kingarthurbaking.com/recipes/japanese-milk-bread-recipe',
     language: 'en',
-    totalTime: 40,
-    yieldServings: 4,
-    equipments: ['large pot', 'knife', 'cutting board'],
-    cuisine: 'Thai',
-    type: 'dinner',
+    totalTime: 180,
+    yieldServings: 12,
+    equipments: ['large mixing bowl', 'oven', 'sauce pan'],
+    cuisine: 'japanese',
+    creditTo: 'Charlotte Rutledge',
+    type: 'breakfast',
     ingredients: [
-      { name: 'green curry paste', amount: 3, unit: 'tbsp' },
-      { name: 'coconut milk', amount: 400, unit: 'ml' },
-      { name: 'chicken breast', amount: 500, unit: 'g' },
-      { name: 'bamboo shoots', amount: 1, unit: 'cup' },
-      { name: 'bell peppers', amount: 2 },
-      { name: 'Thai basil', amount: '1 handful' },
-      { name: 'fish sauce', amount: 2, unit: 'tbsp' },
-      { name: 'palm sugar', amount: 1, unit: 'tbsp' },
-      { name: 'Thai eggplant', amount: 1, unit: 'cup' },
+      { name: 'For tangzhong: water', amount: 43, unit: 'g' },
+      { name: 'milk', amount: 43, unit: 'g' },
+      { name: 'bread flour', amount: 14, unit: 'g' },
+      { name: 'For Dough: bread flour', amount: 300, unit: 'g' },
+      { name: 'granulated sugar', amount: 50, unit: 'g' },
+      { name: 'salt', amount: 1, unit: 'tsp' },
+      { name: 'yeast', amount: 1, unit: 'tbsp' },
+      { name: 'milk', amount: 113, unit: 'g' },
+      { name: 'unsalted butter, melted', amount: 57, unit: 'g' },
+      { name: 'egg', amount: 1 },
     ],
-    pictureUrl: '/exampleRecipes/ThaiGreenCurry.jpg',
+    pictureUrl: '/exampleRecipes/japanese-milk-bread.avif',
     steps: {
       prep: [
-        'Cut chicken into bite-sized pieces',
-        'Slice bell peppers and eggplant',
-        'Drain bamboo shoots',
+        'Make tangzhong: combine all tangzhong ingredients in a small saucepan, whisk until no lumps remain.',
+        'Place the sauce pan over medium heat, cook and whisk, turn heat to low when seeing the liquid form lines.',
+        'Keep cooking a few min until it thickens to a loose paste, leave heat to cool to lukewarm.',
       ],
       steps: [
         {
-          detail:
-            'Heat 1/4 cup coconut milk in pot, add curry paste and fry until fragrant',
+          detail: 'Mix liquid ingredients together, add sugar and yeast.',
         },
-        { detail: 'Add chicken pieces and cook until no longer pink' },
-        { detail: 'Pour in remaining coconut milk and bring to simmer' },
-        { detail: 'Add vegetables and cook for 10 minutes' },
-        { detail: 'Season with fish sauce and palm sugar' },
-        { detail: 'Stir in Thai basil and serve with jasmine rice' },
+        {
+          detail:
+            'Add flour and salt, mix to form a dough. Let rest for 15min.',
+        },
+        { detail: 'Knead until elastic, about 10 min.' },
+        {
+          detail:
+            'Leave the dough to a greased bowl, first proof for 1hr, or cover and put into fridge.',
+        },
+        {
+          detail:
+            'When you are ready to work on the dough, bring the dough out, you need to wait 20min for the dough to warm up if left in fridge.',
+        },
+        {
+          detail:
+            'Shape the dough: cut to 3 pieces, make them into 3 balls. Grab 1 ball, use rolling pin to roll flat to rectangular shape. Remember to push the rolling pin all the way out. Then fold both of the long ends in, roll it from the top short ends, pinching it down.',
+        },
+        {
+          detail:
+            'Repeat to all 3 balls, let rest for 5min. Then repeat this step one more time.',
+        },
+        {
+          detail:
+            'Place all shaped 3 balls in a lightly greased loaf pan, cover and let rise for 45min. Until 80-90% of the pan height.',
+        },
+        { detail: 'Towards the end of rising time, preheat oven to 350F.' },
+        { detail: 'Brush the top of loaf with milk, bake the for 30 - 35min.' },
+        { detail: 'Remove from oven, let cool in rack. Enjoy!' },
       ],
     },
   },
