@@ -6,7 +6,7 @@ export const exampleRecipes: Recipe[] = [
     name: 'Sourdough',
     description:
       'European style sourdough that does not require a starter. Instead, we develop the flavor by using "Poolish". Perfect slice can be used to make sandwich, or just spread some butter!',
-    tags: ['vegetarian', 'european', 'breakfast', 'lunch'],
+    tags: ['vegetarian', 'european', 'breakfast', 'lunch', 'dough'],
     source: 'https://youtu.be/5mehXzl7yHA?si=8y-2iZecgYxvN1kM',
     language: 'en',
     totalTime: 120,
@@ -262,41 +262,61 @@ export const exampleRecipes: Recipe[] = [
   },
   {
     id: '5',
-    name: 'Avocado Toast with Poached Egg',
+    name: 'Wholewheat Loaf Bread',
     description:
-      'A healthy and trendy breakfast option featuring creamy avocado on toasted bread topped with a perfectly poached egg.',
-    tags: ['breakfast', 'healthy', 'quick', 'vegetarian'],
-    source: 'Modern Breakfast Recipe',
+      'A healthy and hearty version of sandwich loaf bread, made with 100% whole wheat.',
+    tags: ['breakfast', 'healthy', 'vegetarian', 'oven', 'dough'],
+    source:
+      'https://merryboosters.com/brown-bread-recipe-whole-wheat-bread-recipe/',
+    creditTo: 'Bincy Chris',
     language: 'en',
-    totalTime: 15,
-    yieldServings: 2,
-    equipments: ['toaster', 'small pot', 'fork'],
-    cuisine: 'Modern',
+    totalTime: 120,
+    yieldServings: 12,
+    equipments: ['oven', 'large mixing bowl', 'spatula'],
+    cuisine: 'baking',
     type: 'breakfast',
     ingredients: [
-      { name: 'bread slices', amount: 4 },
-      { name: 'ripe avocados', amount: 2 },
-      { name: 'eggs', amount: 4 },
-      { name: 'lemon juice', amount: 1, unit: 'tbsp' },
-      { name: 'red pepper flakes', amount: 'to taste' },
-      { name: 'salt and pepper', amount: 'to taste' },
-      { name: 'white vinegar', amount: 1, unit: 'tbsp' },
+      { name: 'whole wheat flour', amount: 357, unit: 'g' },
+      { name: 'lukewarm water', amount: 1, unit: 'cup' },
+      { name: 'honey', amount: 2, unit: 'tbsp' },
+      { name: 'salt', amount: 1, unit: 'tsp' },
+      { name: 'unsalted butter room temperature', amount: 3, unit: 'tbsp' },
+      { name: 'yeast', amount: '1/ 1/2', unit: 'tsp' },
     ],
-    pictureUrl: '/exampleRecipes/AvacadoEgg.jpg',
+    pictureUrl: '/exampleRecipes/whole-wheat-loaf-bread.webp',
     steps: {
-      prep: [
-        'Toast bread slices until golden',
-        'Halve and pit avocados',
-        'Bring pot of water to gentle simmer with vinegar',
-      ],
+      prep: [],
       steps: [
-        { detail: 'Scoop avocado into bowl and mash with fork' },
-        { detail: 'Mix in lemon juice, salt, and pepper' },
-        { detail: 'Crack eggs into simmering water and poach for 3-4 minutes' },
-        { detail: 'Spread mashed avocado generously on toasted bread' },
-        { detail: 'Top each toast with poached egg' },
+        { detail: 'Combine water, honey, salt, yeast. Whisk together.' },
         {
-          detail: 'Sprinkle with red pepper flakes, salt, and pepper to serve',
+          detail:
+            'Add room temperature butter, then add whole wheat flour. Mix to a shaggy dough.',
+        },
+        {
+          detail:
+            'Transfer the dough into a flat surface, knead until elastic, about 10min.',
+        },
+        {
+          detail:
+            'Put the dough in a lightly greased bowl, to do first proof until double in size. You can also leave it in fridge overnight if you are not ready to work with the dough.',
+        },
+        {
+          detail:
+            'Shape the dough to loaf size. Could follow other instructions from web. Put the dough in loaf pan.',
+        },
+        {
+          detail: 'Let the dough rise for 45min, for second proof.',
+        },
+        {
+          detail:
+            'In the end of rising, preheat oven to 350F. Bake the loaf for 32 - 36min.',
+        },
+        {
+          detail:
+            'Cover the top with aluminum foil at ~25min mark to prevent over browning.',
+        },
+        {
+          detail: 'Bring the loaf out of oven, let cool on rack. Enjoy!',
         },
       ],
     },
