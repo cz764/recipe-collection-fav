@@ -6,6 +6,8 @@ import { Image } from '@heroui/image';
 import { Divider } from '@heroui/divider';
 import { Checkbox } from '@heroui/checkbox';
 import { Link } from '@heroui/link';
+import { Switch } from '@heroui/switch';
+import { useWakeLock } from '@/hooks/useWakeLock';
 
 interface RecipeContentProps {
   recipe: Recipe;
@@ -24,7 +26,9 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
     ingredients,
     steps,
     source,
+    creditTo,
   } = recipe;
+  const { isSupported, isLocked, request, release } = useWakeLock();
   return (
     <div className='flex flex-col gap-2 p-2'>
       <Breadcrumbs>
@@ -42,6 +46,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
           Recipe Reference
         </Link>
       )}
+      {creditTo && <span>Credit to: {creditTo}</span>}
       <div>
         <h3 className={h3ClassName}>Equipment</h3>
         <Divider />
@@ -55,6 +60,16 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
           <div>Yield: {yieldServings} servings</div>
         </div>
       </div>
+      <Divider />
+      {isSupported && (
+        <Switch
+          size='sm'
+          isSelected={isLocked}
+          onValueChange={(selected) => (selected ? request() : release())}
+        >
+          Keep screen on
+        </Switch>
+      )}
       <Divider />
       <div className='flex flex-col gap-2 lg:flex-row'>
         <div className='flex min-w-2xs flex-col'>

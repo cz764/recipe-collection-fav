@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { RecipeContent } from '../index';
 import { makeRecipe } from '@/components/__tests__/mockData';
 
@@ -111,6 +112,38 @@ describe('RecipeContent', () => {
 
     expect(screen.getByAltText('step-0')).toHaveAttribute('src', '/mix.jpg');
     expect(screen.queryByAltText('step-1')).not.toBeInTheDocument();
+  });
+
+  describe('keep-screen-on toggle', () => {
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it('is hidden when the Wake Lock API is unsupported', () => {
+      render(<RecipeContent recipe={makeRecipe()} />);
+      expect(
+        screen.queryByRole('switch', { name: 'Keep screen on' }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('requests and releases a wake lock when toggled', async () => {
+      const release = vi.fn().mockResolvedValue(undefined);
+      const sentinel = { release, addEventListener: vi.fn() };
+      const request = vi.fn().mockResolvedValue(sentinel);
+      vi.stubGlobal('navigator', { wakeLock: { request } });
+
+      render(<RecipeContent recipe={makeRecipe()} />);
+
+      const toggle = await screen.findByRole('switch', {
+        name: 'Keep screen on',
+      });
+
+      await userEvent.click(toggle);
+      expect(request).toHaveBeenCalledWith('screen');
+
+      await userEvent.click(toggle);
+      expect(release).toHaveBeenCalled();
+    });
   });
 
   it('renders with no ingredients, prep, or steps', () => {

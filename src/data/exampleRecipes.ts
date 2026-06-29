@@ -289,6 +289,7 @@ export const exampleRecipes: Recipe[] = [
     yieldServings: 12,
     equipments: ['blender', 'pot', 'muffin pan', 'oven'],
     cuisine: 'Modern',
+    creditTo: 'Jennifer Segal',
     type: 'breakfast',
     ingredients: [
       { name: 'bacon slices', amount: 4 },
