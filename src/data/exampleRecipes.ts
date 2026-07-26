@@ -19,7 +19,7 @@ export const exampleRecipes: Recipe[] = [
       { name: 'bread flour', amount: 100, unit: 'g' },
       { name: 'water', amount: 100, unit: 'g' },
       { name: 'warm water', amount: 187, unit: 'g' },
-      { name: 'yeast', amount: '1/2', unit: 'tsp' },
+      { name: 'yeast', amount: 1, unit: 'tsp' },
       { name: 'bread flour', amount: 233, unit: 'g' },
       { name: 'whole wheat flour', amount: 33, unit: 'g' },
       { name: 'almond flour or oats(Optional)', amount: 30, unit: 'g' },
@@ -143,7 +143,7 @@ export const exampleRecipes: Recipe[] = [
     yieldServings: 12,
     equipments: ['mixing bowl', 'baking sheet', '9-inch cake pan', 'oven'],
     cuisine: 'American',
-    creditTo: 'Nigella Lawson',
+    creditTo: 'Nigella Lawson(recipe), Rebecca Firth(picture)',
     type: 'dessert',
     ingredients: [
       { name: 'Guinness stout', amount: 1, unit: 'bottle' },
