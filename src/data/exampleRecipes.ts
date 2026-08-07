@@ -374,4 +374,95 @@ export const exampleRecipes: Recipe[] = [
       ],
     },
   },
+  {
+    id: '7',
+    name: 'Baozi (包子) Chinese dumpling',
+    description:
+      "You've probably tried steamed soup dumplings(Xiao long bao), they were very popular in chinatown. This Baozi is slightly different, rather than Shanghai cuisine, Baozi is more of a northern food, though everyone have their own grandma's Baozi recipe, this is one that brings the most Chinese flavor. ** The ingredients for filling are not carefully measured, you can go with your instinct! **",
+    tags: ['breakfast', 'dough', 'high-protein'],
+    source: 'https://www.youtube.com/watch?v=sfDFiH-eY-A',
+    language: 'en',
+    totalTime: 120,
+    yieldServings: 12,
+    equipments: ['steamer', 'pot', 'mixing bowl', 'rolling pin'],
+    cuisine: 'Chinese',
+    creditTo: 'Amanda Tastes',
+    type: 'breakfast',
+    ingredients: [
+      { name: 'filling: minced pork', amount: 350, unit: 'g' },
+      { name: 'large egg', amount: 1 },
+      { name: 'soy sauce', amount: 1, unit: 'tbsp' },
+      { name: 'white pepper powder', amount: 1, unit: 'tsp' },
+      { name: 'sugar', amount: 1, unit: 'tsp' },
+      { name: 'salt', amount: 1, unit: 'tsp' },
+      { name: 'shaoxing wine', amount: 1, unit: 'tbsp' },
+      { name: 'ginger', amount: 'some, around 1tsp to 1tbsp' },
+      { name: 'scallion', amount: 'some around 1tbsp to 1/4 cup' },
+      { name: 'dough wrap: AP flour', amount: 500, unit: 'g' },
+      { name: 'yeast', amount: '1', unit: 'tsp' },
+      { name: 'sugar', amount: '1', unit: 'tsp' },
+      { name: 'water', amount: 270, unit: 'g' },
+    ],
+    pictureUrl: '/exampleRecipes/chinese-dumpling.jpg',
+    steps: {
+      prep: [
+        'Mince ginger',
+        'Finely dice scallion',
+        'Lay steamer rack with some parchment paper or steamer paper to prevent sticking',
+      ],
+      steps: [
+        {
+          detail:
+            'Mix minced pork with soy sauce, shaoxing wine, white pepper powder, egg, sugar, salt, and ginger. Mix until fully combined, add 1 tbsp of water at a time, during the mixing process, add about 3 times, keep mixing, until the minced pork is juicy, soft and easy to work with. Divide them to 12 meat balls.',
+        },
+        {
+          detail:
+            'Optional: pour some sesame oil to finely dices scallion, so it will be coated, no need to add too much. Add the scallion to the pork mixture.',
+        },
+        {
+          detail:
+            'For dough: mixing sugar with water, add yeast. Add the mixture to flour and salt. Start kneading the dough, until it is smooth and elastic. ',
+        },
+        {
+          detail:
+            'Proofing the dough for 1 or 2 hours, depending on room temperature. The dough should be doubled, when pressing it will not bounce back too quickly.',
+        },
+        {
+          detail:
+            'Knead the dough again, to remove extra gas, knead until elastic, no need to over knead.',
+        },
+        {
+          detail:
+            'Divide the dough to 2 parts, roll each part to long sticks about 1 inch thick, equally divide each stick to 6 parts.',
+        },
+        {
+          detail:
+            'Pick up one part, press it flat, use rolling pin to roll edges and rotate at the same time, until the part stretches to a taco sized flat bread.',
+        },
+        {
+          detail:
+            "Pick 1 ball of minced pork, put it in the center of the flat dough, lift and pinch to seal it. If you don't know what to do, watch the video in the reference at 5:28 timestamp.",
+        },
+        {
+          detail:
+            'One Baozi is finished, put them in the steamer, make sure each Baozi have some room with each other. Keep working the rest of the batches. ',
+        },
+        {
+          detail:
+            'Prepare warm water in bottom of steamer, put the Baozi steamer rack on top, proof for another 10 - 15min.',
+        },
+        {
+          detail:
+            'Turn on heat, when water start to boil and you see steaming coming up, cook with medium to high heat for 15min.',
+        },
+        {
+          detail:
+            'Turn off the heat, wait for 5 to 10min before open it, resist the temptation to open it as it will deflate the Baozi!',
+        },
+        {
+          detail: 'Lift the steamer lid, and enjoy!!',
+        },
+      ],
+    },
+  },
 ];
