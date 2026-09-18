@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { Card, CardBody } from '@heroui/card';
-import { Image } from '@heroui/image';
+import { RecipeImage } from '@/components/RecipeImage';
 import type { Recipe as RecipeType } from '@/data/recipe';
 import { DESCRIPTION_LIMIT, TAGS_LIMIT } from '@/constants';
 import { Tag } from '@/components/Tag';
@@ -21,9 +21,8 @@ export function RecipeCard({ recipeData }: RecipeCardProps) {
     >
       <CardBody className='flex flex-col justify-between gap-2'>
         <div className='flex flex-col gap-2'>
-          <Image
-            isZoomed
-            className='aspect-square w-full object-cover'
+          <RecipeImage
+            sizes='(min-width: 1280px) calc((80vw - 112px) / 3 - 24px), (min-width: 1024px) calc((100vw - 112px) / 3 - 24px), (min-width: 768px) calc((100vw - 72px) / 2 - 24px), (min-width: 640px) calc(100vw - 72px), calc(100vw - 56px)'
             alt={`${name}-image`}
             src={pictureUrl}
           />

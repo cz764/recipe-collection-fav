@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { Card, CardBody } from '@heroui/card';
-import { Image } from '@heroui/image';
+import { RecipeImage } from '@/components/RecipeImage';
 import { Recipe } from '@/data/recipe';
 import { Tag } from '@/components/Tag';
 import { TAGS_LIMIT } from '@/constants';
@@ -21,12 +21,11 @@ export function RecipeEW({ recipe }: RecipeEWProps) {
     >
       <CardBody>
         <div className='flex flex-col gap-6 lg:flex-row'>
-          <Image
-            isZoomed
-            className='h-auto object-cover'
+          <RecipeImage
+            sizes='120px'
+            className='max-w-30 shrink-0'
             alt={`${name}-image`}
             src={pictureUrl}
-            width={120}
           />
           <div className='flex flex-col justify-between lg:max-w-1/2'>
             <h2 className='text-lg'>{name}</h2>

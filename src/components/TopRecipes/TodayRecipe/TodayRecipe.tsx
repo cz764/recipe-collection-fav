@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { Card, CardBody } from '@heroui/card';
-import { Image } from '@heroui/image';
+import { RecipeImage } from '@/components/RecipeImage';
 import type { Recipe } from '@/data/recipe';
 import { DESCRIPTION_LIMIT, INGREDIENTS_LIMIT, TAGS_LIMIT } from '@/constants';
 import { Tag } from '@/components/Tag';
@@ -23,9 +23,10 @@ export function TodayRecipe({ recipe }: TodayRecipeProps) {
     >
       <CardBody>
         <div className='flex flex-col gap-6 lg:flex-row'>
-          <Image
-            isZoomed
-            className='h-auto max-h-72 w-full max-w-72 object-cover'
+          <RecipeImage
+            priority
+            sizes='(max-width: 344px) calc(100vw - 56px), 288px'
+            className='max-w-72 shrink-0'
             alt={`${name}-image`}
             src={pictureUrl}
           />

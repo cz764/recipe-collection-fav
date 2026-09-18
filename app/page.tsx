@@ -1,22 +1,13 @@
-import { Divider } from '@heroui/divider';
-import { fetchRecipes } from '@/api/recipes';
-import type { Recipe as RecipeType } from '@/data/recipe';
-import { TopRecipes } from '@/components/TopRecipes';
-import { RecipeDisplaySection } from '@/components/RecipeDisplaySection';
-
-async function getRecipes() {
-  const response = await fetchRecipes();
-  return response;
-}
+import { Suspense } from 'react';
+import { RecipeLoader } from '@/components/RecipeLoader';
+import { RecipeLoadingSkeleton } from '@/components/RecipeLoadingSkeleton';
 
 export default async function Home() {
-  const recipeList: RecipeType[] = await getRecipes();
-
   return (
     <div className='flex w-full min-w-0 flex-col gap-4'>
-      <TopRecipes topRecipes={recipeList} />
-      <Divider />
-      <RecipeDisplaySection recipeList={recipeList} />
+      <Suspense fallback={<RecipeLoadingSkeleton />}>
+        <RecipeLoader />
+      </Suspense>
     </div>
   );
 }
