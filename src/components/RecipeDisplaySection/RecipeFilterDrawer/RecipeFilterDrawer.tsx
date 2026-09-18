@@ -34,9 +34,14 @@ export function RecipeFilterDrawer({
     onClose();
   };
 
+  const resetStates = () => {
+    setTypeValue([]);
+    setLanguageValue([]);
+  };
+
   const handleReset = (onClose: () => void) => () => {
+    resetStates();
     onDrawerAction(new Map());
-    onClose();
   };
 
   return (

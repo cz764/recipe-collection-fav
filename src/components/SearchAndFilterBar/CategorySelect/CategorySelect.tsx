@@ -37,6 +37,7 @@ export function CategorySelect({ onCategoryChange }: CategorySelectProps) {
       aria-label='Category'
       placeholder='Select up to 3 categories'
       selectionMode='multiple'
+      isClearable
       onChange={handleSelectionChange}
     >
       {categories.map(({ key, label }) => (
