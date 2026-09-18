@@ -17,9 +17,9 @@ export function TopRecipes({ topRecipes }: TopRecipesProps) {
   ];
 
   return (
-    <div className='flex flex-col place-content-center gap-2 md:gap-6 lg:flex-row'>
+    <div className='flex flex-col place-content-center gap-2 md:gap-6 xl:flex-row'>
       <TodayRecipe recipe={topRecipes[todayRecipeIndex]} />
-      <div className='flex flex-col gap-8'>
+      <div className='flex min-w-0 flex-1 flex-col gap-8'>
         {otherRecipes.map((recipe) => (
           <RecipeEW key={`other-recipe-${recipe.id}`} recipe={recipe} />
         ))}

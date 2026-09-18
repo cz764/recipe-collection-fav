@@ -37,7 +37,10 @@ export function NavigationBar({
           />
         </Link>
       </NavbarBrand>
-      <NavbarContent className='hidden gap-16 sm:flex' justify='center'>
+      <NavbarContent
+        className='hidden gap-6 lg:flex xl:gap-10'
+        justify='center'
+      >
         {menuItems.map(({ name, link }) => (
           <NavbarItem key={`${name}-nav`}>
             <Link className='text-2xl' color='foreground' href={link} size='lg'>
@@ -46,12 +49,12 @@ export function NavigationBar({
           </NavbarItem>
         ))}
       </NavbarContent>
-      <NavbarContent justify='end'>
+      <NavbarContent className='lg:hidden' justify='end'>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
         />
       </NavbarContent>
-      <NavbarMenu>
+      <NavbarMenu className='lg:hidden'>
         {menuItems.map(({ name, link }) => (
           <NavbarMenuItem key={`${name}-menu`}>
             <Link className='w-full' size='lg' href={link}>

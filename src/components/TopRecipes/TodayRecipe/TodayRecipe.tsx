@@ -17,7 +17,7 @@ export function TodayRecipe({ recipe }: TodayRecipeProps) {
   return (
     <Card
       isPressable
-      className='lg:max-w-3/5'
+      className='min-w-0 xl:max-w-3/5'
       fullWidth
       onPress={() => router.push(`/details/${encodeURIComponent(id)}`)}
     >

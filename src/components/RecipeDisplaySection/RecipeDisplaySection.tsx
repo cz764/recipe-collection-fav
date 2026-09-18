@@ -68,26 +68,38 @@ export function RecipeDisplaySection({
         onOpenChange={onOpenChange}
         onDrawerAction={setFilterMap}
       />
-      <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-        {filteredRecipeList
-          .slice(
-            (currentPage - 1) * ITEMS_PER_PAGE,
-            currentPage * ITEMS_PER_PAGE,
-          )
-          .map((recipeData) => {
-            const { name } = recipeData;
-            return <RecipeCard key={`${name}-card`} recipeData={recipeData} />;
-          })}
+      <div className='grid min-h-96 grid-cols-1 content-start gap-6 md:grid-cols-2 lg:grid-cols-3'>
+        {filteredRecipeList.length === 0 ? (
+          <p
+            role='status'
+            className='col-span-full flex min-h-96 items-center justify-center text-gray-600'
+          >
+            No recipes found.
+          </p>
+        ) : (
+          filteredRecipeList
+            .slice(
+              (currentPage - 1) * ITEMS_PER_PAGE,
+              currentPage * ITEMS_PER_PAGE,
+            )
+            .map((recipeData) => {
+              const { name } = recipeData;
+              return (
+                <RecipeCard key={`${name}-card`} recipeData={recipeData} />
+              );
+            })
+        )}
       </div>
-      {filteredRecipeList.length > ITEMS_PER_PAGE ? (
-        <Pagination
-          className='mx-auto'
-          color='secondary'
-          page={currentPage}
-          total={Math.ceil(filteredRecipeList.length / ITEMS_PER_PAGE)}
-          onChange={setCurrentPage}
-        />
-      ) : null}
+      <div className='flex min-h-10 justify-center'>
+        {filteredRecipeList.length > ITEMS_PER_PAGE ? (
+          <Pagination
+            color='secondary'
+            page={currentPage}
+            total={Math.ceil(filteredRecipeList.length / ITEMS_PER_PAGE)}
+            onChange={setCurrentPage}
+          />
+        ) : null}
+      </div>
     </div>
   );
 }

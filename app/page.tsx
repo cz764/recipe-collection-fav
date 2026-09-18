@@ -13,7 +13,7 @@ export default async function Home() {
   const recipeList: RecipeType[] = await getRecipes();
 
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex w-full min-w-0 flex-col gap-4'>
       <TopRecipes topRecipes={recipeList} />
       <Divider />
       <RecipeDisplaySection recipeList={recipeList} />
