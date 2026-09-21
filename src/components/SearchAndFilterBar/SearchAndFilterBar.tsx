@@ -45,15 +45,18 @@ export function SearchAndFilterBar({
           <CategorySelect onCategoryChange={onCategoryChange} />
         </div>
       </div>
-      <div className='flex justify-between'>
-        <div className='flex gap-4'>
+      <div className='flex items-start justify-between gap-4'>
+        <div className='flex min-w-0 flex-1 flex-wrap gap-x-4 gap-y-1'>
           {[...filterMap.keys()].map((filterBy) => (
             <p
               key={`${filterBy}`}
+              className='max-w-full min-w-0 break-words'
             >{`${filterBy}: ${filterMap.get(filterBy)}`}</p>
           ))}
         </div>
-        <p className='text-gray-600'>{totalRecipes} recipes</p>
+        <p className='shrink-0 whitespace-nowrap text-gray-600'>
+          {totalRecipes} recipes
+        </p>
       </div>
     </div>
   );

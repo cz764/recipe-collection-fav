@@ -40,7 +40,7 @@ function RecipeImageContent({
         priority={priority}
         onLoad={() => setStatus('loaded')}
         onError={() => setStatus('error')}
-        className={`relative z-10 object-cover transition-[opacity,transform] duration-300 hover:scale-125 motion-reduce:transition-none ${status === 'loading' ? 'opacity-0' : 'opacity-100'}`}
+        className={`relative z-10 object-cover transition-[opacity,transform,scale] duration-300 hover:scale-110 motion-reduce:transition-none ${status === 'loading' ? 'opacity-0' : 'opacity-100'}`}
       />
     </div>
   );

@@ -25,8 +25,10 @@ export const everySet = (
  */
 export const randomRecipeIndexFromDate = (srcArrayLength: number): number => {
   const date = new Date();
-  const startOfYear = new Date(date.getFullYear(), 0, 0);
-  const diff = date.getTime() - startOfYear.getTime();
+  // Compare calendar dates without time-of-day or daylight-saving offsets.
+  const today = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+  const startOfYear = Date.UTC(date.getFullYear(), 0, 0);
+  const diff = today - startOfYear;
   const oneDay = 1000 * 60 * 60 * 24;
   const dayOfYear = Math.floor(diff / oneDay);
   return dayOfYear % srcArrayLength;

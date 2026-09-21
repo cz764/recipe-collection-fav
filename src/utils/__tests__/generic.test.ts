@@ -82,6 +82,13 @@ describe('randomRecipeIndexFromDate', () => {
     expect(result1).not.toEqual(result2);
   });
 
+  it('keeps the same selection from midnight through evening in summer', () => {
+    vi.setSystemTime(new Date('2026-07-10T00:15:00'));
+    const midnightIndex = randomRecipeIndexFromDate(7);
+    vi.setSystemTime(new Date('2026-07-10T20:00:00'));
+    expect(randomRecipeIndexFromDate(7)).toBe(midnightIndex);
+  });
+
   it('handles array length of 1', () => {
     const result = randomRecipeIndexFromDate(1);
     expect(result).toEqual(0);

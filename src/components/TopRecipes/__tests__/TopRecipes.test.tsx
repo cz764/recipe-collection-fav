@@ -1,11 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { TopRecipes } from '../index';
 import { makeRecipe } from '@/components/__tests__/mockData';
-
-vi.mock('@/utils', () => ({
-  randomRecipeIndexFromDate: vi.fn(() => 0),
-}));
 
 describe('TopRecipes', () => {
   const mockRecipes = [
@@ -30,5 +26,16 @@ describe('TopRecipes', () => {
     mockRecipes.forEach((recipe) => {
       expect(screen.getByText(recipe.name)).toBeVisible();
     });
+  });
+
+  it('renders nothing when featured recipes are unavailable', () => {
+    const { container } = render(<TopRecipes topRecipes={[]} />);
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('does not duplicate recipes when fewer than three are returned', () => {
+    render(<TopRecipes topRecipes={mockRecipes.slice(0, 1)} />);
+    expect(screen.getAllByText('Recipe One')).toHaveLength(1);
+    expect(screen.queryByText('Recipe Two')).not.toBeInTheDocument();
   });
 });
