@@ -1,0 +1,3 @@
+interface:
+  display_name: "Verify Recipe Breakpoints"
+  short_description: "Check responsive recipe layouts at breakpoints"
