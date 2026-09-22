@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RecipeDisplaySection } from '..';
 import { makeRecipe } from '@/components/__tests__/mockData';
@@ -24,6 +30,44 @@ describe('RecipeDisplaySection', () => {
     expect(screen.getByText('Spaghetti Carbonara')).toBeVisible();
     expect(screen.getByText('Chicken Curry')).toBeVisible();
     expect(screen.getByText('Caesar Salad')).toBeVisible();
+  });
+
+  it('preserves a loaded image when opening filters and selecting a category', async () => {
+    render(
+      <RecipeDisplaySection
+        recipeList={mockRecipeList.map((recipe) => ({
+          ...recipe,
+          tags: ['vegetarian'],
+        }))}
+      />,
+    );
+    const image = screen.getByAltText(
+      'Spaghetti Carbonara-image',
+    ) as HTMLImageElement;
+    image.parentElement!.style.position = 'relative';
+    Object.defineProperty(image, 'height', { value: 120 });
+    fireEvent.load(image);
+    await waitFor(() =>
+      expect(image.parentElement).toHaveAttribute('data-loading', 'false'),
+    );
+
+    const expectImagePreserved = () => {
+      expect(screen.getByAltText('Spaghetti Carbonara-image')).toBe(image);
+      expect(image.parentElement).toHaveAttribute('data-loading', 'false');
+    };
+
+    await userEvent.click(screen.getByLabelText('Open Filters'));
+    expectImagePreserved();
+    await userEvent.click(
+      within(screen.getByRole('dialog')).getByText('Close', { exact: true }),
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    await userEvent.click(screen.getByRole('button', { name: /Category/ }));
+    expectImagePreserved();
+    await userEvent.click(screen.getByRole('option', { name: 'Vegetarian' }));
+    expectImagePreserved();
   });
 
   it('renders empty state when no recipes', () => {

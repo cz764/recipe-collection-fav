@@ -22,7 +22,7 @@ export async function RecipeLoader({ searchParams }: RecipeLoaderProps) {
         <TopRecipes topRecipes={featuredRecipes} />
       )}
       <Divider />
-      <RecipeDisplaySection recipeList={recipeList} />
+      <RecipeDisplaySection recipeList={recipeList} urlFilters={filters} />
     </>
   );
 }

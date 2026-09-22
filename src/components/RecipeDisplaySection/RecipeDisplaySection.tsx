@@ -8,17 +8,19 @@ import { SearchAndFilterBar } from '@/components/SearchAndFilterBar';
 import { RecipeFilterDrawer } from './RecipeFilterDrawer';
 import { RecipeCard } from '@/components/RecipeCard';
 import type { Recipe } from '@/data/recipe';
-import type { FilterMap } from '@/data/filter';
+import type { FilterMap, RecipeQuery } from '@/data/filter';
 import { matchRecipe, matchCategory, matchFilters } from '@/utils';
 import { ITEMS_PER_PAGE } from '@/constants';
 import _ from 'lodash';
 
 interface RecipeDisplaySectionProps {
   recipeList: Recipe[];
+  urlFilters?: RecipeQuery;
 }
 
 export function RecipeDisplaySection({
   recipeList,
+  urlFilters,
 }: RecipeDisplaySectionProps) {
   const [searchText, setSearchText] = useState('');
   const [appliedSearchText, setAppliedSearchText] = useState('');
@@ -61,7 +63,7 @@ export function RecipeDisplaySection({
         totalRecipes={filteredRecipeList.length}
         onCategoryChange={setCategoryValue}
         onOpenFilter={onOpen}
-        filterMap={filterMap}
+        urlFilters={urlFilters}
       />
       <RecipeFilterDrawer
         isOpen={isOpen}

@@ -1,9 +1,8 @@
 import { Button } from '@heroui/button';
-import { Link } from '@heroui/link';
 import { SearchInput } from './SearchInput';
 import { CategorySelect } from '@/components/SearchAndFilterBar/CategorySelect';
 import FilterIcon from '@/components/Icons/FilterIcon';
-import { FilterMap } from '@/data/filter';
+import type { RecipeQuery } from '@/data/filter';
 
 interface SearchAndFilterBarProps {
   searchText: string;
@@ -12,7 +11,7 @@ interface SearchAndFilterBarProps {
   totalRecipes: number;
   onCategoryChange: React.Dispatch<React.SetStateAction<Set<string>>>;
   onOpenFilter: () => void;
-  filterMap: FilterMap;
+  urlFilters?: RecipeQuery;
 }
 
 export function SearchAndFilterBar({
@@ -22,7 +21,7 @@ export function SearchAndFilterBar({
   totalRecipes,
   onCategoryChange,
   onOpenFilter,
-  filterMap,
+  urlFilters = {},
 }: SearchAndFilterBarProps) {
   return (
     <div className='flex flex-col gap-1'>
@@ -47,12 +46,14 @@ export function SearchAndFilterBar({
       </div>
       <div className='flex items-start justify-between gap-4'>
         <div className='flex min-w-0 flex-1 flex-wrap gap-x-4 gap-y-1'>
-          {[...filterMap.keys()].map((filterBy) => (
-            <p
-              key={`${filterBy}`}
-              className='max-w-full min-w-0 break-words'
-            >{`${filterBy}: ${filterMap.get(filterBy)}`}</p>
-          ))}
+          {Object.entries(urlFilters)
+            .filter(([, value]) => value)
+            .map(([filterBy, value]) => (
+              <p
+                key={`url-${filterBy}`}
+                className='max-w-full min-w-0 break-words'
+              >{`${filterBy}: ${value}`}</p>
+            ))}
         </div>
         <p className='shrink-0 whitespace-nowrap text-gray-600'>
           {totalRecipes} recipes

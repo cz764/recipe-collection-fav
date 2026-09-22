@@ -2,7 +2,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SearchAndFilterBar } from '..';
-import type { FilterMap } from '@/data/filter';
 
 describe('SearchAndFilterBar', () => {
   const defaultProps = {
@@ -12,7 +11,6 @@ describe('SearchAndFilterBar', () => {
     onCategoryChange: vi.fn(),
     totalRecipes: 0,
     onOpenFilter: vi.fn(),
-    filterMap: new Map(),
   };
 
   it('renders filter button', () => {
@@ -39,21 +37,28 @@ describe('SearchAndFilterBar', () => {
     expect(screen.getByText(`${totalRecipes} recipes`)).toBeVisible();
   });
 
-  it('displays active filters from filterMap', () => {
-    const filterMap: FilterMap = new Map([
-      ['type', ['breakfast', 'lunch']],
-      ['cuisine', ['Italian']],
-    ]);
-    render(<SearchAndFilterBar {...defaultProps} filterMap={filterMap} />);
-
-    expect(screen.getByText('type: breakfast,lunch')).toBeVisible();
-    expect(screen.getByText('cuisine: Italian')).toBeVisible();
-  });
-
-  it('displays no filter tags when filterMap is empty', () => {
-    render(<SearchAndFilterBar {...defaultProps} filterMap={new Map()} />);
+  it('displays no filter tags when URL filters are absent', () => {
+    render(<SearchAndFilterBar {...defaultProps} />);
 
     expect(screen.queryByText(/type:/)).not.toBeInTheDocument();
     expect(screen.queryByText(/cuisine:/)).not.toBeInTheDocument();
+  });
+
+  it('updates URL summaries directly when props change', () => {
+    const { rerender } = render(
+      <SearchAndFilterBar
+        {...defaultProps}
+        urlFilters={{ cuisine: 'chinese', type: 'breakfast' }}
+      />,
+    );
+    expect(screen.getByText('cuisine: chinese')).toBeVisible();
+    expect(screen.getByText('type: breakfast')).toBeVisible();
+
+    rerender(
+      <SearchAndFilterBar {...defaultProps} urlFilters={{ type: 'dessert' }} />,
+    );
+    expect(screen.queryByText('cuisine: chinese')).not.toBeInTheDocument();
+    expect(screen.queryByText('type: breakfast')).not.toBeInTheDocument();
+    expect(screen.getByText('type: dessert')).toBeVisible();
   });
 });

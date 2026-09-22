@@ -12,11 +12,13 @@ describe('RecipeLoader', () => {
       ),
     ).toBeVisible();
     expect(screen.getByText("Today's recipe")).toBeVisible();
+    expect(screen.getByText('cuisine: chinese')).toBeVisible();
   });
 
   it('keeps featured recipes visible when URL filters have no results', async () => {
     render(await RecipeLoader({ searchParams: { type: 'unknown' } }));
     expect(screen.getByText('0 recipes')).toBeVisible();
+    expect(screen.getByText('type: unknown')).toBeVisible();
     expect(screen.getByText('No recipes found.')).toBeVisible();
     expect(screen.getByText("Today's recipe")).toBeVisible();
   });
