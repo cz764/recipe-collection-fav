@@ -22,7 +22,7 @@ export function SearchInput({
       maxLength={100}
       value={searchText}
       onValueChange={onSearchTextChange}
-      placeholder='Type and press enter'
+      placeholder='Search recipes and press enter'
       startContent={
         <Button
           isIconOnly

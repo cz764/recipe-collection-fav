@@ -4,13 +4,13 @@ Last updated: September 23, 2026. This document records durable decisions and cu
 
 ## URL filters and data flow
 
-**Status:** Cuisine/meal/type filtering and prop-based summaries implemented; migration of all applied controls to the URL is incomplete.
+**Status:** Cuisine/meal/type filtering, submitted text search, and prop-based summaries are URL-driven. Navigation redesign remains pending.
 
-**Decision:** `Home` awaits `searchParams`, then passes resolved values to `RecipeLoader`. The loader parses cuisine/meal/type and passes normalized filters through `RecipeDisplaySection` to `SearchAndFilterBar`. Summaries derive directly from props, without synchronization effects or a second state copy.
+**Decision:** `Home` awaits `searchParams`, then passes resolved values to `RecipeLoader`. The loader parses cuisine/meal/type/q and passes normalized filters through `RecipeDisplaySection` to `SearchAndFilterBar`. Summaries derive directly from props, without synchronization effects or a second state copy.
 
 **Reason:** Explicit data flow makes shared links, browser navigation, and a future backend easier to reason about.
 
-**Consequences:** Values are trimmed and matched case-insensitively; all fields combine with AND. Repeated parameters use the first value, blanks are ignored, and unknown values yield no results. The URL-based Suspense key resets results state when cuisine/meal/type changes. Search, category selection, and the existing drawer still apply additional local filtering; wiring those controls to URL updates is pending.
+**Consequences:** Values are trimmed and matched case-insensitively; all fields combine with AND. Repeated parameters use the first value, blanks are ignored, and unknown values yield no results. The URL-based Suspense key resets results state when cuisine/meal/type/q changes, resetting pagination and initializing the search draft from the URL. Enter or the search button submits trimmed text as `q`, preserving other query parameters and scroll position. Empty submission removes `q`. Typing and clearing alone only edit the draft. Search text keeps its casing for display; matching is case-insensitive using the existing text matcher in the data layer. Browser history and shared URLs carry the applied search.
 
 ## Recipe classification
 
@@ -44,7 +44,7 @@ Last updated: September 23, 2026. This document records durable decisions and cu
 
 **Consequences:** `main` uses auto horizontal margins, without `place-items-center`; the homepage wrapper fills its available width. Results reserve a 24rem minimum height, an empty-state message, and pagination space. These reduce collapse but do not guarantee identical page heights for different result counts.
 
-**Decision:** Keep data fetching inside the homepage Suspense boundary and use the shared recipe skeleton. Use Next.js Image through `RecipeImage` for homepage photos, with responsive sizes, lazy loading for cards, and priority for Today's Recipe.
+**Decision:** Use separate Suspense boundaries for featured recipes and results. `FeaturedRecipeLoader` has a stable boundary; only `RecipeLoader` is keyed by URL filters. Each has its own skeleton, composed together for the route loading state. Featured data may still be fetched again on navigation; stable component identity is not a data cache. Use Next.js Image through `RecipeImage` for homepage photos, with responsive sizes, lazy loading for cards, and priority for Today's Recipe.
 
 **Reason:** Data readiness does not imply image readiness. Original images were larger than needed for cards.
 
@@ -52,13 +52,13 @@ Last updated: September 23, 2026. This document records durable decisions and cu
 
 ## Filter drawer and classification cleanup
 
-**Status:** Drawer removal accepted but pending. The recipe classification migration is implemented.
+**Status:** Drawer and mixed category picker removed. The recipe classification migration is implemented.
 
-**Decision:** Remove the drawer in a future scoped change because it interrupts page context and overlaps navigation filtering. The current completed step only removes local drawer summaries; URL summaries remain.
+**Decision:** Keep one search input and URL-derived summaries. Remove the drawer and mixed category picker because they interrupt page context and duplicate navigation filtering.
 
-**Consequences:** The drawer and button still exist. Local drawer filters can still constrain results without appearing in the toolbar summary. This is an intermediate state, not the intended final UX.
+**Consequences:** Results no longer apply hidden local category, language, or drawer filters. The loading skeleton also omits these controls. Language filtering has no replacement UI yet.
 
-**Open design:** Replace the mixed category picker and drawer with grouped navigation and one search input. Settle navigation behavior before implementing it. Ingredient/equipment filters and a navigation language control remain proposals. Clarify recipe/source language versus UI language before implementation.
+**Open design:** Design grouped navigation alongside the existing search input. Settle navigation behavior before implementing it. Ingredient/equipment filters and a navigation language control remain proposals. Clarify recipe/source language versus UI language before implementation.
 
 ## Supabase integration
 
@@ -74,10 +74,35 @@ References: [Supabase Storage](https://supabase.com/docs/guides/storage/quicksta
 
 ## Open work
 
-- **Priority: reproduce screen flicker.** User reports brief whole-screen dimming/blurring when opening the drawer/category dropdown or selecting a category. The drawer has an animated opaque backdrop; Select defaults to a transparent backdrop. Both lock scrolling. These findings do not establish the cause of every reported interaction. An interaction test confirms a loaded image retains its DOM node and loading state through these actions; browser reproduction is still needed. No speculative flicker fix has been applied.
-- Remove the drawer in a separately scoped change, then settle remaining filter controls and reset behavior.
+- **Priority: visually reassess screen flicker.** Earlier reports described whole-screen dimming/blurring during drawer/category interactions. Those controls are now removed; this does not establish the cause or prove all flicker resolved. Verify remaining navigation and URL search transitions in a browser.
+- Revisit landing-only featured recipes before further changes to featured loading; see the proposal below. Keep the pending cornbread image request tracked independently.
+- Design grouped navigation and decide whether navigation selections replace or combine existing URL filters.
 - Review recipe-specific classifications as the collection grows; do not silently relabel fixtures as part of unrelated UI work.
-- Complete URL-driven controls after deciding the filter UX.
-- Reset the current page when local applied filters/search/categories change. This remains lower priority; URL changes already remount the results subtree.
 - Pagination versus infinite scroll is undecided.
-- Explicit visual confirmation of filter-summary wrapping remains pending.
+- The user confirmed the search/drawer-removal visual checks passed before the featured-boundary split. Visual verification of the split remains separate from that confirmation.
+
+## Featured image navigation bug
+
+**Finding:** Breakfast/Dessert navigation previously changed the key of a boundary containing both results and featured recipes, remounting featured images. The user observed the cornbread thumbnail remain pending with `complete: false`, `naturalWidth: 0`, and an empty `currentSrc`; this is not evidence of a successfully loaded image merely hidden by opacity.
+
+**Change:** Move featured fetching/rendering outside the filter-keyed results boundary. A reconciliation test covers preservation of both pending and loaded featured image nodes across meal/search changes, including empty results. Results still reset their draft and pagination through their own key.
+
+**Verification:** The user retested after the boundary split: the Mexican cornbread thumbnail still hangs in fetching when navigating to Breakfast. The split did not resolve the reported bug. The reconciliation test only establishes component preservation under its test conditions, not successful browser image loading. Root cause remains unresolved; do not claim the remount was the cause of the stalled request.
+
+**Data-layer inspection:** `fetchFeaturedRecipes()` synchronously selects up to three records from local fixtures. It does not fetch image bytes or make network requests. No defect in that selection function has been established; the pending image request is a separate browser/Next.js image-loading path. Future investigation should inspect its exact URL, network timing, optimizer/server logs, and direct image loading before selecting a fix.
+
+**Pause:** Further implementation is deferred at the user’s request. The existing boundary split remains in place for review; revisit the unresolved request in a later session.
+
+## Landing-only featured recipes
+
+**Status:** Proposed by the user; not finalized or implemented. Discuss before changing behavior.
+
+**Proposal:** Show Today's Recipe and RecipeEW only on the landing page. Category navigation and submitted searches would show the search/results section without featured recipes. This would change the current behavior that preserves featured recipes through filtering, including empty results.
+
+**Reason:** Featured recipes support discovery on arrival. After choosing Breakfast, Dessert, or a search query, users may benefit from seeing their requested results immediately, without unrelated featured content above them. Treat this as a product decision, not a fix for the pending cornbread image request.
+
+**Suggested rule for discussion:** Derive visibility from the current URL rather than whether the user has navigated before. Show featured recipes when no nonblank supported `cuisine`, `meal`, `type`, or `q` is applied; hide them otherwise. This would make direct filtered links and Back/Forward consistent. Blank or unrelated query parameters would not hide featured recipes; invalid nonblank filters would still show the results/empty state.
+
+**Open decisions:** Does All Recipes mean the landing page with featured recipes, or a dedicated results-only view? Should clearing all filters/search bring featured recipes back? Confirm whether any active supported query hides featured recipes, or use a separate browse route. These choices determine whether the suggested URL rule is sufficient.
+
+**If adopted:** Skip featured data fetching as well as rendering for results-only views, and match the loading skeleton to the chosen view. Revisit the boundary split in that design. Verify direct URLs, navigation, Back/Forward, empty results, and clearing search. Continue tracking the image issue because it could also affect landing-page or result-card images.

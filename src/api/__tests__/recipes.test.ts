@@ -82,3 +82,23 @@ describe('recipe classifications', () => {
     );
   });
 });
+
+describe('URL text search', () => {
+  it('searches case-insensitively and combines with classification filters', () => {
+    const results = fetchRecipes({ q: ' EGG ' });
+    expect(results).toContainEqual(exampleRecipes[5]);
+    expect(results.length).toBeGreaterThan(0);
+    const combined = fetchRecipes({
+      q: 'EGG',
+      cuisine: 'modern',
+      meal: 'breakfast',
+      type: 'entree',
+    });
+    expect(combined).toEqual([exampleRecipes[5]]);
+    expect(fetchRecipes({ q: 'egg', cuisine: 'italian' })).toEqual([]);
+  });
+  it('ignores blank search and returns no results for unmatched text', () => {
+    expect(fetchRecipes({ q: '  ' })).toEqual(exampleRecipes);
+    expect(fetchRecipes({ q: 'no-such-recipe' })).toEqual([]);
+  });
+});

@@ -1,4 +1,4 @@
-import { matchCuisine } from '@/utils/recipes';
+import { matchCuisine, matchRecipe } from '@/utils/recipes';
 import { exampleRecipes } from '@/data/exampleRecipes';
 import type { RecipeQuery } from '@/data/filter';
 import { randomRecipeIndexFromDate } from '@/utils/generic';
@@ -15,13 +15,15 @@ export function fetchFeaturedRecipes() {
   );
 }
 
-export function fetchRecipes({ cuisine, meal, type }: RecipeQuery = {}) {
+export function fetchRecipes({ cuisine, meal, type, q }: RecipeQuery = {}) {
+  const searchText = q?.trim();
   const normalizedCuisine = cuisine?.trim().toLowerCase();
   const normalizedMeal = meal?.trim().toLowerCase();
   const normalizedType = type?.trim().toLowerCase();
 
   return exampleRecipes.filter(
     (recipe) =>
+      (!searchText || matchRecipe(recipe, searchText)) &&
       (!normalizedCuisine || matchCuisine(recipe.cuisine, normalizedCuisine)) &&
       (!normalizedMeal || recipe.meal === normalizedMeal) &&
       (!normalizedType || recipe.type.some((type) => type === normalizedType)),

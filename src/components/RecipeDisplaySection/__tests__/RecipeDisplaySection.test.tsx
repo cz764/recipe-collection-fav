@@ -1,15 +1,21 @@
-import { describe, it, expect } from 'vitest';
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  within,
-} from '@testing-library/react';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useSearchParams } from 'next/navigation';
+import { pushMock } from '../../../../vitest.setup';
 import { RecipeDisplaySection } from '..';
 import { makeRecipe } from '@/components/__tests__/mockData';
 import { ITEMS_PER_PAGE } from '@/constants';
+
+vi.mock('next/navigation', async (importOriginal) => {
+  const original = await importOriginal<typeof import('next/navigation')>();
+  return {
+    ...original,
+    useRouter: () => ({ push: pushMock }),
+    usePathname: () => '/',
+    useSearchParams: vi.fn(() => new URLSearchParams()),
+  };
+});
 
 describe('RecipeDisplaySection', () => {
   const mockRecipeList = [
@@ -17,113 +23,89 @@ describe('RecipeDisplaySection', () => {
     makeRecipe({ id: '2', name: 'Chicken Curry' }),
     makeRecipe({ id: '3', name: 'Caesar Salad' }),
   ];
-
   const getSearchInput = () => screen.getByLabelText('Search Input');
+  beforeEach(() => {
+    pushMock.mockClear();
+    vi.mocked(useSearchParams).mockReturnValue(
+      new URLSearchParams() as ReturnType<typeof useSearchParams>,
+    );
+  });
 
-  it('renders SearchAndFilterBar', () => {
+  it('renders server results and search without drawer or category picker', () => {
     render(<RecipeDisplaySection recipeList={mockRecipeList} />);
     expect(getSearchInput()).toBeVisible();
-  });
-
-  it('renders all recipe cards', () => {
-    render(<RecipeDisplaySection recipeList={mockRecipeList} />);
+    expect(screen.getByText('3 recipes')).toBeVisible();
     expect(screen.getByText('Spaghetti Carbonara')).toBeVisible();
-    expect(screen.getByText('Chicken Curry')).toBeVisible();
-    expect(screen.getByText('Caesar Salad')).toBeVisible();
+    expect(screen.queryByLabelText('Open Filters')).not.toBeInTheDocument();
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
   });
 
-  it('preserves a loaded image when opening filters and selecting a category', async () => {
+  it('shows an empty state for empty server results', () => {
+    render(
+      <RecipeDisplaySection recipeList={[]} urlFilters={{ q: 'missing' }} />,
+    );
+    expect(getSearchInput()).toHaveValue('missing');
+    expect(screen.getByText('No recipes found.')).toBeVisible();
+    expect(screen.getByText('0 recipes')).toBeVisible();
+  });
+
+  it('submits on Enter, preserving other URL parameters and encoding search text', async () => {
+    vi.mocked(useSearchParams).mockReturnValue(
+      new URLSearchParams(
+        'cuisine=chinese&meal=breakfast&type=entree&extra=keep',
+      ) as ReturnType<typeof useSearchParams>,
+    );
+    render(<RecipeDisplaySection recipeList={mockRecipeList} />);
+    await userEvent.type(getSearchInput(), ' egg & cheese ');
+    expect(pushMock).not.toHaveBeenCalled();
+    expect(screen.getByText('3 recipes')).toBeVisible();
+    await userEvent.type(getSearchInput(), '{Enter}');
+    expect(pushMock).toHaveBeenCalledWith(
+      '/?cuisine=chinese&meal=breakfast&type=entree&extra=keep&q=egg+%26+cheese',
+      { scroll: false },
+    );
+  });
+
+  it('submits using the search button', async () => {
+    render(<RecipeDisplaySection recipeList={mockRecipeList} />);
+    await userEvent.type(getSearchInput(), 'egg');
+    await userEvent.click(screen.getByLabelText('Search'));
+    expect(pushMock).toHaveBeenCalledWith('/?q=egg', { scroll: false });
+  });
+
+  it('removes q on empty submission while retaining filters', async () => {
+    vi.mocked(useSearchParams).mockReturnValue(
+      new URLSearchParams('q=egg&cuisine=chinese') as ReturnType<
+        typeof useSearchParams
+      >,
+    );
     render(
       <RecipeDisplaySection
-        recipeList={mockRecipeList.map((recipe) => ({
-          ...recipe,
-          tags: ['vegetarian'],
-        }))}
+        recipeList={mockRecipeList}
+        urlFilters={{ q: 'egg', cuisine: 'chinese' }}
       />,
     );
-    const image = screen.getByAltText(
-      'Spaghetti Carbonara-image',
-    ) as HTMLImageElement;
-    image.parentElement!.style.position = 'relative';
-    Object.defineProperty(image, 'height', { value: 120 });
-    fireEvent.load(image);
-    await waitFor(() =>
-      expect(image.parentElement).toHaveAttribute('data-loading', 'false'),
+    expect(getSearchInput()).toHaveValue('egg');
+    await userEvent.clear(getSearchInput());
+    await userEvent.type(getSearchInput(), '   {Enter}');
+    expect(pushMock).toHaveBeenCalledWith('/?cuisine=chinese', {
+      scroll: false,
+    });
+  });
+
+  it('uses the bare pathname when the final query parameter is removed', async () => {
+    vi.mocked(useSearchParams).mockReturnValue(
+      new URLSearchParams('q=egg') as ReturnType<typeof useSearchParams>,
     );
-
-    const expectImagePreserved = () => {
-      expect(screen.getByAltText('Spaghetti Carbonara-image')).toBe(image);
-      expect(image.parentElement).toHaveAttribute('data-loading', 'false');
-    };
-
-    await userEvent.click(screen.getByLabelText('Open Filters'));
-    expectImagePreserved();
-    await userEvent.click(
-      within(screen.getByRole('dialog')).getByText('Close', { exact: true }),
+    render(
+      <RecipeDisplaySection
+        recipeList={mockRecipeList}
+        urlFilters={{ q: 'egg' }}
+      />,
     );
-    await waitFor(() =>
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
-    );
-    await userEvent.click(screen.getByRole('button', { name: /Category/ }));
-    expectImagePreserved();
-    await userEvent.click(screen.getByRole('option', { name: 'Vegetarian' }));
-    expectImagePreserved();
-  });
-
-  it('renders empty state when no recipes', () => {
-    render(<RecipeDisplaySection recipeList={[]} />);
-    expect(getSearchInput()).toBeVisible();
-    expect(screen.queryByText('Spaghetti Carbonara')).not.toBeInTheDocument();
-  });
-
-  it('filters recipes when search is applied via Enter key', async () => {
-    render(<RecipeDisplaySection recipeList={mockRecipeList} />);
-    const input = getSearchInput();
-
-    await userEvent.type(input, 'spaghetti{Enter}');
-
-    expect(screen.getByText('Spaghetti Carbonara')).toBeVisible();
-    expect(screen.queryByText('Chicken Curry')).not.toBeInTheDocument();
-    expect(screen.queryByText('Caesar Salad')).not.toBeInTheDocument();
-  });
-
-  it('filters recipes when search button is clicked', async () => {
-    render(<RecipeDisplaySection recipeList={mockRecipeList} />);
-    const input = getSearchInput();
-    const searchButton = screen.getByLabelText('Search');
-
-    await userEvent.type(input, 'chicken');
-    await userEvent.click(searchButton);
-
-    expect(screen.queryByText('Spaghetti Carbonara')).not.toBeInTheDocument();
-    expect(screen.getByText('Chicken Curry')).toBeVisible();
-    expect(screen.queryByText('Caesar Salad')).not.toBeInTheDocument();
-  });
-
-  it('shows all recipes when search is cleared', async () => {
-    render(<RecipeDisplaySection recipeList={mockRecipeList} />);
-    const input = getSearchInput();
-
-    // Apply search first
-    await userEvent.type(input, 'spaghetti{Enter}');
-    expect(screen.queryByText('Chicken Curry')).not.toBeInTheDocument();
-
-    // Clear and search again
-    await userEvent.clear(input);
-    await userEvent.type(input, '{Enter}');
-
-    expect(screen.getByText('Spaghetti Carbonara')).toBeVisible();
-    expect(screen.getByText('Chicken Curry')).toBeVisible();
-    expect(screen.getByText('Caesar Salad')).toBeVisible();
-  });
-
-  it('shows correct recipe count after filtering', async () => {
-    render(<RecipeDisplaySection recipeList={mockRecipeList} />);
-    expect(screen.getByText(`${mockRecipeList.length} recipes`)).toBeVisible();
-
-    const input = getSearchInput();
-    await userEvent.type(input, 'spaghetti{Enter}');
-    expect(screen.getByText('1 recipes')).toBeVisible();
+    await userEvent.clear(getSearchInput());
+    await userEvent.type(getSearchInput(), '{Enter}');
+    expect(pushMock).toHaveBeenCalledWith('/', { scroll: false });
   });
 
   describe('pagination', () => {

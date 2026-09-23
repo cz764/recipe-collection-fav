@@ -10,16 +10,23 @@ describe('parseRecipeSearchParams', () => {
         type: ' BAKERY ',
         extra: 'value',
       }),
-    ).toEqual({ cuisine: 'chinese', meal: 'dinner', type: 'bakery' });
+    ).toEqual({
+      cuisine: 'chinese',
+      meal: 'dinner',
+      type: 'bakery',
+      q: undefined,
+    });
   });
 
   it('handles missing and blank values', () => {
     expect(parseRecipeSearchParams({})).toEqual({
+      q: undefined,
       cuisine: undefined,
       meal: undefined,
       type: undefined,
     });
     expect(parseRecipeSearchParams({ cuisine: ' ', meal: '' })).toEqual({
+      q: undefined,
       cuisine: undefined,
       meal: undefined,
       type: undefined,
@@ -33,6 +40,18 @@ describe('parseRecipeSearchParams', () => {
         meal: ['Dinner', 'Dessert'],
         type: ['Bakery', 'Soup'],
       }),
-    ).toEqual({ cuisine: 'chinese', meal: 'dinner', type: 'bakery' });
+    ).toEqual({
+      cuisine: 'chinese',
+      meal: 'dinner',
+      type: 'bakery',
+      q: undefined,
+    });
   });
+});
+
+it('trims search text, preserves case, and uses the first repeated value', () => {
+  expect(
+    parseRecipeSearchParams({ q: [' Egg & Cheese ', 'bread'] }),
+  ).toMatchObject({ q: 'Egg & Cheese' });
+  expect(parseRecipeSearchParams({ q: '  ' })).toMatchObject({ q: undefined });
 });

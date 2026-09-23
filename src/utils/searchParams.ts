@@ -10,6 +10,7 @@ export function parseRecipeSearchParams(
   };
 
   return {
+    q: (Array.isArray(params.q) ? params.q[0] : params.q)?.trim() || undefined,
     cuisine: normalize(params.cuisine),
     meal: normalize(params.meal),
     type: normalize(params.type),

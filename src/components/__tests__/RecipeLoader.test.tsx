@@ -11,15 +11,22 @@ describe('RecipeLoader', () => {
         `${fetchRecipes({ cuisine: 'Chinese' }).length} recipes`,
       ),
     ).toBeVisible();
-    expect(screen.getByText("Today's recipe")).toBeVisible();
     expect(screen.getByText('cuisine: chinese')).toBeVisible();
   });
 
-  it('keeps featured recipes visible when URL filters have no results', async () => {
+  it('shows the empty state when URL filters have no results', async () => {
     render(await RecipeLoader({ searchParams: { type: 'unknown' } }));
     expect(screen.getByText('0 recipes')).toBeVisible();
     expect(screen.getByText('type: unknown')).toBeVisible();
     expect(screen.getByText('No recipes found.')).toBeVisible();
-    expect(screen.getByText("Today's recipe")).toBeVisible();
   });
+});
+
+it('initializes search from a direct URL and filters results', async () => {
+  render(
+    await RecipeLoader({ searchParams: { q: ' Egg ', cuisine: 'modern' } }),
+  );
+  expect(screen.getByLabelText('Search Input')).toHaveValue('Egg');
+  expect(screen.getByText('Search: Egg')).toBeVisible();
+  expect(screen.getByText('1 recipes')).toBeVisible();
 });
