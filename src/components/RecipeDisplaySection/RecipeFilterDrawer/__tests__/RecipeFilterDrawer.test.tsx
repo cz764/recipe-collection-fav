@@ -15,9 +15,9 @@ describe('RecipeFilterDrawer', () => {
     expect(screen.getByText('Filter Recipes')).toBeVisible();
   });
 
-  it('renders Type checkbox group with all options', () => {
+  it('renders Meal checkbox group with all options', () => {
     render(<RecipeFilterDrawer {...defaultProps} />);
-    expect(screen.getByText('Type')).toBeVisible();
+    expect(screen.getByText('Meal')).toBeVisible();
     expect(screen.getByLabelText('Breakfast')).toBeInTheDocument();
     expect(screen.getByLabelText('Lunch')).toBeInTheDocument();
     expect(screen.getByLabelText('Dinner')).toBeInTheDocument();

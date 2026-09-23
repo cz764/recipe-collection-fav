@@ -13,7 +13,7 @@ export default async function Home({ searchParams }: HomeProps) {
   return (
     <div className='flex w-full min-w-0 flex-col gap-4'>
       <Suspense
-        key={JSON.stringify([params.cuisine, params.type])}
+        key={JSON.stringify([params.cuisine, params.meal, params.type])}
         fallback={<RecipeLoadingSkeleton />}
       >
         <RecipeLoader searchParams={params} />

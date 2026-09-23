@@ -6,19 +6,22 @@ describe('parseRecipeSearchParams', () => {
     expect(
       parseRecipeSearchParams({
         cuisine: ' Chinese ',
-        type: 'DINNER',
+        meal: 'DINNER',
+        type: ' BAKERY ',
         extra: 'value',
       }),
-    ).toEqual({ cuisine: 'chinese', type: 'dinner' });
+    ).toEqual({ cuisine: 'chinese', meal: 'dinner', type: 'bakery' });
   });
 
   it('handles missing and blank values', () => {
     expect(parseRecipeSearchParams({})).toEqual({
       cuisine: undefined,
+      meal: undefined,
       type: undefined,
     });
-    expect(parseRecipeSearchParams({ cuisine: ' ', type: '' })).toEqual({
+    expect(parseRecipeSearchParams({ cuisine: ' ', meal: '' })).toEqual({
       cuisine: undefined,
+      meal: undefined,
       type: undefined,
     });
   });
@@ -27,8 +30,9 @@ describe('parseRecipeSearchParams', () => {
     expect(
       parseRecipeSearchParams({
         cuisine: ['Chinese', 'Italian'],
-        type: ['Dinner', 'Dessert'],
+        meal: ['Dinner', 'Dessert'],
+        type: ['Bakery', 'Soup'],
       }),
-    ).toEqual({ cuisine: 'chinese', type: 'dinner' });
+    ).toEqual({ cuisine: 'chinese', meal: 'dinner', type: 'bakery' });
   });
 });

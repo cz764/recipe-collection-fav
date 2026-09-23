@@ -1,16 +1,28 @@
 # Project decisions
 
-Last updated: September 22, 2026. This document records durable decisions and current open work. Implementation status is separate from acceptance; accepted future work is not implemented automatically.
+Last updated: September 23, 2026. This document records durable decisions and current open work. Implementation status is separate from acceptance; accepted future work is not implemented automatically.
 
 ## URL filters and data flow
 
-**Status:** Cuisine/type filtering and prop-based summaries implemented; migration of all applied controls to the URL is incomplete.
+**Status:** Cuisine/meal/type filtering and prop-based summaries implemented; migration of all applied controls to the URL is incomplete.
 
-**Decision:** `Home` awaits `searchParams`, then passes resolved values to `RecipeLoader`. The loader parses cuisine/type and passes normalized filters through `RecipeDisplaySection` to `SearchAndFilterBar`. Summaries derive directly from props, without synchronization effects or a second state copy.
+**Decision:** `Home` awaits `searchParams`, then passes resolved values to `RecipeLoader`. The loader parses cuisine/meal/type and passes normalized filters through `RecipeDisplaySection` to `SearchAndFilterBar`. Summaries derive directly from props, without synchronization effects or a second state copy.
 
 **Reason:** Explicit data flow makes shared links, browser navigation, and a future backend easier to reason about.
 
-**Consequences:** Values are trimmed and matched case-insensitively; both fields combine with AND. Repeated parameters use the first value, blanks are ignored, and unknown values yield no results. The URL-based Suspense key resets results state when cuisine/type changes. Search, category selection, and the existing drawer still apply additional local filtering; wiring those controls to URL updates is pending.
+**Consequences:** Values are trimmed and matched case-insensitively; all fields combine with AND. Repeated parameters use the first value, blanks are ignored, and unknown values yield no results. The URL-based Suspense key resets results state when cuisine/meal/type changes. Search, category selection, and the existing drawer still apply additional local filtering; wiring those controls to URL updates is pending.
+
+## Recipe classification
+
+**Status:** Implemented in the model, fixtures, filtering, and existing meal links. Navigation redesign remains pending.
+
+**Decision:** Shared readonly constants in `src/constants/recipe.ts` define the unions. `cuisine: Cuisine` is required, with `unknown` for recipes without an assigned cuisine. Mexican is a subset of Latin American for filtering, not the reverse. `meal: MealType` replaces the former meal-valued `type`. The new `type: TypeCollection[]` supports multiple dish classifications: appetizer, soup, bakery, entree, side dish, and other. Reserve other for recipes without a more specific classification.
+
+**Decision:** Bakery means baked goods such as breads, cakes, pastries, and muffins, not all oven dishes. `tags: RecipeTag[]` uses curated dietary, product, and preparation labels. Chocolate stays in ingredients; tangzhong remains in recipe instructions rather than the tag vocabulary. Cuisine and meal are no longer duplicated in tags.
+
+**Consequences:** Plain loaves use unknown cuisine; milk bread keeps Japanese cuisine. Cornbread biscuits are bakery/side dish, egg bites are entree, and dumplings are appetizer/entree. These editorial assignments can be reviewed independently. Type filters match any assigned type; separate query fields combine with AND. Existing breakfast/dessert navigation links now use `?meal=...`; old `?type=breakfast` links are not aliased. `?type=bakery` uses the new dish classification. Unknown cuisine is now valid; use `/?cuisine=invalid-cuisine` for empty-result checks (including in place of the older breakpoint skill example).
+
+**Boundary:** TypeScript constrains authored data; future database/API payloads still need runtime validation before being treated as Recipe values.
 
 ## Daily featured recipes
 
@@ -40,13 +52,13 @@ Last updated: September 22, 2026. This document records durable decisions and cu
 
 ## Filter drawer and classification cleanup
 
-**Status:** Drawer removal accepted but pending. Data cleanup requires a separate design/work session.
+**Status:** Drawer removal accepted but pending. The recipe classification migration is implemented.
 
 **Decision:** Remove the drawer in a future scoped change because it interrupts page context and overlaps navigation filtering. The current completed step only removes local drawer summaries; URL summaries remain.
 
 **Consequences:** The drawer and button still exist. Local drawer filters can still constrain results without appearing in the toolbar summary. This is an intermediate state, not the intended final UX.
 
-**Open design:** Separate cuisine, meal type, dietary labels, and cooking methods. The existing category picker mixes them, and fixtures include `cuisine: 'baking'` and inconsistent casing. Review cuisine, type, maximum time, and curated tags first. Ingredient/equipment filters and a navigation language control remain proposals. Clarify recipe/source language versus UI language before implementation.
+**Open design:** Replace the mixed category picker and drawer with grouped navigation and one search input. Settle navigation behavior before implementing it. Ingredient/equipment filters and a navigation language control remain proposals. Clarify recipe/source language versus UI language before implementation.
 
 ## Supabase integration
 
@@ -64,7 +76,7 @@ References: [Supabase Storage](https://supabase.com/docs/guides/storage/quicksta
 
 - **Priority: reproduce screen flicker.** User reports brief whole-screen dimming/blurring when opening the drawer/category dropdown or selecting a category. The drawer has an animated opaque backdrop; Select defaults to a transparent backdrop. Both lock scrolling. These findings do not establish the cause of every reported interaction. An interaction test confirms a loaded image retains its DOM node and loading state through these actions; browser reproduction is still needed. No speculative flicker fix has been applied.
 - Remove the drawer in a separately scoped change, then settle remaining filter controls and reset behavior.
-- Schedule classification/data cleanup separately; do not silently relabel fixtures as part of unrelated UI work.
+- Review recipe-specific classifications as the collection grows; do not silently relabel fixtures as part of unrelated UI work.
 - Complete URL-driven controls after deciding the filter UX.
 - Reset the current page when local applied filters/search/categories change. This remains lower priority; URL changes already remount the results subtree.
 - Pagination versus infinite scroll is undecided.

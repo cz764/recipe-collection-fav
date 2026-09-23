@@ -1,3 +1,4 @@
+import type { RecipeTag } from '@/data/recipe';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -50,7 +51,7 @@ describe('TodayRecipe', () => {
   });
 
   it('renders tags', () => {
-    const tags = ['Spicy', 'Asian', 'Quick'];
+    const tags: RecipeTag[] = ['bread', 'dough', 'one-pot'];
     const recipe = makeRecipe({ tags });
     render(<TodayRecipe recipe={recipe} />);
     tags.forEach((tag) => {
@@ -59,7 +60,7 @@ describe('TodayRecipe', () => {
   });
 
   it(`renders up to ${TAGS_LIMIT} tags`, () => {
-    const tags = ['Spicy', 'Asian', 'Quick', 'Healthy'];
+    const tags: RecipeTag[] = ['bread', 'dough', 'one-pot', 'high-protein'];
     const recipe = makeRecipe({ tags });
     render(<TodayRecipe recipe={recipe} />);
     const items = screen.getAllByTestId('recipe-tags');

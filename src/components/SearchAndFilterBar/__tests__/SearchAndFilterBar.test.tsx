@@ -40,7 +40,7 @@ describe('SearchAndFilterBar', () => {
   it('displays no filter tags when URL filters are absent', () => {
     render(<SearchAndFilterBar {...defaultProps} />);
 
-    expect(screen.queryByText(/type:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/meal:/)).not.toBeInTheDocument();
     expect(screen.queryByText(/cuisine:/)).not.toBeInTheDocument();
   });
 
@@ -48,17 +48,17 @@ describe('SearchAndFilterBar', () => {
     const { rerender } = render(
       <SearchAndFilterBar
         {...defaultProps}
-        urlFilters={{ cuisine: 'chinese', type: 'breakfast' }}
+        urlFilters={{ cuisine: 'chinese', meal: 'breakfast' }}
       />,
     );
     expect(screen.getByText('cuisine: chinese')).toBeVisible();
-    expect(screen.getByText('type: breakfast')).toBeVisible();
+    expect(screen.getByText('meal: breakfast')).toBeVisible();
 
     rerender(
-      <SearchAndFilterBar {...defaultProps} urlFilters={{ type: 'dessert' }} />,
+      <SearchAndFilterBar {...defaultProps} urlFilters={{ meal: 'dessert' }} />,
     );
     expect(screen.queryByText('cuisine: chinese')).not.toBeInTheDocument();
-    expect(screen.queryByText('type: breakfast')).not.toBeInTheDocument();
-    expect(screen.getByText('type: dessert')).toBeVisible();
+    expect(screen.queryByText('meal: breakfast')).not.toBeInTheDocument();
+    expect(screen.getByText('meal: dessert')).toBeVisible();
   });
 });

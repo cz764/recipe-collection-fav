@@ -1,15 +1,28 @@
+import type {
+  CUISINES,
+  MEAL_TYPES,
+  TYPE_COLLECTIONS,
+  RECIPE_TAGS,
+} from '@/constants/recipe';
+
+export type Cuisine = (typeof CUISINES)[number];
+export type MealType = (typeof MEAL_TYPES)[number];
+export type TypeCollection = (typeof TYPE_COLLECTIONS)[number];
+export type RecipeTag = (typeof RECIPE_TAGS)[number];
+
 export interface Recipe {
   id: string;
   name: string; // max: 40
   description: string; // max: 200
-  tags: string[];
+  tags: RecipeTag[];
   source: string;
   language: 'en' | 'ch';
   totalTime: number; // in min
   yieldServings: number; // in serving
   equipments: string[];
-  cuisine: string;
-  type: 'breakfast' | 'lunch' | 'dinner' | 'snack' | 'dessert';
+  cuisine: Cuisine;
+  meal: MealType;
+  type: TypeCollection[];
   ingredients: Ingredient[];
   pictureUrl: string;
   steps: {

@@ -23,19 +23,19 @@ export function RecipeFilterDrawer({
   onOpenChange,
   onDrawerAction,
 }: RecipeFilterDrawerProps) {
-  const [typeValue, setTypeValue] = useState([]);
+  const [mealValue, setMealValue] = useState([]);
   const [languageValue, setLanguageValue] = useState([]);
 
   const handleAction = (onClose: () => void) => () => {
     const nextFilterMap: FilterMap = new Map();
-    nextFilterMap.set('type', typeValue);
+    nextFilterMap.set('meal', mealValue);
     nextFilterMap.set('language', languageValue);
     onDrawerAction(nextFilterMap);
     onClose();
   };
 
   const resetStates = () => {
-    setTypeValue([]);
+    setMealValue([]);
     setLanguageValue([]);
   };
 
@@ -56,10 +56,10 @@ export function RecipeFilterDrawer({
               <CheckboxGroup
                 color='secondary'
                 className={checkboxGroupClasses}
-                label='Type'
+                label='Meal'
                 orientation='horizontal'
-                value={typeValue}
-                onValueChange={setTypeValue}
+                value={mealValue}
+                onValueChange={setMealValue}
               >
                 <Checkbox value='breakfast'>Breakfast</Checkbox>
                 <Checkbox value='lunch'>Lunch</Checkbox>

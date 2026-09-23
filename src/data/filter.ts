@@ -6,5 +6,6 @@ export type RecipeSearchParams = Record<string, string | string[] | undefined>;
 
 export interface RecipeQuery {
   cuisine?: string;
+  meal?: string;
   type?: string;
 }

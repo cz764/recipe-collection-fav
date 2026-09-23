@@ -28,25 +28,57 @@ describe('fetchRecipes URL filters', () => {
   it('matches cuisine exactly, ignoring case and surrounding spaces', () => {
     const recipes = fetchRecipes({ cuisine: ' CHINESE ' });
     expect(recipes.length).toBeGreaterThan(0);
-    expect(recipes.every((recipe) => recipe.cuisine === 'Chinese')).toBe(true);
+    expect(recipes.every((recipe) => recipe.cuisine === 'chinese')).toBe(true);
     expect(fetchRecipes({ cuisine: 'chin' })).toEqual([]);
   });
 
   it('matches type and combines it with cuisine using AND', () => {
-    const desserts = fetchRecipes({ type: 'DESSERT' });
+    const desserts = fetchRecipes({ meal: 'DESSERT' });
     expect(desserts.length).toBeGreaterThan(0);
-    expect(desserts.every((recipe) => recipe.type === 'dessert')).toBe(true);
+    expect(desserts.every((recipe) => recipe.meal === 'dessert')).toBe(true);
 
     const recipe = exampleRecipes[0];
     expect(
-      fetchRecipes({ cuisine: recipe.cuisine, type: recipe.type }),
+      fetchRecipes({ cuisine: recipe.cuisine, meal: recipe.meal }),
     ).toContainEqual(recipe);
-    expect(fetchRecipes({ cuisine: 'Chinese', type: 'dessert' })).toEqual([]);
+    expect(fetchRecipes({ cuisine: 'Chinese', meal: 'dessert' })).toEqual([]);
   });
 
   it('ignores blank filters and returns no matches for unknown values', () => {
-    expect(fetchRecipes({ cuisine: ' ', type: '' })).toEqual(exampleRecipes);
-    expect(fetchRecipes({ cuisine: 'unknown' })).toEqual([]);
-    expect(fetchRecipes({ type: 'unknown' })).toEqual([]);
+    expect(fetchRecipes({ cuisine: ' ', meal: '' })).toEqual(exampleRecipes);
+    expect(fetchRecipes({ cuisine: 'invalid-cuisine' })).toEqual([]);
+    expect(fetchRecipes({ meal: 'unknown' })).toEqual([]);
+  });
+});
+
+describe('recipe classifications', () => {
+  it('matches any assigned dish type and combines cuisine, meal, and type', () => {
+    const biscuits = exampleRecipes[1];
+    expect(fetchRecipes({ type: ' BAKERY ' })).toContainEqual(biscuits);
+    expect(fetchRecipes({ type: 'side dish' })).toContainEqual(biscuits);
+    expect(
+      fetchRecipes({ cuisine: 'mexican', meal: 'dinner', type: 'bakery' }),
+    ).toEqual([biscuits]);
+    expect(
+      fetchRecipes({ cuisine: 'mexican', meal: 'breakfast', type: 'bakery' }),
+    ).toEqual([]);
+    expect(fetchRecipes({ type: 'breakfast' })).toEqual([]);
+  });
+
+  it('includes Mexican recipes in Latin American results', () => {
+    const mexican = fetchRecipes({ cuisine: 'mexican' });
+    expect(mexican.length).toBeGreaterThan(0);
+    expect(fetchRecipes({ cuisine: 'latin-american' })).toEqual(
+      expect.arrayContaining(mexican),
+    );
+  });
+
+  it('treats unknown as a valid cuisine and excludes egg bites from Bakery', () => {
+    expect(fetchRecipes({ cuisine: 'unknown' })).toContainEqual(
+      exampleRecipes[0],
+    );
+    expect(fetchRecipes({ type: 'bakery' })).not.toContainEqual(
+      exampleRecipes[5],
+    );
   });
 });
