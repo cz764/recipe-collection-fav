@@ -23,6 +23,7 @@ describe('Home loading view', () => {
   );
   it.each([
     'type=bakery',
+    'tag=vegetarian',
     'q=Japanese',
     'meal=breakfast',
     'cuisine=invalid',

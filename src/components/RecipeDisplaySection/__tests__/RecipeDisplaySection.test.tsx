@@ -46,7 +46,7 @@ describe('RecipeDisplaySection', () => {
     );
     expect(getSearchInput()).toHaveValue('missing');
     expect(screen.getByText('No recipes found.')).toBeVisible();
-    expect(screen.getByText('0 recipes')).toBeVisible();
+    expect(screen.getByText('0 recipe')).toBeVisible();
   });
 
   it('submits on Enter, preserving other URL parameters and encoding search text', async () => {

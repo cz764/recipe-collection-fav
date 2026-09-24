@@ -39,7 +39,9 @@ export function SearchAndFilterBar({
             ))}
         </div>
         <p className='shrink-0 whitespace-nowrap text-gray-600'>
-          {totalRecipes} recipes
+          {totalRecipes <= 1
+            ? `${totalRecipes} recipe`
+            : `${totalRecipes} recipes`}
         </p>
       </div>
     </div>

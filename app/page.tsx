@@ -33,6 +33,7 @@ export default async function Home({ searchParams }: HomeProps) {
           params.meal,
           params.type,
           params.q,
+          params.tag,
         ])}
         fallback={<RecipeResultsLoadingSkeleton />}
       >

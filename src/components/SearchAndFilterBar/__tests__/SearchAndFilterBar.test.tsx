@@ -10,12 +10,16 @@ describe('SearchAndFilterBar', () => {
     totalRecipes: 0,
   };
 
-  it('renders recipe count', () => {
-    const totalRecipes = 38;
+  it.each([
+    [0, '0 recipe'],
+    [1, '1 recipe'],
+    [2, '2 recipes'],
+    [38, '38 recipes'],
+  ])('renders recipe count %i as "%s"', (totalRecipes, label) => {
     render(
       <SearchAndFilterBar {...defaultProps} totalRecipes={totalRecipes} />,
     );
-    expect(screen.getByText(`${totalRecipes} recipes`)).toBeVisible();
+    expect(screen.getByText(label)).toBeVisible();
   });
 
   it('displays no filter tags when URL filters are absent', () => {

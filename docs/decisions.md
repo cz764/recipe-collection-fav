@@ -4,13 +4,13 @@ Last updated: September 24, 2026. This document records durable decisions and cu
 
 ## URL filters and data flow
 
-**Status:** Cuisine/meal/type filtering, submitted text search, and prop-based summaries are URL-driven. Navigation redesign remains pending.
+**Status:** Cuisine/meal/type/tag filtering, submitted text search, and prop-based summaries are URL-driven. Grouped All Recipes navigation and a direct Bakery link are implemented; browser verification is pending.
 
-**Decision:** `Home` awaits `searchParams`, then passes resolved values to `RecipeLoader`. The loader parses cuisine/meal/type/q and passes normalized filters through `RecipeDisplaySection` to `SearchAndFilterBar`. Summaries derive directly from props, without synchronization effects or a second state copy.
+**Decision:** `Home` awaits `searchParams`, then passes resolved values to `RecipeLoader`. The loader parses cuisine/meal/type/tag/q and passes normalized filters through `RecipeDisplaySection` to `SearchAndFilterBar`. Summaries derive directly from props, without synchronization effects or a second state copy.
 
 **Reason:** Explicit data flow makes shared links, browser navigation, and a future backend easier to reason about.
 
-**Consequences:** Values are trimmed and matched case-insensitively; all fields combine with AND. Repeated parameters use the first value, blanks are ignored, and unknown values yield no results. The URL-based Suspense key resets results state when cuisine/meal/type/q changes, resetting pagination and initializing the search draft from the URL. Enter or the search button submits trimmed text as `q`, preserving other query parameters and scroll position. Empty submission removes `q`. Typing and clearing alone only edit the draft. Search text keeps its casing for display; matching is case-insensitive using the existing text matcher in the data layer. Browser history and shared URLs carry the applied search.
+**Consequences:** Values are trimmed and matched case-insensitively; all fields combine with AND. Repeated parameters use the first value, blanks are ignored, and unknown values yield no results. The URL-based Suspense key resets results state when cuisine/meal/type/tag/q changes, resetting pagination and initializing the search draft from the URL. Enter or the search button submits trimmed text as `q`, preserving other query parameters and scroll position. Empty submission removes `q`. Typing and clearing alone only edit the draft. Search text keeps its casing for display; matching is case-insensitive using the existing text matcher in the data layer. Browser history and shared URLs carry the applied search.
 
 ## Recipe classification
 
@@ -76,7 +76,8 @@ References: [Supabase Storage](https://supabase.com/docs/guides/storage/quicksta
 
 - **Priority: visually reassess screen flicker.** Earlier reports described whole-screen dimming/blurring during drawer/category interactions. Those controls are now removed; this does not establish the cause or prove all flicker resolved. Verify remaining navigation and URL search transitions in a browser.
 - Keep the pending cornbread image request tracked independently of the visually verified landing-only design.
-- Design grouped navigation and decide whether navigation selections replace or combine existing URL filters.
+- Visually verify grouped All Recipes navigation at desktop and mobile widths, including keyboard focus, nested mobile-menu dismissal, scrolling, and long labels.
+- TODO: Write the About story and create its page, then uncomment the About navigation item.
 - Review recipe-specific classifications as the collection grows; do not silently relabel fixtures as part of unrelated UI work.
 - Pagination versus infinite scroll is undecided. A future landing-page grid cap of roughly one or two pages is proposed; do not cap data or remove current pagination until the browsing design is settled.
 - The user confirmed the search/drawer-removal visual checks passed before the featured-boundary split. Visual verification of the split remains separate from that confirmation.
@@ -97,7 +98,7 @@ References: [Supabase Storage](https://supabase.com/docs/guides/storage/quicksta
 
 **Status:** Accepted September 24, 2026; visibility and loading behavior implemented. The user confirmed the visual check passed.
 
-**Decision:** The homepage keeps featured recipes, search, and the all-recipe grid. Any nonblank supported `cuisine`, `meal`, `type`, or `q` selects a results-only view. Derive this from the URL, not navigation history. Blank or unrelated parameters preserve the landing view; invalid nonblank filters still select results/empty state. Repeated parameters follow the existing first-value rule.
+**Decision:** The homepage keeps featured recipes, search, and the all-recipe grid. Any nonblank supported `cuisine`, `meal`, `type`, `tag`, or `q` selects a results-only view. Derive this from the URL, not navigation history. Blank or unrelated parameters preserve the landing view; invalid nonblank filters still select results/empty state. Repeated parameters follow the existing first-value rule.
 
 **Reason:** Featured recipes support discovery on arrival. After a category selection or search, users see their requested results immediately. This is a product decision, not a fix for the pending cornbread image request.
 
@@ -105,14 +106,22 @@ References: [Supabase Storage](https://supabase.com/docs/guides/storage/quicksta
 
 **Deferred grid limit:** As the collection grows, consider limiting the homepage grid to roughly one or two pages. Decide the cap and how users reach the rest of the collection alongside pagination versus infinite scroll. No cap is implemented now.
 
+## Grouped recipe navigation
+
+**Status:** Implemented September 24, 2026; browser verification pending.
+
+**Decision:** Navigation exposes All Recipes and Bakery. About is commented out with a TODO until its story/page exists. The separate `NavigationBar/AllRecipes` component uses HeroUI Dropdown, DropdownMenu, and grouped sections, with Next.js links. Desktop and mobile share the menu content; selecting a mobile category closes the navigation menu.
+
+**Groups:** Meal (the shared meal vocabulary), Cuisine (the shared cuisine vocabulary except unknown), Dietary (Vegetarian), and Preparation (One pot). View all recipes returns to `/`, including featured content. Bakery links directly to `/?type=bakery`.
+
+**URL behavior:** A navigation category starts a fresh selection. Search preserves that selection and narrows with AND. Tag parameters use the existing first-value, trim, and case-normalization rules; they also select results-only loading/rendering and reset results state on change. Tag matching is exact. Ingredient navigation and its URL parameter are removed for now, including the chocolate/cocoa alias, to avoid recipe-specific matching rules. Free-text search retains its existing ingredient matching. Unsupported `ingredient` parameters are ignored like other unrelated parameters. Empty categories retain the standard no-results message.
+
+**Verification:** Test link destinations, keyboard opening/Escape/focus return, mobile selection callback, tag matching and combined filters, plus landing/loading visibility for the new parameters. Browser checks remain needed at 375px, 675px, 1023/1024px, 1052×963px, and 1279/1280px, especially while opening and resizing menus.
+
 ## Upcoming browsing work
 
-**Accepted direction, pending implementation:** Work in small reviewable steps after landing-only visibility. The featured section now has a centered “Today's recipe” h1 and the existing HeroUI divider above all featured cards; the individual TodayRecipe card no longer owns that heading. Browser verification of this heading change is pending. Simplify navigation to About, All Recipes, and Bakery; Bakery links to `/?type=bakery`. All Recipes will become grouped navigation, including meal categories, ingredients such as chocolate, and curated tags such as one-pot and vegetarian. Exact groups and interaction behavior remain to be designed.
+**Result presentation:** Use existing image cards until a separate discussion decides between a grid and full-width result cards. Keep loading and empty states throughout.
 
-**Search:** Keep the current URL-preserving AND behavior: Bakery plus Japanese search becomes `/?type=bakery&q=Japanese`. Use existing image cards until a separate discussion decides between a grid and full-width result cards. Retain loading and empty states throughout.
-
-**Filter model:** Before enabling ingredient/tag navigation, refine the filter model and parsing to support explicit ingredient and tag fields alongside cuisine, meal, type, and q. Decide ingredient matching, including chocolate versus cocoa. Removing obsolete drawer filter structures belongs to that scoped step.
+**Filter model:** Tag URL support is implemented for the menu. Ingredient filtering is deferred. Broader validated filter types and removal of obsolete drawer filter structures remain separate work.
 
 **Lower priority:** Add a globe control to navigation for language. Clarify whether it controls recipe/source language or interface language before implementation.
-
-**Open navigation details:** Decide whether category navigation replaces existing filters or combines with them, and whether an All Recipes submenu needs a results-only unfiltered destination distinct from the landing page. The logo continues to return to `/`.

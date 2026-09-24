@@ -1,5 +1,7 @@
 'use client';
 
+import NextLink from 'next/link';
+import { AllRecipes } from './AllRecipes';
 import { useState } from 'react';
 import {
   Navbar,
@@ -24,6 +26,7 @@ export function NavigationBar({
 
   return (
     <Navbar
+      isMenuOpen={isMenuOpen}
       isBordered
       onMenuOpenChange={setIsMenuOpen}
       className='bg-nav-background'
@@ -41,11 +44,21 @@ export function NavigationBar({
         className='hidden gap-6 lg:flex xl:gap-10'
         justify='center'
       >
-        {menuItems.map(({ name, link }) => (
+        {menuItems.map(({ name, link, kind }) => (
           <NavbarItem key={`${name}-nav`}>
-            <Link className='text-2xl' color='foreground' href={link} size='lg'>
-              {name}
-            </Link>
+            {kind === 'all-recipes' ? (
+              <AllRecipes />
+            ) : (
+              <Link
+                as={NextLink}
+                className='text-2xl'
+                color='foreground'
+                href={link}
+                size='lg'
+              >
+                {name}
+              </Link>
+            )}
           </NavbarItem>
         ))}
       </NavbarContent>
@@ -55,11 +68,21 @@ export function NavigationBar({
         />
       </NavbarContent>
       <NavbarMenu className='lg:hidden'>
-        {menuItems.map(({ name, link }) => (
+        {menuItems.map(({ name, link, kind }) => (
           <NavbarMenuItem key={`${name}-menu`}>
-            <Link className='w-full' size='lg' href={link}>
-              {name}
-            </Link>
+            {kind === 'all-recipes' ? (
+              <AllRecipes isMobile onNavigate={() => setIsMenuOpen(false)} />
+            ) : (
+              <Link
+                as={NextLink}
+                className='w-full'
+                size='lg'
+                href={link}
+                onPress={() => setIsMenuOpen(false)}
+              >
+                {name}
+              </Link>
+            )}
           </NavbarMenuItem>
         ))}
       </NavbarMenu>

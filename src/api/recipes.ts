@@ -15,7 +15,14 @@ export function fetchFeaturedRecipes() {
   );
 }
 
-export function fetchRecipes({ cuisine, meal, type, q }: RecipeQuery = {}) {
+export function fetchRecipes({
+  cuisine,
+  meal,
+  type,
+  q,
+  tag,
+}: RecipeQuery = {}) {
+  const normalizedTag = tag?.trim().toLowerCase();
   const searchText = q?.trim();
   const normalizedCuisine = cuisine?.trim().toLowerCase();
   const normalizedMeal = meal?.trim().toLowerCase();
@@ -23,6 +30,7 @@ export function fetchRecipes({ cuisine, meal, type, q }: RecipeQuery = {}) {
 
   return exampleRecipes.filter(
     (recipe) =>
+      (!normalizedTag || recipe.tags.some((tag) => tag === normalizedTag)) &&
       (!searchText || matchRecipe(recipe, searchText)) &&
       (!normalizedCuisine || matchCuisine(recipe.cuisine, normalizedCuisine)) &&
       (!normalizedMeal || recipe.meal === normalizedMeal) &&

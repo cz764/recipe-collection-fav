@@ -102,3 +102,21 @@ describe('URL text search', () => {
     expect(fetchRecipes({ q: 'no-such-recipe' })).toEqual([]);
   });
 });
+
+describe('grouped navigation filters', () => {
+  it('matches exact curated tags with case and whitespace normalization', () => {
+    const recipes = fetchRecipes({ tag: ' VEGETARIAN ' });
+    expect(recipes.length).toBeGreaterThan(0);
+    expect(recipes.every((recipe) => recipe.tags.includes('vegetarian'))).toBe(
+      true,
+    );
+    expect(fetchRecipes({ tag: 'veg' })).toEqual([]);
+    expect(fetchRecipes({ tag: 'one-pot' })).toEqual([]);
+  });
+  it('combines tags with the existing filters using AND', () => {
+    expect(
+      fetchRecipes({ tag: 'vegetarian', type: 'bakery', q: 'Loaf' }),
+    ).toEqual([exampleRecipes[4]]);
+    expect(fetchRecipes({ tag: '  ' })).toEqual(exampleRecipes);
+  });
+});

@@ -15,18 +15,21 @@ describe('parseRecipeSearchParams', () => {
       meal: 'dinner',
       type: 'bakery',
       q: undefined,
+      tag: undefined,
     });
   });
 
   it('handles missing and blank values', () => {
     expect(parseRecipeSearchParams({})).toEqual({
       q: undefined,
+      tag: undefined,
       cuisine: undefined,
       meal: undefined,
       type: undefined,
     });
     expect(parseRecipeSearchParams({ cuisine: ' ', meal: '' })).toEqual({
       q: undefined,
+      tag: undefined,
       cuisine: undefined,
       meal: undefined,
       type: undefined,
@@ -45,6 +48,7 @@ describe('parseRecipeSearchParams', () => {
       meal: 'dinner',
       type: 'bakery',
       q: undefined,
+      tag: undefined,
     });
   });
 });
@@ -54,4 +58,15 @@ it('trims search text, preserves case, and uses the first repeated value', () =>
     parseRecipeSearchParams({ q: [' Egg & Cheese ', 'bread'] }),
   ).toMatchObject({ q: 'Egg & Cheese' });
   expect(parseRecipeSearchParams({ q: '  ' })).toMatchObject({ q: undefined });
+});
+
+it('normalizes tag values, preserving the first-value rule', () => {
+  expect(
+    parseRecipeSearchParams({
+      tag: [' Vegetarian ', 'one-pot'],
+    }),
+  ).toMatchObject({ tag: 'vegetarian' });
+  expect(parseRecipeSearchParams({ tag: ' ' })).toMatchObject({
+    tag: undefined,
+  });
 });

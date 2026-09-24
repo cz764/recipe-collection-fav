@@ -48,6 +48,7 @@ describe('Home landing and results views', () => {
 
   it.each([
     { type: 'bakery' },
+    { tag: 'vegetarian' },
     { q: 'Japanese' },
     { meal: 'breakfast' },
     { cuisine: 'chinese' },
@@ -82,7 +83,7 @@ describe('Home landing and results views', () => {
     );
     expect(screen.queryByText("Today's recipe")).not.toBeInTheDocument();
     expect(screen.getByText('Japanese Milk Bread')).toBeVisible();
-    expect(screen.getByText('1 recipes')).toBeVisible();
+    expect(screen.getByText('1 recipe')).toBeVisible();
     expect(screen.getByLabelText('Search Input')).toHaveValue('Japanese');
     rerender(
       await Home({ searchParams: Promise.resolve({ q: 'no-such-recipe' }) }),

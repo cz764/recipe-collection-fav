@@ -63,8 +63,17 @@ describe('NavigationBar', () => {
   it('renders the default menu when no menuItems prop is given', () => {
     render(<NavigationBar />);
 
-    defaultMenuItems.forEach(({ name, link }) => {
-      expect(screen.getByRole('link', { name })).toHaveAttribute('href', link);
+    defaultMenuItems.forEach(({ name, link, kind }) => {
+      if (kind === 'all-recipes')
+        expect(screen.getByRole('button', { name })).toBeVisible();
+      else
+        expect(screen.getByRole('link', { name })).toHaveAttribute(
+          'href',
+          link,
+        );
     });
+    expect(
+      screen.queryByRole('link', { name: 'About' }),
+    ).not.toBeInTheDocument();
   });
 });
