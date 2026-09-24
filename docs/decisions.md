@@ -1,6 +1,6 @@
 # Project decisions
 
-Last updated: September 23, 2026. This document records durable decisions and current open work. Implementation status is separate from acceptance; accepted future work is not implemented automatically.
+Last updated: September 24, 2026. This document records durable decisions and current open work. Implementation status is separate from acceptance; accepted future work is not implemented automatically.
 
 ## URL filters and data flow
 
@@ -30,7 +30,7 @@ Last updated: September 23, 2026. This document records durable decisions and cu
 
 **Decision:** `fetchFeaturedRecipes()` returns up to three distinct recipes for the server's calendar day. `TopRecipes` renders the selection in order, with the first as Today's Recipe. `fetchRecipes(filters)` serves the independent results list.
 
-**Reason:** A search with zero matches must not remove or break featured recipes. The backend can later provide a separate limited query.
+**Reason:** Landing-page recommendations are independent of filtered results. Featured recipes are now omitted from filtered/search views, including empty results. The backend can later provide a separate limited query.
 
 **Consequences:** Selection uses calendar dates to avoid daylight-saving elapsed-hour errors. This is deterministic selection, not a scheduled daily fetch or database cache. Backend daily caching and the production day/timezone policy remain to be designed.
 
@@ -44,7 +44,7 @@ Last updated: September 23, 2026. This document records durable decisions and cu
 
 **Consequences:** `main` uses auto horizontal margins, without `place-items-center`; the homepage wrapper fills its available width. Results reserve a 24rem minimum height, an empty-state message, and pagination space. These reduce collapse but do not guarantee identical page heights for different result counts.
 
-**Decision:** Use separate Suspense boundaries for featured recipes and results. `FeaturedRecipeLoader` has a stable boundary; only `RecipeLoader` is keyed by URL filters. Each has its own skeleton, composed together for the route loading state. Featured data may still be fetched again on navigation; stable component identity is not a data cache. Use Next.js Image through `RecipeImage` for homepage photos, with responsive sizes, lazy loading for cards, and priority for Today's Recipe.
+**Decision:** Use separate Suspense boundaries for featured recipes and results. `FeaturedRecipeLoader` has a stable boundary; only `RecipeLoader` is keyed by URL filters. Each has its own skeleton. The route loading state reads the URL to show featured placeholders only for landing views; its pre-resolution fallback shows only results placeholders. Featured data is fetched only when the landing view renders; this is not a daily data cache. Use Next.js Image through `RecipeImage` for homepage photos, with responsive sizes, lazy loading for cards, and priority for Today's Recipe.
 
 **Reason:** Data readiness does not imply image readiness. Original images were larger than needed for cards.
 
@@ -75,17 +75,17 @@ References: [Supabase Storage](https://supabase.com/docs/guides/storage/quicksta
 ## Open work
 
 - **Priority: visually reassess screen flicker.** Earlier reports described whole-screen dimming/blurring during drawer/category interactions. Those controls are now removed; this does not establish the cause or prove all flicker resolved. Verify remaining navigation and URL search transitions in a browser.
-- Revisit landing-only featured recipes before further changes to featured loading; see the proposal below. Keep the pending cornbread image request tracked independently.
+- Keep the pending cornbread image request tracked independently of the visually verified landing-only design.
 - Design grouped navigation and decide whether navigation selections replace or combine existing URL filters.
 - Review recipe-specific classifications as the collection grows; do not silently relabel fixtures as part of unrelated UI work.
-- Pagination versus infinite scroll is undecided.
+- Pagination versus infinite scroll is undecided. A future landing-page grid cap of roughly one or two pages is proposed; do not cap data or remove current pagination until the browsing design is settled.
 - The user confirmed the search/drawer-removal visual checks passed before the featured-boundary split. Visual verification of the split remains separate from that confirmation.
 
 ## Featured image navigation bug
 
 **Finding:** Breakfast/Dessert navigation previously changed the key of a boundary containing both results and featured recipes, remounting featured images. The user observed the cornbread thumbnail remain pending with `complete: false`, `naturalWidth: 0`, and an empty `currentSrc`; this is not evidence of a successfully loaded image merely hidden by opacity.
 
-**Change:** Move featured fetching/rendering outside the filter-keyed results boundary. A reconciliation test covers preservation of both pending and loaded featured image nodes across meal/search changes, including empty results. Results still reset their draft and pagination through their own key.
+**Change:** Move featured fetching/rendering outside the filter-keyed results boundary. The earlier reconciliation test covered preservation of both pending and loaded featured image nodes across meal/search changes. It has since been replaced with tests for the accepted landing-only design. Results still reset their draft and pagination through their own key.
 
 **Verification:** The user retested after the boundary split: the Mexican cornbread thumbnail still hangs in fetching when navigating to Breakfast. The split did not resolve the reported bug. The reconciliation test only establishes component preservation under its test conditions, not successful browser image loading. Root cause remains unresolved; do not claim the remount was the cause of the stalled request.
 
@@ -95,14 +95,24 @@ References: [Supabase Storage](https://supabase.com/docs/guides/storage/quicksta
 
 ## Landing-only featured recipes
 
-**Status:** Proposed by the user; not finalized or implemented. Discuss before changing behavior.
+**Status:** Accepted September 24, 2026; visibility and loading behavior implemented. The user confirmed the visual check passed.
 
-**Proposal:** Show Today's Recipe and RecipeEW only on the landing page. Category navigation and submitted searches would show the search/results section without featured recipes. This would change the current behavior that preserves featured recipes through filtering, including empty results.
+**Decision:** The homepage keeps featured recipes, search, and the all-recipe grid. Any nonblank supported `cuisine`, `meal`, `type`, or `q` selects a results-only view. Derive this from the URL, not navigation history. Blank or unrelated parameters preserve the landing view; invalid nonblank filters still select results/empty state. Repeated parameters follow the existing first-value rule.
 
-**Reason:** Featured recipes support discovery on arrival. After choosing Breakfast, Dessert, or a search query, users may benefit from seeing their requested results immediately, without unrelated featured content above them. Treat this as a product decision, not a fix for the pending cornbread image request.
+**Reason:** Featured recipes support discovery on arrival. After a category selection or search, users see their requested results immediately. This is a product decision, not a fix for the pending cornbread image request.
 
-**Suggested rule for discussion:** Derive visibility from the current URL rather than whether the user has navigated before. Show featured recipes when no nonblank supported `cuisine`, `meal`, `type`, or `q` is applied; hide them otherwise. This would make direct filtered links and Back/Forward consistent. Blank or unrelated query parameters would not hide featured recipes; invalid nonblank filters would still show the results/empty state.
+**Consequences:** Results-only views do not mount `FeaturedRecipeLoader`, call its featured-data function, show the featured skeleton, or render its divider. Returning to an unfiltered URL restores featured recipes. Clearing search while retaining Bakery stays in the results view. Search still combines with category filters using AND. The existing cards, pagination, and empty-state message remain.
 
-**Open decisions:** Does All Recipes mean the landing page with featured recipes, or a dedicated results-only view? Should clearing all filters/search bring featured recipes back? Confirm whether any active supported query hides featured recipes, or use a separate browse route. These choices determine whether the suggested URL rule is sufficient.
+**Deferred grid limit:** As the collection grows, consider limiting the homepage grid to roughly one or two pages. Decide the cap and how users reach the rest of the collection alongside pagination versus infinite scroll. No cap is implemented now.
 
-**If adopted:** Skip featured data fetching as well as rendering for results-only views, and match the loading skeleton to the chosen view. Revisit the boundary split in that design. Verify direct URLs, navigation, Back/Forward, empty results, and clearing search. Continue tracking the image issue because it could also affect landing-page or result-card images.
+## Upcoming browsing work
+
+**Accepted direction, pending implementation:** Work in small reviewable steps after landing-only visibility. Discuss a featured-section design that clearly communicates today's recommendations. Simplify navigation to About, All Recipes, and Bakery; Bakery links to `/?type=bakery`. All Recipes will become grouped navigation, including meal categories, ingredients such as chocolate, and curated tags such as one-pot and vegetarian. Exact groups and interaction behavior remain to be designed.
+
+**Search:** Keep the current URL-preserving AND behavior: Bakery plus Japanese search becomes `/?type=bakery&q=Japanese`. Use existing image cards until a separate discussion decides between a grid and full-width result cards. Retain loading and empty states throughout.
+
+**Filter model:** Before enabling ingredient/tag navigation, refine the filter model and parsing to support explicit ingredient and tag fields alongside cuisine, meal, type, and q. Decide ingredient matching, including chocolate versus cocoa. Removing obsolete drawer filter structures belongs to that scoped step.
+
+**Lower priority:** Add a globe control to navigation for language. Clarify whether it controls recipe/source language or interface language before implementation.
+
+**Open navigation details:** Decide whether category navigation replaces existing filters or combines with them, and whether an All Recipes submenu needs a results-only unfiltered destination distinct from the landing page. The logo continues to return to `/`.

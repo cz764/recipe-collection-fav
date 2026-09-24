@@ -16,3 +16,8 @@ export function parseRecipeSearchParams(
     type: normalize(params.type),
   };
 }
+
+/** Use the same supported, normalized values as recipe filtering. */
+export function hasRecipeFilters(params: RecipeSearchParams): boolean {
+  return Object.values(parseRecipeSearchParams(params)).some(Boolean);
+}

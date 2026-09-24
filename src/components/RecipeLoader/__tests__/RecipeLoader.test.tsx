@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { RecipeLoader } from '../RecipeLoader';
+import { RecipeLoader } from '..';
 import { fetchRecipes } from '@/api/recipes';
 
 describe('RecipeLoader', () => {
