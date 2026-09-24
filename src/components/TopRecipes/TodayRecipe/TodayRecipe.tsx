@@ -32,7 +32,6 @@ export function TodayRecipe({ recipe }: TodayRecipeProps) {
           />
           <div className='flex flex-1 flex-col justify-between'>
             <div>
-              <h1 className='text-2xl'>Today's recipe</h1>
               <h2 className='text-xl'>{name}</h2>
               <p>
                 {_.truncate(description, {

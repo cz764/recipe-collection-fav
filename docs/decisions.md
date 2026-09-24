@@ -107,7 +107,7 @@ References: [Supabase Storage](https://supabase.com/docs/guides/storage/quicksta
 
 ## Upcoming browsing work
 
-**Accepted direction, pending implementation:** Work in small reviewable steps after landing-only visibility. Discuss a featured-section design that clearly communicates today's recommendations. Simplify navigation to About, All Recipes, and Bakery; Bakery links to `/?type=bakery`. All Recipes will become grouped navigation, including meal categories, ingredients such as chocolate, and curated tags such as one-pot and vegetarian. Exact groups and interaction behavior remain to be designed.
+**Accepted direction, pending implementation:** Work in small reviewable steps after landing-only visibility. The featured section now has a centered “Today's recipe” h1 and the existing HeroUI divider above all featured cards; the individual TodayRecipe card no longer owns that heading. Browser verification of this heading change is pending. Simplify navigation to About, All Recipes, and Bakery; Bakery links to `/?type=bakery`. All Recipes will become grouped navigation, including meal categories, ingredients such as chocolate, and curated tags such as one-pot and vegetarian. Exact groups and interaction behavior remain to be designed.
 
 **Search:** Keep the current URL-preserving AND behavior: Bakery plus Japanese search becomes `/?type=bakery&q=Japanese`. Use existing image cards until a separate discussion decides between a grid and full-width result cards. Retain loading and empty states throughout.
 

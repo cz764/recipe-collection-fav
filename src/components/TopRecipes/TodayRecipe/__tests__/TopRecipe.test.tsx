@@ -12,12 +12,6 @@ describe('TodayRecipe', () => {
     pushMock.mockClear();
   });
 
-  it('renders "Today\'s recipe" heading', () => {
-    const recipe = makeRecipe();
-    render(<TodayRecipe recipe={recipe} />);
-    expect(screen.getByText("Today's recipe")).toBeVisible();
-  });
-
   it('renders recipe name', () => {
     const name = 'Beef Stew';
     const recipe = makeRecipe({ name });

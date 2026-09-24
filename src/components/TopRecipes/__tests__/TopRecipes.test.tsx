@@ -10,6 +10,17 @@ describe('TopRecipes', () => {
     makeRecipe({ id: '3', name: 'Recipe Three' }),
   ];
 
+  it('labels the whole featured section with one heading', () => {
+    render(<TopRecipes topRecipes={mockRecipes} />);
+    const section = screen.getByRole('region', { name: "Today's recipe" });
+    expect(section).toContainElement(
+      screen.getByRole('heading', { level: 1, name: "Today's recipe" }),
+    );
+    mockRecipes.forEach((recipe) => {
+      expect(section).toContainElement(screen.getByText(recipe.name));
+    });
+  });
+
   it('renders the today recipe', () => {
     render(<TopRecipes topRecipes={mockRecipes} />);
     expect(screen.getByText('Recipe One')).toBeVisible();
