@@ -472,4 +472,80 @@ export const exampleRecipes: Recipe[] = [
       ],
     },
   },
+  {
+    id: '8',
+    name: 'Shanghai style Borscht(罗宋汤)',
+    description:
+      "This is my grandpa's recipe of this comforting warm soup that always heal my soul.",
+    tags: ['high-protein'],
+    source: '',
+    language: 'en',
+    totalTime: 90,
+    yieldServings: 8,
+    equipments: ['large sauce pan'],
+    cuisine: 'chinese',
+    creditTo: '',
+    meal: 'dinner',
+    type: ['soup', 'entree'],
+    ingredients: [
+      { name: 'tomato', amount: 3 },
+      { name: 'potato', amount: 1 },
+      { name: 'cabbage', amount: 300, unit: 'g' },
+      { name: 'beef cubes for stew', amount: 250, unit: 'g' },
+      { name: 'carrots', amount: 1 },
+      { name: 'onion', amount: 1 },
+      { name: 'garlic', amount: 2, unit: 'cloves' },
+      { name: 'curry powder', amount: 1, unit: 'tsp' },
+      { name: 'star anise', amount: 2 },
+      { name: 'bay leaves', amount: 2 },
+      { name: 'ginger', amount: 2, unit: 'slices' },
+      { name: 'soy sauce', amount: 2, unit: 'tsp' },
+      { name: 'shaoxing wine', amount: 2, unit: 'tsp' },
+    ],
+    pictureUrl: '/exampleRecipes/Shanghai-Borscht.jpg',
+    steps: {
+      prep: [
+        'Slice tomato to cubes',
+        'Peel potato and slice to cubes',
+        'Mince onion and garlic',
+        'Peel carrots and slice to soup cubes',
+        'Wash cabbage and slice them to bite size pieces',
+      ],
+      steps: [
+        {
+          detail:
+            'Beef stew & broth(can sub with store bought, then skip this step): blanch beef cubes, then in add them to good amount of hot water, add ginger, star anise and bay leaves, bring to a boil, reduce to low heat, cook for 1hr.',
+        },
+        {
+          detail:
+            'In a large sauce pan on medium heat, add some oil, then add onion and garlic, cook for 1min for aromatics.',
+        },
+        {
+          detail:
+            'Add curry powder, stir and bring up the curry powder flavor.',
+        },
+        {
+          detail: 'Add potato, carrots, stir and cook 1min.',
+        },
+        {
+          detail:
+            'Add tomato, stir and cook 1min. Then add shaoxing wine and soy sauce.',
+        },
+        {
+          detail:
+            'Remove ginger, star anise and bay leaves from the beef stew, pour the beef stew to the cooking ingredients.',
+        },
+        {
+          detail: 'Add cabbage, salt to taste.',
+        },
+        {
+          detail:
+            'Bring the whole thing to a boil, then reduce heat to low, simmer for 30min so all flavor come together.',
+        },
+        {
+          detail: 'Optional serve cilantro on top. Enjoy!',
+        },
+      ],
+    },
+  },
 ];

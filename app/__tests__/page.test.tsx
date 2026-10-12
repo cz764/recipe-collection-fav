@@ -1,18 +1,65 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Home from '../page';
-import type { RecipeSearchParams } from '@/data/filter';
+import type { RecipeQuery, RecipeSearchParams } from '@/data/filter';
 
-const { featuredRender } = vi.hoisted(() => ({ featuredRender: vi.fn() }));
+// Mock data lives here so the test owns the collection the loaders return.
+const { featuredRender, mockRecipes } = await vi.hoisted(async () => {
+  const { makeRecipe } = await import('@/components/__tests__/mockData');
+  return {
+    featuredRender: vi.fn(),
+    mockRecipes: [
+      makeRecipe({
+        id: '1',
+        name: 'Japanese Milk Bread',
+        cuisine: 'japanese',
+        meal: 'breakfast',
+        type: ['bakery'],
+        tags: ['bread', 'vegetarian'],
+      }),
+      makeRecipe({
+        id: '2',
+        name: 'Tomato Pasta',
+        cuisine: 'italian',
+        meal: 'dinner',
+        type: ['entree'],
+        tags: ['vegetarian', 'one-pot'],
+      }),
+      makeRecipe({
+        id: '3',
+        name: 'Pork Dumplings',
+        cuisine: 'chinese',
+        meal: 'lunch',
+        type: ['appetizer'],
+        tags: [],
+      }),
+      makeRecipe({
+        id: '4',
+        name: 'Cornbread',
+        cuisine: 'mexican',
+        meal: 'dinner',
+        type: ['bakery', 'side dish'],
+        tags: ['bread'],
+      }),
+    ],
+  };
+});
+
+// Minimal stand-in for the data layer: only the filters this test exercises.
+const selectMockRecipes = ({ q, type }: RecipeQuery) =>
+  mockRecipes.filter(
+    (recipe) =>
+      (!type || recipe.type.some((item) => item === type)) &&
+      (!q || recipe.name.toLowerCase().includes(q.toLowerCase())),
+  );
 
 // Resolve server data synchronously here so jsdom can test boundary reconciliation.
 vi.mock('@/components/FeaturedRecipeLoader', async () => {
   const { TopRecipes } = await import('@/components/TopRecipes');
-  const { exampleRecipes } = await import('@/data/exampleRecipes');
   return {
     FeaturedRecipeLoader: () => {
       featuredRender();
-      return <TopRecipes topRecipes={exampleRecipes.slice(0, 3)} />;
+      return <TopRecipes topRecipes={mockRecipes.slice(0, 3)} />;
     },
   };
 });
@@ -21,19 +68,20 @@ vi.mock('@/components/RecipeLoader', async () => {
     '@/components/RecipeDisplaySection'
   );
   const { parseRecipeSearchParams } = await import('@/utils/searchParams');
-  const { fetchRecipes } = await import('@/api/recipes');
   return {
     RecipeLoader: ({ searchParams }: { searchParams: RecipeSearchParams }) => {
       const filters = parseRecipeSearchParams(searchParams);
       return (
         <RecipeDisplaySection
-          recipeList={fetchRecipes(filters)}
+          recipeList={selectMockRecipes(filters)}
           urlFilters={filters}
         />
       );
     },
   };
 });
+
+const allRecipesLabel = `${mockRecipes.length} recipes`;
 
 describe('Home landing and results views', () => {
   beforeEach(() => featuredRender.mockClear());
@@ -42,7 +90,7 @@ describe('Home landing and results views', () => {
     render(await Home({ searchParams: Promise.resolve({}) }));
     expect(screen.getByText("Today's recipe")).toBeVisible();
     expect(screen.getByLabelText('Search Input')).toBeVisible();
-    expect(screen.getByText('7 recipes')).toBeVisible();
+    expect(screen.getByText(allRecipesLabel)).toBeVisible();
     expect(featuredRender).toHaveBeenCalled();
   });
 
@@ -93,6 +141,6 @@ describe('Home landing and results views', () => {
     rerender(await Home({ searchParams: Promise.resolve({}) }));
     expect(screen.getByText("Today's recipe")).toBeVisible();
     expect(screen.getByLabelText('Search Input')).toHaveValue('');
-    expect(screen.getByText('7 recipes')).toBeVisible();
+    expect(screen.getByText(allRecipesLabel)).toBeVisible();
   });
 });
