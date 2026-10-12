@@ -50,9 +50,9 @@ describe('RecipeEW', () => {
 
   it('navigates to recipe details on press', async () => {
     const user = userEvent.setup();
-    const recipe = makeRecipe({ id: '7' });
+    const recipe = makeRecipe({ slug: 'baozi' });
     render(<RecipeEW recipe={recipe} />);
     await user.click(screen.getByRole('button'));
-    expect(pushMock).toHaveBeenCalledWith('/details/7');
+    expect(pushMock).toHaveBeenCalledWith('/details/baozi');
   });
 });

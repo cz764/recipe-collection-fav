@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Home from '../page';
-import type { RecipeQuery, RecipeSearchParams } from '@/data/filter';
+import { ITEMS_PER_PAGE } from '@/constants';
+import type {
+  RecipePage,
+  RecipeQuery,
+  RecipeSearchParams,
+} from '@/data/filter';
 
 // Mock data lives here so the test owns the collection the loaders return.
 const { featuredRender, mockRecipes } = await vi.hoisted(async () => {
@@ -46,12 +51,20 @@ const { featuredRender, mockRecipes } = await vi.hoisted(async () => {
 });
 
 // Minimal stand-in for the data layer: only the filters this test exercises.
-const selectMockRecipes = ({ q, type }: RecipeQuery) =>
-  mockRecipes.filter(
+const selectMockRecipes = ({ q, type }: RecipeQuery): RecipePage => {
+  const recipes = mockRecipes.filter(
     (recipe) =>
       (!type || recipe.type.some((item) => item === type)) &&
       (!q || recipe.name.toLowerCase().includes(q.toLowerCase())),
   );
+  return {
+    recipes,
+    page: 1,
+    pageSize: ITEMS_PER_PAGE,
+    total: recipes.length,
+    hasMore: false,
+  };
+};
 
 // Resolve server data synchronously here so jsdom can test boundary reconciliation.
 vi.mock('@/components/FeaturedRecipeLoader', async () => {
@@ -73,7 +86,7 @@ vi.mock('@/components/RecipeLoader', async () => {
       const filters = parseRecipeSearchParams(searchParams);
       return (
         <RecipeDisplaySection
-          recipeList={selectMockRecipes(filters)}
+          initialPage={selectMockRecipes(filters)}
           urlFilters={filters}
         />
       );

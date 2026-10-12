@@ -2,6 +2,7 @@
   "type": "module",
   "dependencies": {
     "@heroui/react": "^2.8.5",
+    "@supabase/supabase-js": "^2.117.3",
     "@tailwindcss/postcss": "^4.1.17",
     "framer-motion": "^12.23.24",
     "lodash": "^4.17.21",
@@ -9,6 +10,7 @@
     "postcss": "^8.5.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "server-only": "^0.0.1",
     "tailwindcss": "^4.1.17"
   },
   "scripts": {
@@ -17,6 +19,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
+    "seed:supabase": "node --env-file=.env.local scripts/seed-supabase.mjs",
     "prepare": "husky"
   },
   "devDependencies": {

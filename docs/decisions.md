@@ -1,6 +1,6 @@
 # Project decisions
 
-Last updated: September 24, 2026. This document records durable decisions and current open work. Implementation status is separate from acceptance; accepted future work is not implemented automatically.
+Last updated: October 12, 2026. This document records durable decisions and current open work. Implementation status is separate from acceptance; accepted future work is not implemented automatically.
 
 ## URL filters and data flow
 
@@ -22,17 +22,17 @@ Last updated: September 24, 2026. This document records durable decisions and cu
 
 **Consequences:** Plain loaves use unknown cuisine; milk bread keeps Japanese cuisine. Cornbread biscuits are bakery/side dish, egg bites are entree, and dumplings are appetizer/entree. These editorial assignments can be reviewed independently. Type filters match any assigned type; separate query fields combine with AND. Existing breakfast/dessert navigation links now use `?meal=...`; old `?type=breakfast` links are not aliased. `?type=bakery` uses the new dish classification. Unknown cuisine is now valid; use `/?cuisine=invalid-cuisine` for empty-result checks (including in place of the older breakpoint skill example).
 
-**Boundary:** TypeScript constrains authored data; future database/API payloads still need runtime validation before being treated as Recipe values.
+**Boundary:** TypeScript constrains authored data; database rows are validated at runtime by `toRecipe` in `src/server/recipeRow.ts` before being treated as Recipe values, and the Postgres enums enforce the same vocabularies on write.
 
 ## Daily featured recipes
 
-**Status:** Implemented with local fixtures.
+**Status:** Implemented against the Supabase collection (October 12, 2026).
 
-**Decision:** `fetchFeaturedRecipes()` returns up to three distinct recipes for the server's calendar day. `TopRecipes` renders the selection in order, with the first as Today's Recipe. `fetchRecipes(filters)` serves the independent results list.
+**Decision:** `fetchFeaturedRecipes()` returns up to three distinct recipes for the server's local calendar day. `TopRecipes` renders the selection in order, with the first as Today's Recipe. `fetchRecipes(filters)` serves the independent results list.
 
-**Reason:** Landing-page recommendations are independent of filtered results. Featured recipes are now omitted from filtered/search views, including empty results. The backend can later provide a separate limited query.
+**Reason:** Landing-page recommendations are independent of filtered results. Featured recipes are omitted from filtered/search views, including empty results.
 
-**Consequences:** Selection uses calendar dates to avoid daylight-saving elapsed-hour errors. This is deterministic selection, not a scheduled daily fetch or database cache. Backend daily caching and the production day/timezone policy remain to be designed.
+**Consequences:** `selectFeaturedRecipes` in `src/utils/featured.ts` seeds a small deterministic generator with the local date and draws three distinct recipes from the whole collection, so the picks look random but stay fixed until the day changes. The day is the Node server's local date; there is no scheduled job or database cache. Both loaders share one collection read per request through React `cache`.
 
 ## Responsive layout and image loading
 
@@ -62,25 +62,42 @@ Last updated: September 24, 2026. This document records durable decisions and cu
 
 ## Supabase integration
 
-**Status:** Proposed, not implemented or selected as a finalized backend design.
+**Status:** Accepted and implemented October 12, 2026. The user applied the migration, seeded the project, and confirmed the local dev server works against it.
 
-**Proposal:** Store recipe records in Postgres and image files in Supabase Storage. Store object paths in records and resolve them into frontend `Recipe.pictureUrl` and `Step.imageUrl` values in the data layer. Database rows need not mirror frontend types exactly.
+**Details route:** `/details/<slug>` replaced `/details/<id>` on October 12, 2026. Cards, featured tiles, and Today's recipe link by slug; old id links are not redirected.
 
-**Reason:** Separating records and files supports backend search and keeps component interfaces stable.
+**Decision:** Supabase Postgres holds recipe records and Supabase Storage holds images in the public `recipe-images` bucket. The Next.js server is the Node.js backend: `src/server/recipes.ts` reads with `@supabase/supabase-js` over PostgREST, and no separate service or GraphQL layer exists. Everything under `src/server/` imports `server-only`, so a client component importing backend code fails the build; `src/api/` holds only browser calls to the app's own routes. GraphQL was rejected because the app is the only consumer with three fixed queries.
 
-**Consequences if adopted:** Use database filtering/pagination instead of loading the full collection. Keep the featured query limited and separate. Public recipe images can use a public bucket with controlled writes; private images require a separate access/caching design. Allow only the actual project hostname and bucket in Next.js `remotePatterns`. The default image optimizer does not forward authentication headers.
+**Schema:** One `recipes` table (`supabase/migrations/`). Postgres enums mirror the cuisine, meal, dish type, tag, and language vocabularies in `src/constants/recipe.ts`; update both together. `ingredients` and `steps` are JSONB arrays; `prep`, `tags`, `type`, and `equipments` are arrays. `picture_path` and step `image_path` store bucket object paths (or absolute URLs). A unique `slug` column (dashed recipe name) backs the `/details/<slug>` route; fixtures carry their slugs explicitly so reseeding upserts the same rows. Row level security allows public reads only; writes go through the dashboard or the service-role seed script. Length limits on name and description are not enforced because existing descriptions exceed the old comment limits.
+
+**Data layer:** `toRecipe` validates every row at runtime against the shared vocabularies before it becomes a `Recipe`, and resolves image paths to public URLs. Invalid rows throw rather than being skipped, so schema drift is loud. Filtering, text search, and paging run in Node over the full collection loaded once per request: `filterRecipes` keeps the existing matcher semantics and `paginateRecipes` returns a `RecipePage` with `total` and `hasMore`. This follows the user's choice to defer database-side search design; moving filters into SQL is a contained change inside `fetchRecipes` when the collection grows. `getRecipeBySlug` serves the details page; an unknown slug renders the existing error view.
+
+**Configuration:** `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` are server-only (no `NEXT_PUBLIC_` prefix) and read from `.env.local`, which stays untracked; there is no committed example file by the user's choice. `next.config.ts` allows Next.js Image only for the project hostname and the recipe bucket path. `npm run seed:supabase` uploads `public/exampleRecipes` images and upserts the fixtures by slug using `SUPABASE_SECRET_KEY`. The fixtures remain as seed data and as the source for mock-based tests.
+
+**Testing:** Unit tests mock `getSupabaseClient` and cover row mapping, filters, paging, featured selection, and the route handler. Filter semantics live in `src/utils/__tests__/recipe.test.ts` on mock recipes. Integration tests against a real or local Supabase project are not set up.
+
+**Removed:** The Add recipe page. The user is the only author and adds records directly in Supabase; a web form was judged not worth the UX effort.
 
 References: [Supabase Storage](https://supabase.com/docs/guides/storage/quickstart), [bucket access](https://supabase.com/docs/guides/storage/buckets/fundamentals), [Next.js 15 Image](https://nextjs.org/docs/15/app/api-reference/components/image).
 
+## Infinite results loading
+
+**Status:** Accepted and implemented October 12, 2026; browser verification pending.
+
+**Decision:** Results load in pages of `ITEMS_PER_PAGE` from the server, with no client-side slicing. The server render supplies page one. `GET /api/recipes` returns later pages as JSON for the same URL filters plus a `page` parameter, using the same parsing rules as the page loader. Scrolling near the end of the list fetches the next page automatically up to `AUTO_LOAD_LIMIT` (six) times; after that, or whenever the observer is unavailable, a Load more button continues the list. The button is always rendered while more results exist, so the footer stays reachable and the list works without JavaScript observers.
+
+**Reason:** The user preferred infinite scroll over pagination, combined with filters and search, and wanted a cap so the page does not grow without bound.
+
+**Consequences:** `useRecipePages` accumulates pages, reports loading and error states, and ignores stale automatic triggers. The URL-keyed Suspense boundary still resets accumulated pages when filters change. Page numbers are not written to the URL, so a shared link always starts at page one. The earlier HeroUI pagination control and its tests are removed.
+
 ## Open work
 
-- **Priority: visually reassess screen flicker.** Earlier reports described whole-screen dimming/blurring during drawer/category interactions. Those controls are now removed; this does not establish the cause or prove all flicker resolved. Verify remaining navigation and URL search transitions in a browser.
-- Keep the pending cornbread image request tracked independently of the visually verified landing-only design.
-- Visually verify grouped All Recipes navigation at desktop and mobile widths, including keyboard focus, nested mobile-menu dismissal, scrolling, and long labels.
+- On October 12, 2026 the user reported the earlier open items (flicker reassessment, cornbread image request, grouped navigation checks) as done, except the About page. The sections below keep their history.
+- **Supabase go-live:** create the project, apply the migration (`supabase link` then `supabase db push`, or paste the SQL into the dashboard), fill `.env.local`, run `npm run seed:supabase`, and verify the homepage, filters, details page, and image optimization in a browser.
+- **Browser-verify infinite loading:** automatic loading near the list end, the Load more button after six automatic pages, error and retry, and filter changes resetting the list. This needs more than twelve recipes, or a temporarily lower `ITEMS_PER_PAGE`.
+- **Search design session:** decide whether filtering and search move into Postgres, and how the current matcher semantics (partial on name/description/cuisine, exact on tags/ingredients/equipment) carry over.
 - TODO: Write the About story and create its page, then uncomment the About navigation item.
 - Review recipe-specific classifications as the collection grows; do not silently relabel fixtures as part of unrelated UI work.
-- Pagination versus infinite scroll is undecided. A future landing-page grid cap of roughly one or two pages is proposed; do not cap data or remove current pagination until the browsing design is settled.
-- The user confirmed the search/drawer-removal visual checks passed before the featured-boundary split. Visual verification of the split remains separate from that confirmation.
 
 ## Featured image navigation bug
 
@@ -108,7 +125,7 @@ References: [Supabase Storage](https://supabase.com/docs/guides/storage/quicksta
 
 ## Grouped recipe navigation
 
-**Status:** Implemented September 24, 2026; browser verification pending.
+**Status:** Implemented September 24, 2026; the user reported the browser checks done on October 12, 2026.
 
 **Decision:** Navigation exposes All Recipes and Bakery. About is commented out with a TODO until its story/page exists. The separate `NavigationBar/AllRecipes` component uses HeroUI Dropdown, DropdownMenu, and grouped sections, with Next.js links. Desktop and mobile share the menu content; selecting a mobile category closes the navigation menu.
 
@@ -120,8 +137,8 @@ References: [Supabase Storage](https://supabase.com/docs/guides/storage/quicksta
 
 ## Upcoming browsing work
 
-**Result presentation:** Use existing image cards until a separate discussion decides between a grid and full-width result cards. Keep loading and empty states throughout.
+**Result presentation:** Use existing image cards until a separate discussion decides between a grid and full-width result cards. Keep loading and empty states throughout. Paging is settled by the infinite results loading decision above.
 
-**Filter model:** Tag URL support is implemented for the menu. Ingredient filtering is deferred. Broader validated filter types and removal of obsolete drawer filter structures remain separate work.
+**Filter model:** Tag URL support is implemented for the menu. Ingredient filtering is deferred. Broader validated filter types remain separate work. The obsolete drawer-era matchers (`matchCategory`, `matchFilters`, `everySet`, `parseCategorySelection`, the `FilterMap` type) and the empty drawer folder were removed on October 12, 2026; `matchRecipe` and `matchCuisine` stay because `filterRecipes` uses them for server-side search.
 
 **Lower priority:** Add a globe control to navigation for language. Clarify whether it controls recipe/source language or interface language before implementation.

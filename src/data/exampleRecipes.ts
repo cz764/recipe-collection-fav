@@ -4,6 +4,7 @@ export const exampleRecipes: Recipe[] = [
   {
     id: '1',
     name: 'Sourdough',
+    slug: 'sourdough',
     description:
       'European style sourdough that does not require a starter. Instead, we develop the flavor by using "Poolish". Perfect slice can be used to make sandwich, or just spread some butter!',
     tags: ['vegetarian', 'bread', 'dough'],
@@ -75,6 +76,7 @@ export const exampleRecipes: Recipe[] = [
   {
     id: '2',
     name: 'Mexican Cheese Cornbread Biscuits',
+    slug: 'mexican-cheese-cornbread-biscuits',
     description:
       'I watched a video from Mike G on Youtube about this $50 budget meal prepping, this Mexican cheese cornbread caught my eye. It looks easy to make and delicious. It is between a dinner roll and biscuit. ',
     tags: ['bread'],
@@ -136,6 +138,7 @@ export const exampleRecipes: Recipe[] = [
   {
     id: '3',
     name: 'Chocolate Guinness Cake',
+    slug: 'chocolate-guinness-cake',
     description:
       "This is recipe inspired from New York Times, I had this cake at my mother-in-law's home once, and immediately fall in love with the flavor. Personally I prefer the cake without the topping, so I put it as optional.",
     tags: ['cake'],
@@ -197,6 +200,7 @@ export const exampleRecipes: Recipe[] = [
   {
     id: '4',
     name: 'Japanese Milk Bread',
+    slug: 'japanese-milk-bread',
     description:
       "I had this bread ordered from a bakery in San francisco while I stayed at my friend's house, it blow my mind of how airy and fluffy the milk bread texture can be. After I come back home, I still remembered it. I've tried bake this tangzhong bread myself by following this King Authur blog post, the result is awesome. And plus it saves a lot money since I remember it cost a fortune from the bakery my friend ordered from. The end result is same! The secrete is tangzhong(汤种).",
     tags: ['bread', 'dough'],
@@ -267,6 +271,7 @@ export const exampleRecipes: Recipe[] = [
   {
     id: '5',
     name: 'Wholewheat Loaf Bread',
+    slug: 'wholewheat-loaf-bread',
     description:
       'A healthy and hearty version of sandwich loaf bread, made with 100% whole wheat.',
     tags: ['vegetarian', 'bread', 'dough'],
@@ -329,6 +334,7 @@ export const exampleRecipes: Recipe[] = [
   {
     id: '6',
     name: 'Egg Bites with Bacon & Gruyère',
+    slug: 'egg-bites-with-bacon-gruyere',
     description:
       'If you like the sous vide egg bites from Starbucks, you’ll love this copycat version—no sous vide equipment required!',
     tags: ['high-protein'],
@@ -383,6 +389,7 @@ export const exampleRecipes: Recipe[] = [
   {
     id: '7',
     name: 'Baozi (包子) Chinese dumpling',
+    slug: 'baozi-chinese-dumpling',
     description:
       "You've probably tried steamed soup dumplings(Xiao long bao), they were very popular in chinatown. This Baozi is slightly different, rather than Shanghai cuisine, Baozi is more of a northern food, though everyone have their own grandma's Baozi recipe, this is one that brings the most Chinese flavor. ** The ingredients for filling are not carefully measured, you can go with your instinct! **",
     tags: ['dough', 'high-protein'],
@@ -475,6 +482,7 @@ export const exampleRecipes: Recipe[] = [
   {
     id: '8',
     name: 'Shanghai style Borscht(罗宋汤)',
+    slug: 'shanghai-style-borscht',
     description:
       "This is my grandpa's recipe of this comforting warm soup that always heal my soul.",
     tags: ['high-protein'],

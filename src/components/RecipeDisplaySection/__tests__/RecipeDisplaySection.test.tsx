@@ -1,11 +1,12 @@
-import { beforeEach, describe, it, expect, vi } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useSearchParams } from 'next/navigation';
 import { pushMock } from '../../../../vitest.setup';
 import { RecipeDisplaySection } from '..';
 import { makeRecipe } from '@/components/__tests__/mockData';
-import { ITEMS_PER_PAGE } from '@/constants';
+import { AUTO_LOAD_LIMIT, ITEMS_PER_PAGE } from '@/constants';
+import type { RecipePage } from '@/data/filter';
 
 vi.mock('next/navigation', async (importOriginal) => {
   const original = await importOriginal<typeof import('next/navigation')>();
@@ -17,12 +18,30 @@ vi.mock('next/navigation', async (importOriginal) => {
   };
 });
 
+const pageOf = (
+  names: string[],
+  overrides: Partial<RecipePage> = {},
+): RecipePage => ({
+  recipes: names.map((name) => makeRecipe({ id: name, name })),
+  page: 1,
+  pageSize: ITEMS_PER_PAGE,
+  total: names.length,
+  hasMore: false,
+  ...overrides,
+});
+
+const jsonResponse = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
+
 describe('RecipeDisplaySection', () => {
-  const mockRecipeList = [
-    makeRecipe({ id: '1', name: 'Spaghetti Carbonara' }),
-    makeRecipe({ id: '2', name: 'Chicken Curry' }),
-    makeRecipe({ id: '3', name: 'Caesar Salad' }),
-  ];
+  const threeRecipes = pageOf([
+    'Spaghetti Carbonara',
+    'Chicken Curry',
+    'Caesar Salad',
+  ]);
   const getSearchInput = () => screen.getByLabelText('Search Input');
   beforeEach(() => {
     pushMock.mockClear();
@@ -32,7 +51,7 @@ describe('RecipeDisplaySection', () => {
   });
 
   it('renders server results and search without drawer or category picker', () => {
-    render(<RecipeDisplaySection recipeList={mockRecipeList} />);
+    render(<RecipeDisplaySection initialPage={threeRecipes} />);
     expect(getSearchInput()).toBeVisible();
     expect(screen.getByText('3 recipes')).toBeVisible();
     expect(screen.getByText('Spaghetti Carbonara')).toBeVisible();
@@ -42,7 +61,10 @@ describe('RecipeDisplaySection', () => {
 
   it('shows an empty state for empty server results', () => {
     render(
-      <RecipeDisplaySection recipeList={[]} urlFilters={{ q: 'missing' }} />,
+      <RecipeDisplaySection
+        initialPage={pageOf([])}
+        urlFilters={{ q: 'missing' }}
+      />,
     );
     expect(getSearchInput()).toHaveValue('missing');
     expect(screen.getByText('No recipes found.')).toBeVisible();
@@ -55,7 +77,7 @@ describe('RecipeDisplaySection', () => {
         'cuisine=chinese&meal=breakfast&type=entree&extra=keep',
       ) as ReturnType<typeof useSearchParams>,
     );
-    render(<RecipeDisplaySection recipeList={mockRecipeList} />);
+    render(<RecipeDisplaySection initialPage={threeRecipes} />);
     await userEvent.type(getSearchInput(), ' egg & cheese ');
     expect(pushMock).not.toHaveBeenCalled();
     expect(screen.getByText('3 recipes')).toBeVisible();
@@ -67,7 +89,7 @@ describe('RecipeDisplaySection', () => {
   });
 
   it('submits using the search button', async () => {
-    render(<RecipeDisplaySection recipeList={mockRecipeList} />);
+    render(<RecipeDisplaySection initialPage={threeRecipes} />);
     await userEvent.type(getSearchInput(), 'egg');
     await userEvent.click(screen.getByLabelText('Search'));
     expect(pushMock).toHaveBeenCalledWith('/?q=egg', { scroll: false });
@@ -81,7 +103,7 @@ describe('RecipeDisplaySection', () => {
     );
     render(
       <RecipeDisplaySection
-        recipeList={mockRecipeList}
+        initialPage={threeRecipes}
         urlFilters={{ q: 'egg', cuisine: 'chinese' }}
       />,
     );
@@ -99,7 +121,7 @@ describe('RecipeDisplaySection', () => {
     );
     render(
       <RecipeDisplaySection
-        recipeList={mockRecipeList}
+        initialPage={threeRecipes}
         urlFilters={{ q: 'egg' }}
       />,
     );
@@ -108,87 +130,149 @@ describe('RecipeDisplaySection', () => {
     expect(pushMock).toHaveBeenCalledWith('/', { scroll: false });
   });
 
-  describe('pagination', () => {
-    const createManyRecipes = (count: number) =>
-      Array.from({ length: count }, (_, i) =>
-        makeRecipe({ id: `${i + 1}`, name: `Recipe ${i + 1}` }),
+  describe('loading more results', () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    const firstPage = pageOf(['Recipe 1', 'Recipe 2'], {
+      total: 5,
+      hasMore: true,
+    });
+
+    beforeEach(() => {
+      fetchMock.mockReset();
+      vi.stubGlobal('fetch', fetchMock);
+    });
+    afterEach(() => vi.unstubAllGlobals());
+
+    it('hides Load more when the server page is the last one', () => {
+      render(<RecipeDisplaySection initialPage={threeRecipes} />);
+      expect(
+        screen.queryByRole('button', { name: 'Load more' }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('fetches the next page with the current filters and appends it', async () => {
+      fetchMock.mockResolvedValueOnce(
+        jsonResponse(
+          pageOf(['Recipe 3', 'Recipe 4'], {
+            page: 2,
+            total: 5,
+            hasMore: true,
+          }),
+        ),
       );
-
-    it('does not show pagination when recipes fit on one page', () => {
-      const recipes = createManyRecipes(ITEMS_PER_PAGE);
-      render(<RecipeDisplaySection recipeList={recipes} />);
-
-      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
-    });
-
-    it('shows pagination when recipes exceed one page', () => {
-      const recipes = createManyRecipes(ITEMS_PER_PAGE + 1);
-      render(<RecipeDisplaySection recipeList={recipes} />);
-
-      expect(screen.getByRole('navigation')).toBeVisible();
-    });
-
-    it('displays correct items on first page', () => {
-      const recipes = createManyRecipes(ITEMS_PER_PAGE + 3);
-      render(<RecipeDisplaySection recipeList={recipes} />);
-
+      render(
+        <RecipeDisplaySection
+          initialPage={firstPage}
+          urlFilters={{ cuisine: 'chinese', q: 'egg & cheese' }}
+        />,
+      );
+      expect(screen.getByText('5 recipes')).toBeVisible();
+      await userEvent.click(screen.getByRole('button', { name: 'Load more' }));
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/recipes?cuisine=chinese&q=egg+%26+cheese&page=2',
+      );
+      expect(await screen.findByText('Recipe 3')).toBeVisible();
       expect(screen.getByText('Recipe 1')).toBeVisible();
-      expect(screen.getByText(`Recipe ${ITEMS_PER_PAGE}`)).toBeVisible();
+      expect(screen.getByText('Recipe 4')).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Load more' })).toBeVisible();
+
+      fetchMock.mockResolvedValueOnce(
+        jsonResponse(pageOf(['Recipe 5'], { page: 3, total: 5 })),
+      );
+      await userEvent.click(screen.getByRole('button', { name: 'Load more' }));
+      expect(await screen.findByText('Recipe 5')).toBeVisible();
+      expect(fetchMock).toHaveBeenLastCalledWith(
+        '/api/recipes?cuisine=chinese&q=egg+%26+cheese&page=3',
+      );
       expect(
-        screen.queryByText(`Recipe ${ITEMS_PER_PAGE + 1}`),
+        screen.queryByRole('button', { name: 'Load more' }),
       ).not.toBeInTheDocument();
     });
 
-    it('displays correct items on second page', async () => {
-      const recipes = createManyRecipes(ITEMS_PER_PAGE + 3);
-      render(<RecipeDisplaySection recipeList={recipes} />);
-
-      const pagination = screen.getByRole('navigation');
-      await userEvent.click(
-        within(pagination).getByRole('button', { name: /pagination item 2/ }),
+    it('reports a failed fetch and lets the user retry', async () => {
+      const consoleError = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+      fetchMock.mockResolvedValueOnce(jsonResponse({ error: 'nope' }, 500));
+      render(<RecipeDisplaySection initialPage={firstPage} />);
+      await userEvent.click(screen.getByRole('button', { name: 'Load more' }));
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        'Could not load more recipes.',
       );
 
-      expect(screen.getByText(`Recipe ${ITEMS_PER_PAGE + 1}`)).toBeVisible();
-      expect(screen.getByText(`Recipe ${ITEMS_PER_PAGE + 3}`)).toBeVisible();
-      expect(screen.queryByText('Recipe 1')).not.toBeInTheDocument();
+      fetchMock.mockResolvedValueOnce(
+        jsonResponse(pageOf(['Recipe 3'], { page: 2, total: 5 })),
+      );
+      await userEvent.click(screen.getByRole('button', { name: 'Load more' }));
+      expect(await screen.findByText('Recipe 3')).toBeVisible();
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      consoleError.mockRestore();
     });
 
-    it('calculates total pages correctly', () => {
-      // 2 full pages + 1 partial = 3 pages
-      const recipes = createManyRecipes(ITEMS_PER_PAGE * 2 + 1);
-      render(<RecipeDisplaySection recipeList={recipes} />);
+    describe('automatic loading on scroll', () => {
+      let intersect: (() => void) | undefined;
+      const observe = vi.fn();
+      const disconnect = vi.fn();
 
-      const pagination = screen.getByRole('navigation');
-      expect(
-        within(pagination).getByRole('button', { name: /pagination item 1/ }),
-      ).toBeVisible();
-      expect(
-        within(pagination).getByRole('button', { name: /pagination item 2/ }),
-      ).toBeVisible();
-      expect(
-        within(pagination).getByRole('button', { name: /pagination item 3/ }),
-      ).toBeVisible();
-      expect(
-        within(pagination).queryByRole('button', { name: /pagination item 4/ }),
-      ).not.toBeInTheDocument();
-    });
+      beforeEach(() => {
+        intersect = undefined;
+        observe.mockClear();
+        disconnect.mockClear();
+        vi.stubGlobal(
+          'IntersectionObserver',
+          class {
+            constructor(callback: IntersectionObserverCallback) {
+              intersect = () =>
+                callback(
+                  [{ isIntersecting: true } as IntersectionObserverEntry],
+                  this as unknown as IntersectionObserver,
+                );
+            }
+            observe = observe;
+            disconnect = disconnect;
+          },
+        );
+      });
 
-    it('calculates total pages correctly when evenly divisible', () => {
-      const recipes = createManyRecipes(ITEMS_PER_PAGE * 2);
-      render(<RecipeDisplaySection recipeList={recipes} />);
+      it('loads pages while scrolling until the automatic limit, then leaves Load more', async () => {
+        let page = 1;
+        fetchMock.mockImplementation(async () => {
+          page += 1;
+          return jsonResponse(
+            pageOf([`Auto page ${page}`], { page, total: 100, hasMore: true }),
+          );
+        });
+        render(<RecipeDisplaySection initialPage={firstPage} />);
+        expect(observe).toHaveBeenCalledTimes(1);
 
-      const pagination = screen.getByRole('navigation');
-      expect(
-        within(pagination).getByRole('button', {
-          name: /pagination item 1/,
-        }),
-      ).toBeVisible();
-      expect(
-        within(pagination).getByRole('button', { name: /pagination item 2/ }),
-      ).toBeVisible();
-      expect(
-        within(pagination).queryByRole('button', { name: /pagination item 3/ }),
-      ).not.toBeInTheDocument();
+        for (let load = 1; load <= AUTO_LOAD_LIMIT; load += 1) {
+          await act(async () => intersect?.());
+          expect(
+            await screen.findByText(`Auto page ${load + 1}`),
+          ).toBeVisible();
+        }
+        expect(fetchMock).toHaveBeenCalledTimes(AUTO_LOAD_LIMIT);
+        expect(fetchMock).toHaveBeenLastCalledWith(
+          `/api/recipes?page=${AUTO_LOAD_LIMIT + 1}`,
+        );
+
+        // Observation stops after the limit; only the button loads more now.
+        const observations = observe.mock.calls.length;
+        await act(async () => intersect?.());
+        expect(fetchMock).toHaveBeenCalledTimes(AUTO_LOAD_LIMIT);
+        expect(observe).toHaveBeenCalledTimes(observations);
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Load more' }),
+        );
+        await waitFor(() =>
+          expect(fetchMock).toHaveBeenCalledTimes(AUTO_LOAD_LIMIT + 1),
+        );
+      });
+
+      it('does not observe when there is nothing more to load', () => {
+        render(<RecipeDisplaySection initialPage={threeRecipes} />);
+        expect(observe).not.toHaveBeenCalled();
+      });
     });
   });
 });

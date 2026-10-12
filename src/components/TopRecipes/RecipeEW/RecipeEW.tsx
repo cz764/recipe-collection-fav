@@ -10,14 +10,14 @@ interface RecipeEWProps {
 }
 
 export function RecipeEW({ recipe }: RecipeEWProps) {
-  const { id, name, pictureUrl, tags } = recipe;
+  const { slug, name, pictureUrl, tags } = recipe;
   const router = useRouter();
 
   return (
     <Card
       isPressable
       fullWidth
-      onPress={() => router.push(`/details/${encodeURIComponent(id)}`)}
+      onPress={() => router.push(`/details/${encodeURIComponent(slug)}`)}
     >
       <CardBody>
         <div className='flex flex-col gap-6 lg:flex-row'>

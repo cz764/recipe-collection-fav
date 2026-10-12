@@ -10,14 +10,14 @@ interface RecipeCardProps {
   recipeData: RecipeType;
 }
 export function RecipeCard({ recipeData }: RecipeCardProps) {
-  const { id, pictureUrl, name, description, tags } = recipeData;
+  const { slug, pictureUrl, name, description, tags } = recipeData;
   const router = useRouter();
 
   return (
     <Card
       isPressable
       className='w-full'
-      onPress={() => router.push(`/details/${encodeURIComponent(id)}`)}
+      onPress={() => router.push(`/details/${encodeURIComponent(slug)}`)}
     >
       <CardBody className='flex flex-col justify-between gap-2'>
         <div className='flex flex-col gap-2'>

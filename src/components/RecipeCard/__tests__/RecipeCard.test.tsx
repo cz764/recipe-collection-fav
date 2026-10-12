@@ -52,15 +52,15 @@ describe('RecipeCard', () => {
 
   it('navigates to recipe details on press', async () => {
     const user = userEvent.setup();
-    const recipe = makeRecipe({ id: '42' });
+    const recipe = makeRecipe({ slug: 'milk-bread' });
     render(<RecipeCard recipeData={recipe} />);
     await user.click(screen.getByRole('button'));
-    expect(pushMock).toHaveBeenCalledWith('/details/42');
+    expect(pushMock).toHaveBeenCalledWith('/details/milk-bread');
   });
 
-  it('encodes ids with special characters in the URL', async () => {
+  it('encodes slugs with special characters in the URL', async () => {
     const user = userEvent.setup();
-    const recipe = makeRecipe({ id: 'a b/c' });
+    const recipe = makeRecipe({ slug: 'a b/c' });
     render(<RecipeCard recipeData={recipe} />);
     await user.click(screen.getByRole('button'));
     expect(pushMock).toHaveBeenCalledWith('/details/a%20b%2Fc');

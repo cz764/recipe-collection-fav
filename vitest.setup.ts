@@ -3,6 +3,10 @@ import { vi } from 'vitest';
 
 export const pushMock = vi.fn();
 
+// `server-only` throws outside a React Server Components bundle; tests import
+// server modules directly, so neutralize the guard here.
+vi.mock('server-only', () => ({}));
+
 vi.mock('next/navigation', () => ({
   usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),

@@ -11,7 +11,7 @@ interface TodayRecipeProps {
 }
 
 export function TodayRecipe({ recipe }: TodayRecipeProps) {
-  const { id, name, pictureUrl, description, ingredients, tags } = recipe;
+  const { slug, name, pictureUrl, description, ingredients, tags } = recipe;
   const router = useRouter();
 
   return (
@@ -19,7 +19,7 @@ export function TodayRecipe({ recipe }: TodayRecipeProps) {
       isPressable
       className='min-w-0 xl:max-w-3/5'
       fullWidth
-      onPress={() => router.push(`/details/${encodeURIComponent(id)}`)}
+      onPress={() => router.push(`/details/${encodeURIComponent(slug)}`)}
     >
       <CardBody>
         <div className='flex flex-col gap-6 lg:flex-row'>

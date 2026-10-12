@@ -1,29 +1,48 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
-import { Pagination } from '@heroui/pagination';
+import { Button } from '@heroui/button';
 import { SearchAndFilterBar } from '@/components/SearchAndFilterBar';
 import { RecipeCard } from '@/components/RecipeCard';
-import type { Recipe } from '@/data/recipe';
-import type { RecipeQuery } from '@/data/filter';
-import { ITEMS_PER_PAGE } from '@/constants';
+import type { RecipePage, RecipeQuery } from '@/data/filter';
+import { useRecipePages } from '@/hooks/useRecipePages';
 
 interface RecipeDisplaySectionProps {
-  recipeList: Recipe[];
+  initialPage: RecipePage;
   urlFilters?: RecipeQuery;
 }
 
 export function RecipeDisplaySection({
-  recipeList,
+  initialPage,
   urlFilters,
 }: RecipeDisplaySectionProps) {
   const [searchText, setSearchText] = useState(urlFilters?.q ?? '');
-  const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { recipes, total, hasMore, status, autoLoadExhausted, loadMore } =
+    useRecipePages(initialPage, urlFilters);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // Scrolling near the Load more control fetches the next page automatically.
+  // The button stays available, so the list still works without the observer.
+  const autoLoad = hasMore && !autoLoadExhausted && status === 'idle';
+  useEffect(() => {
+    const target = loadMoreRef.current;
+    if (!autoLoad || !target || typeof IntersectionObserver === 'undefined') {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) loadMore('auto');
+      },
+      { rootMargin: '200px 0px' },
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [autoLoad, loadMore]);
 
   const applySearch = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -42,11 +61,11 @@ export function RecipeDisplaySection({
         searchText={searchText}
         onSearchTextChange={setSearchText}
         onSearch={applySearch}
-        totalRecipes={recipeList.length}
+        totalRecipes={total}
         urlFilters={urlFilters}
       />
       <div className='grid min-h-96 grid-cols-1 content-start gap-6 md:grid-cols-2 lg:grid-cols-3'>
-        {recipeList.length === 0 ? (
+        {recipes.length === 0 ? (
           <p
             role='status'
             className='col-span-full flex min-h-96 items-center justify-center text-gray-600'
@@ -54,27 +73,29 @@ export function RecipeDisplaySection({
             No recipes found.
           </p>
         ) : (
-          recipeList
-            .slice(
-              (currentPage - 1) * ITEMS_PER_PAGE,
-              currentPage * ITEMS_PER_PAGE,
-            )
-            .map((recipeData) => {
-              const { name } = recipeData;
-              return (
-                <RecipeCard key={`${name}-card`} recipeData={recipeData} />
-              );
-            })
+          recipes.map((recipeData) => (
+            <RecipeCard key={`${recipeData.id}-card`} recipeData={recipeData} />
+          ))
         )}
       </div>
-      <div className='flex min-h-10 justify-center'>
-        {recipeList.length > ITEMS_PER_PAGE ? (
-          <Pagination
+      <div
+        ref={loadMoreRef}
+        className='flex min-h-10 flex-col items-center justify-center gap-2'
+      >
+        {status === 'error' ? (
+          <p role='alert' className='text-danger text-sm'>
+            Could not load more recipes.
+          </p>
+        ) : null}
+        {hasMore ? (
+          <Button
             color='secondary'
-            page={currentPage}
-            total={Math.ceil(recipeList.length / ITEMS_PER_PAGE)}
-            onChange={setCurrentPage}
-          />
+            variant='flat'
+            isLoading={status === 'loading'}
+            onPress={() => loadMore('manual')}
+          >
+            {status === 'loading' ? 'Loading more recipes' : 'Load more'}
+          </Button>
         ) : null}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { fetchFeaturedRecipes } from '@/api/recipes';
+import { fetchFeaturedRecipes } from '@/server/recipes';
 import { TopRecipes } from '@/components/TopRecipes';
 
 export async function FeaturedRecipeLoader() {

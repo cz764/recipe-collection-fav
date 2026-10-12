@@ -12,6 +12,7 @@ export type RecipeTag = (typeof RECIPE_TAGS)[number];
 
 export interface Recipe {
   id: string;
+  slug: string; // dashed name, unique; used in /details/<slug>
   name: string; // max: 40
   description: string; // max: 200
   tags: RecipeTag[];

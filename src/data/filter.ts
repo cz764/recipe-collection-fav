@@ -1,7 +1,5 @@
 import type { Recipe } from './recipe';
 
-export type FilterMap = Map<keyof Recipe, Array<string>>;
-
 export type RecipeSearchParams = Record<string, string | string[] | undefined>;
 
 export interface RecipeQuery {
@@ -10,4 +8,13 @@ export interface RecipeQuery {
   cuisine?: string;
   meal?: string;
   type?: string;
+}
+
+/** One page of filtered results plus what the client needs to ask for the next. */
+export interface RecipePage {
+  recipes: Recipe[];
+  page: number;
+  pageSize: number;
+  total: number;
+  hasMore: boolean;
 }

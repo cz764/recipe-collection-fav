@@ -3,6 +3,7 @@ import type { Recipe } from '@/data/recipe';
 export function makeRecipe(overrides: Partial<Recipe> = {}): Recipe {
   return {
     id: '1',
+    slug: 'test-recipe',
     name: 'Test Recipe',
     description: 'A delicious test recipe with amazing flavors',
     tags: ['one-pot', 'bread', 'vegetarian'],

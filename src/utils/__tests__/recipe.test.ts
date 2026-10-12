@@ -1,7 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { matchRecipe, matchCategory, matchFilters } from '../index';
+import {
+  filterRecipes,
+  matchCuisine,
+  matchRecipe,
+  paginateRecipes,
+  parsePage,
+} from '../index';
 import { makeRecipe } from '@/components/__tests__/mockData';
-import type { FilterMap } from '@/data/filter';
 
 describe('matchRecipe', () => {
   it('matches recipe by name (partial match)', () => {
@@ -84,162 +89,6 @@ describe('matchRecipe', () => {
   });
 });
 
-describe('matchCategory', () => {
-  it('returns true for empty category set', () => {
-    const recipe = makeRecipe();
-    expect(matchCategory(recipe, new Set())).toBe(true);
-  });
-
-  it('matches recipe by tag', () => {
-    const recipe = makeRecipe({ tags: ['one-pot', 'bread', 'vegetarian'] });
-    expect(matchCategory(recipe, new Set(['one-pot']))).toBe(true);
-    expect(matchCategory(recipe, new Set(['bread']))).toBe(true);
-  });
-
-  it('matches recipe by cuisine', () => {
-    const recipe = makeRecipe({ cuisine: 'italian' });
-    expect(matchCategory(recipe, new Set(['italian']))).toBe(true);
-  });
-
-  it('matches recipe by meal', () => {
-    const recipe = makeRecipe({ meal: 'dinner' });
-    expect(matchCategory(recipe, new Set(['dinner']))).toBe(true);
-  });
-
-  it('matches recipe with multiple categories from different fields', () => {
-    const recipe = makeRecipe({
-      tags: ['one-pot', 'high-protein'],
-      cuisine: 'italian',
-      meal: 'dinner',
-    });
-    expect(matchCategory(recipe, new Set(['one-pot', 'italian']))).toBe(true);
-    expect(matchCategory(recipe, new Set(['high-protein', 'dinner']))).toBe(
-      true,
-    );
-    expect(
-      matchCategory(recipe, new Set(['one-pot', 'italian', 'dinner'])),
-    ).toBe(true);
-  });
-
-  it('returns false when one category does not match', () => {
-    const recipe = makeRecipe({
-      tags: ['one-pot'],
-      cuisine: 'italian',
-      meal: 'dinner',
-    });
-    expect(matchCategory(recipe, new Set(['one-pot', 'mexican']))).toBe(false);
-  });
-
-  it('returns false when no categories match', () => {
-    const recipe = makeRecipe({
-      tags: ['one-pot'],
-      cuisine: 'italian',
-      meal: 'dinner',
-    });
-    expect(matchCategory(recipe, new Set(['Slow', 'mexican']))).toBe(false);
-  });
-
-  it('requires all categories to match (AND logic)', () => {
-    const recipe = makeRecipe({
-      tags: ['one-pot', 'bread'],
-      cuisine: 'italian',
-      meal: 'lunch',
-    });
-    expect(
-      matchCategory(recipe, new Set(['one-pot', 'bread', 'italian'])),
-    ).toBe(true);
-    expect(
-      matchCategory(
-        recipe,
-        new Set(['one-pot', 'bread', 'italian', 'breakfast']),
-      ),
-    ).toBe(false);
-  });
-});
-
-describe('matchFilters', () => {
-  it('returns true for empty filterMap', () => {
-    const recipe = makeRecipe();
-    const filterMap: FilterMap = new Map();
-    expect(matchFilters(recipe, filterMap)).toBe(true);
-  });
-
-  it('returns true when all filter values are empty arrays', () => {
-    const recipe = makeRecipe({ meal: 'dinner', language: 'en' });
-    const filterMap: FilterMap = new Map();
-    filterMap.set('meal', []);
-    filterMap.set('language', []);
-    expect(matchFilters(recipe, filterMap)).toBe(true);
-  });
-
-  it('matches recipe by meal filter', () => {
-    const recipe = makeRecipe({ meal: 'breakfast' });
-    const filterMap: FilterMap = new Map();
-    filterMap.set('meal', ['breakfast']);
-    expect(matchFilters(recipe, filterMap)).toBe(true);
-  });
-
-  it('matches recipe by language filter', () => {
-    const recipe = makeRecipe({ language: 'ch' });
-    const filterMap: FilterMap = new Map();
-    filterMap.set('language', ['ch']);
-    expect(matchFilters(recipe, filterMap)).toBe(true);
-  });
-
-  it('returns false when meal does not match', () => {
-    const recipe = makeRecipe({ meal: 'dinner' });
-    const filterMap: FilterMap = new Map();
-    filterMap.set('meal', ['breakfast']);
-    expect(matchFilters(recipe, filterMap)).toBe(false);
-  });
-
-  it('returns false when language does not match', () => {
-    const recipe = makeRecipe({ language: 'en' });
-    const filterMap: FilterMap = new Map();
-    filterMap.set('language', ['ch']);
-    expect(matchFilters(recipe, filterMap)).toBe(false);
-  });
-
-  it('matches when filter has multiple values (OR within key)', () => {
-    const recipe = makeRecipe({ meal: 'lunch' });
-    const filterMap: FilterMap = new Map();
-    filterMap.set('meal', ['breakfast', 'lunch', 'dinner']);
-    expect(matchFilters(recipe, filterMap)).toBe(true);
-  });
-
-  it('requires all keys to match (AND logic across keys)', () => {
-    const recipe = makeRecipe({ meal: 'breakfast', language: 'en' });
-    const filterMap: FilterMap = new Map();
-    filterMap.set('meal', ['breakfast']);
-    filterMap.set('language', ['en']);
-    expect(matchFilters(recipe, filterMap)).toBe(true);
-  });
-
-  it('returns false when one of multiple keys does not match', () => {
-    const recipe = makeRecipe({ meal: 'breakfast', language: 'en' });
-    const filterMap: FilterMap = new Map();
-    filterMap.set('meal', ['breakfast']);
-    filterMap.set('language', ['ch']);
-    expect(matchFilters(recipe, filterMap)).toBe(false);
-  });
-
-  it('skips keys with empty arrays and applies the rest', () => {
-    const recipe = makeRecipe({ meal: 'breakfast', language: 'en' });
-    const filterMap: FilterMap = new Map();
-    filterMap.set('meal', []);
-    filterMap.set('language', ['en']);
-    expect(matchFilters(recipe, filterMap)).toBe(true);
-  });
-
-  it('returns false when non-empty key fails even if other keys are empty', () => {
-    const recipe = makeRecipe({ meal: 'breakfast', language: 'en' });
-    const filterMap: FilterMap = new Map();
-    filterMap.set('meal', []);
-    filterMap.set('language', ['ch']);
-    expect(matchFilters(recipe, filterMap)).toBe(false);
-  });
-});
-
 describe('controlled classifications', () => {
   it('finds meal and dish types without duplicating them in tags', () => {
     const recipe = makeRecipe({
@@ -249,31 +98,141 @@ describe('controlled classifications', () => {
     });
     expect(matchRecipe(recipe, 'SNACK')).toBe(true);
     expect(matchRecipe(recipe, 'bakery')).toBe(true);
-    expect(matchCategory(recipe, new Set(['snack', 'side dish']))).toBe(true);
-    expect(matchFilters(recipe, new Map([['type', ['soup', 'bakery']]]))).toBe(
-      true,
-    );
-    expect(matchFilters(recipe, new Map([['type', ['soup']]]))).toBe(false);
-  });
-
-  it('matches controlled tags using OR within the field', () => {
-    const recipe = makeRecipe({ tags: ['bread', 'dough'] });
-    expect(matchFilters(recipe, new Map([['tags', ['cake', 'bread']]]))).toBe(
-      true,
-    );
-    expect(matchFilters(recipe, new Map([['tags', ['cake']]]))).toBe(false);
   });
 
   it('keeps the cuisine hierarchy one-way', () => {
-    const mexican = makeRecipe({ cuisine: 'mexican' });
-    const regional = makeRecipe({ cuisine: 'latin-american' });
-    expect(matchCategory(mexican, new Set(['latin-american']))).toBe(true);
+    expect(matchCuisine('mexican', 'latin-american')).toBe(true);
+    expect(matchCuisine('latin-american', 'mexican')).toBe(false);
+    expect(matchCuisine('mexican', ' Mexican ')).toBe(true);
+  });
+});
+
+describe('filterRecipes', () => {
+  const sourdough = makeRecipe({
+    id: '1',
+    name: 'Sourdough',
+    cuisine: 'unknown',
+    meal: 'breakfast',
+    type: ['bakery'],
+    tags: ['vegetarian', 'bread'],
+  });
+  const biscuits = makeRecipe({
+    id: '2',
+    name: 'Cornbread Biscuits',
+    cuisine: 'mexican',
+    meal: 'dinner',
+    type: ['bakery', 'side dish'],
+    tags: ['bread'],
+  });
+  const eggBites = makeRecipe({
+    id: '3',
+    name: 'Egg Bites',
+    cuisine: 'modern',
+    meal: 'breakfast',
+    type: ['entree'],
+    tags: ['high-protein'],
+    ingredients: [{ name: 'egg', amount: 6 }],
+  });
+  const dumplings = makeRecipe({
+    id: '4',
+    name: 'Baozi',
+    cuisine: 'chinese',
+    meal: 'lunch',
+    type: ['appetizer', 'entree'],
+    tags: ['dough'],
+  });
+  const all = [sourdough, biscuits, eggBites, dumplings];
+  const names = (filters: Parameters<typeof filterRecipes>[1]) =>
+    filterRecipes(all, filters).map((recipe) => recipe.name);
+
+  it('returns everything for missing or blank filters', () => {
+    expect(filterRecipes(all)).toEqual(all);
     expect(
-      matchFilters(mexican, new Map([['cuisine', ['latin-american']]])),
-    ).toBe(true);
-    expect(matchCategory(regional, new Set(['mexican']))).toBe(false);
-    expect(matchFilters(regional, new Map([['cuisine', ['mexican']]]))).toBe(
-      false,
-    );
+      filterRecipes(all, { cuisine: ' ', meal: '', q: '  ', tag: ' ' }),
+    ).toEqual(all);
+  });
+
+  it('matches cuisine exactly, ignoring case and spaces, with Mexican inside Latin American', () => {
+    expect(names({ cuisine: ' CHINESE ' })).toEqual(['Baozi']);
+    expect(names({ cuisine: 'chin' })).toEqual([]);
+    expect(names({ cuisine: 'latin-american' })).toEqual([
+      'Cornbread Biscuits',
+    ]);
+    expect(names({ cuisine: 'unknown' })).toEqual(['Sourdough']);
+    expect(names({ cuisine: 'invalid-cuisine' })).toEqual([]);
+  });
+
+  it('matches meal, any assigned dish type, and exact tags', () => {
+    expect(names({ meal: 'DESSERT' })).toEqual([]);
+    expect(names({ meal: 'breakfast' })).toEqual(['Sourdough', 'Egg Bites']);
+    expect(names({ type: ' BAKERY ' })).toEqual([
+      'Sourdough',
+      'Cornbread Biscuits',
+    ]);
+    expect(names({ type: 'side dish' })).toEqual(['Cornbread Biscuits']);
+    expect(names({ type: 'breakfast' })).toEqual([]);
+    expect(names({ tag: ' VEGETARIAN ' })).toEqual(['Sourdough']);
+    expect(names({ tag: 'veg' })).toEqual([]);
+  });
+
+  it('combines fields with AND and searches text case-insensitively', () => {
+    expect(
+      names({ cuisine: 'mexican', meal: 'dinner', type: 'bakery' }),
+    ).toEqual(['Cornbread Biscuits']);
+    expect(names({ cuisine: 'mexican', meal: 'breakfast' })).toEqual([]);
+    expect(names({ q: ' EGG ' })).toEqual(['Egg Bites']);
+    expect(
+      names({ q: 'egg', cuisine: 'modern', meal: 'breakfast', type: 'entree' }),
+    ).toEqual(['Egg Bites']);
+    expect(names({ q: 'egg', cuisine: 'italian' })).toEqual([]);
+    expect(names({ tag: 'bread', type: 'bakery', q: 'Sour' })).toEqual([
+      'Sourdough',
+    ]);
+    expect(names({ q: 'no-such-recipe' })).toEqual([]);
+  });
+});
+
+describe('parsePage and paginateRecipes', () => {
+  const recipes = Array.from({ length: 7 }, (_, index) =>
+    makeRecipe({ id: `${index + 1}`, name: `Recipe ${index + 1}` }),
+  );
+
+  it('accepts positive integers and falls back to page 1', () => {
+    expect(parsePage('3')).toBe(3);
+    expect(parsePage(undefined)).toBe(1);
+    expect(parsePage('0')).toBe(1);
+    expect(parsePage('-2')).toBe(1);
+    expect(parsePage('1.5')).toBe(1);
+    expect(parsePage('abc')).toBe(1);
+  });
+
+  it('slices pages and reports the total and whether more remain', () => {
+    const first = paginateRecipes(recipes, 1, 3);
+    expect(first.recipes.map((recipe) => recipe.name)).toEqual([
+      'Recipe 1',
+      'Recipe 2',
+      'Recipe 3',
+    ]);
+    expect(first).toMatchObject({
+      page: 1,
+      pageSize: 3,
+      total: 7,
+      hasMore: true,
+    });
+
+    const last = paginateRecipes(recipes, 3, 3);
+    expect(last.recipes.map((recipe) => recipe.name)).toEqual(['Recipe 7']);
+    expect(last.hasMore).toBe(false);
+
+    expect(paginateRecipes(recipes, 4, 3)).toMatchObject({
+      recipes: [],
+      total: 7,
+      hasMore: false,
+    });
+    expect(paginateRecipes([], 1, 3)).toMatchObject({
+      total: 0,
+      hasMore: false,
+    });
+    expect(paginateRecipes(recipes, 0, 3).page).toBe(1);
   });
 });

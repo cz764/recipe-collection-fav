@@ -1,4 +1,4 @@
-import { fetchRecipes } from '@/api/recipes';
+import { fetchRecipes } from '@/server/recipes';
 import type { RecipeSearchParams } from '@/data/filter';
 import { parseRecipeSearchParams } from '@/utils/searchParams';
 import { RecipeDisplaySection } from '@/components/RecipeDisplaySection';
@@ -9,7 +9,9 @@ interface RecipeLoaderProps {
 
 export async function RecipeLoader({ searchParams }: RecipeLoaderProps) {
   const filters = parseRecipeSearchParams(searchParams);
-  const recipeList = await fetchRecipes(filters);
+  const initialPage = await fetchRecipes(filters);
 
-  return <RecipeDisplaySection recipeList={recipeList} urlFilters={filters} />;
+  return (
+    <RecipeDisplaySection initialPage={initialPage} urlFilters={filters} />
+  );
 }

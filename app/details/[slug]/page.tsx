@@ -1,15 +1,15 @@
 import { RecipeContent } from '@/components/RecipeContent';
-import { getRecipe } from '@/api/recipes';
+import { getRecipeBySlug } from '@/server/recipes';
 
 export default async function Page({
   params,
 }: {
-  params: Promise<{ recipeId: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { recipeId } = await params;
+  const { slug } = await params;
   let recipe;
   try {
-    recipe = await getRecipe(recipeId);
+    recipe = await getRecipeBySlug(slug);
   } catch (ex) {
     console.error(ex);
   }

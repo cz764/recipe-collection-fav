@@ -1,6 +1,5 @@
 import { Recipe } from '@/data/recipe';
-import { everySet } from './generic';
-import { FilterMap } from '@/data/filter';
+import type { RecipePage, RecipeQuery } from '@/data/filter';
 
 export const matchCuisine = (
   cuisine: Recipe['cuisine'],
@@ -57,47 +56,49 @@ export const matchRecipe = (recipe: Recipe, searchText: string): boolean => {
 };
 
 /**
- * Checks if a recipe matches all selected categories.
- * A recipe matches if its tags, cuisine, meal, and types contain all categories in the set.
- * @param recipe - The recipe to check
- * @param categorySet - Set of category keys to match against
- * @returns true if the recipe contains all selected categories
+ * Applies URL filters to a recipe list: fields combine with AND, values are
+ * trimmed and matched case-insensitively, and blank values are ignored.
  */
-export const matchCategory = (
-  recipe: Recipe,
-  categorySet: Set<string>,
-): boolean => {
-  const { tags, cuisine, meal, type } = recipe;
-  const recipeInfo: string[] = [...tags, cuisine, meal, ...type];
-  return everySet(
-    categorySet,
-    (category) =>
-      recipeInfo.includes(category.toLowerCase()) ||
-      matchCuisine(cuisine, category),
+export const filterRecipes = (
+  recipes: readonly Recipe[],
+  { cuisine, meal, type, q, tag }: RecipeQuery = {},
+): Recipe[] => {
+  const normalizedTag = tag?.trim().toLowerCase();
+  const searchText = q?.trim();
+  const normalizedCuisine = cuisine?.trim().toLowerCase();
+  const normalizedMeal = meal?.trim().toLowerCase();
+  const normalizedType = type?.trim().toLowerCase();
+
+  return recipes.filter(
+    (recipe) =>
+      (!normalizedTag || recipe.tags.some((tag) => tag === normalizedTag)) &&
+      (!searchText || matchRecipe(recipe, searchText)) &&
+      (!normalizedCuisine || matchCuisine(recipe.cuisine, normalizedCuisine)) &&
+      (!normalizedMeal || recipe.meal === normalizedMeal) &&
+      (!normalizedType || recipe.type.some((type) => type === normalizedType)),
   );
 };
 
-/**
- * Checks if a recipe matches all filters.
- * Uses OR within each field and AND across fields.
- * @param recipe - The recipe to check
- * @param filterMap - Map of filter
- * @returns true if the recipe contains all selected categories
- */
-export const matchFilters = (recipe: Recipe, filterMap: FilterMap): boolean => {
-  for (const [key, filterValues] of filterMap) {
-    if (filterValues.length === 0) continue;
-    const value = recipe[key];
-    const matches = filterValues.some((filter) => {
-      if (key === 'cuisine') return matchCuisine(recipe.cuisine, filter);
-      const values = Array.isArray(value) ? value : [value];
-      return values.some(
-        (item) =>
-          typeof item === 'string' &&
-          item.toLowerCase() === filter.toLowerCase(),
-      );
-    });
-    if (!matches) return false;
-  }
-  return true;
+/** Parses a 1-based page number from a query value; anything invalid becomes page 1. */
+export const parsePage = (value: string | undefined): number => {
+  const page = Number(value);
+  return Number.isInteger(page) && page > 0 ? page : 1;
+};
+
+/** Slices one page out of an already filtered list and reports whether more remain. */
+export const paginateRecipes = (
+  recipes: readonly Recipe[],
+  page: number,
+  pageSize: number,
+): RecipePage => {
+  const safePage = parsePage(String(page));
+  const start = (safePage - 1) * pageSize;
+  const items = recipes.slice(start, start + pageSize);
+  return {
+    recipes: items,
+    page: safePage,
+    pageSize,
+    total: recipes.length,
+    hasMore: start + items.length < recipes.length,
+  };
 };
