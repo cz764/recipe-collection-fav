@@ -1,5 +1,5 @@
-import { Loader } from '@/components/Loader';
+import { RecipeDetailSkeleton } from '@/components/RecipeLoadingSkeleton';
 
 export default function Loading() {
-  return <Loader />;
+  return <RecipeDetailSkeleton />;
 }
