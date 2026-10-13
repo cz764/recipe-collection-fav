@@ -1,4 +1,5 @@
 import { CUISINES, MEAL_TYPES } from '@/constants/recipe';
+import { titleCase } from '@/utils/labels';
 export interface MenuItem {
   name: string;
   link: string;
@@ -12,12 +13,6 @@ export const defaultMenuItems: MenuItem[] = [
   { name: 'Bakery', link: '/?type=bakery' },
 ];
 
-const parseLabel = (value: string) =>
-  value
-    .split('-')
-    .map((word) => word[0].toUpperCase() + word.slice(1))
-    .join(' ');
-
 export const formatLink = (key: string, value: string) =>
   `/?${new URLSearchParams({ [key]: value })}`;
 
@@ -26,7 +21,7 @@ export const menuGroups = [
   {
     title: 'Meal',
     items: MEAL_TYPES.map((meal) => ({
-      name: parseLabel(meal),
+      name: titleCase(meal),
       href: formatLink('meal', meal),
     })),
   },
@@ -34,7 +29,7 @@ export const menuGroups = [
     title: 'Cuisine',
     items: CUISINES.filter((cuisine) => cuisine !== 'unknown').map(
       (cuisine) => ({
-        name: parseLabel(cuisine),
+        name: titleCase(cuisine),
         href: formatLink('cuisine', cuisine),
       }),
     ),

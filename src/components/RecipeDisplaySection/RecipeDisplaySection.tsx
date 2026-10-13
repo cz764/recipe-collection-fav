@@ -4,7 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import { Button } from '@heroui/button';
-import { SearchAndFilterBar } from '@/components/SearchAndFilterBar';
+import {
+  SearchAndFilterBar,
+  type RecipeFilterKey,
+} from '@/components/SearchAndFilterBar';
 import { RecipeCard } from '@/components/RecipeCard';
 import type { RecipePage, RecipeQuery } from '@/data/filter';
 import { useRecipePages } from '@/hooks/useRecipePages';
@@ -44,16 +47,26 @@ export function RecipeDisplaySection({
     return () => observer.disconnect();
   }, [autoLoad, loadMore]);
 
-  const applySearch = () => {
+  // Single URL write path: edit the current query, keep unrelated parameters
+  // and scroll position. The URL-keyed boundary then resets results state.
+  const pushQuery = (edit: (params: URLSearchParams) => void) => {
     const params = new URLSearchParams(searchParams.toString());
-    const query = searchText.trim();
-    if (query) params.set('q', query);
-    else params.delete('q');
+    edit(params);
     const queryString = params.toString();
     router.push(queryString ? `${pathname}?${queryString}` : pathname, {
       scroll: false,
     });
   };
+
+  const applySearch = () =>
+    pushQuery((params) => {
+      const query = searchText.trim();
+      if (query) params.set('q', query);
+      else params.delete('q');
+    });
+
+  const removeFilter = (key: RecipeFilterKey) =>
+    pushQuery((params) => params.delete(key));
 
   return (
     <div className='flex flex-col gap-2'>
@@ -61,6 +74,7 @@ export function RecipeDisplaySection({
         searchText={searchText}
         onSearchTextChange={setSearchText}
         onSearch={applySearch}
+        onRemoveFilter={removeFilter}
         totalRecipes={total}
         urlFilters={urlFilters}
       />

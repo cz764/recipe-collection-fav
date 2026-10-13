@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useSearchParams } from 'next/navigation';
 import { pushMock } from '../../../../vitest.setup';
@@ -128,6 +128,27 @@ describe('RecipeDisplaySection', () => {
     await userEvent.clear(getSearchInput());
     await userEvent.type(getSearchInput(), '{Enter}');
     expect(pushMock).toHaveBeenCalledWith('/', { scroll: false });
+  });
+
+  it('removes a filter from the URL when its chip is closed', async () => {
+    vi.mocked(useSearchParams).mockReturnValue(
+      new URLSearchParams('type=bakery&q=dough&extra=keep') as ReturnType<
+        typeof useSearchParams
+      >,
+    );
+    render(
+      <RecipeDisplaySection
+        initialPage={threeRecipes}
+        urlFilters={{ type: 'bakery', q: 'dough' }}
+      />,
+    );
+    const typeChip = screen.getByText('Type: Bakery').closest('div')!;
+    await userEvent.click(
+      within(typeChip).getByRole('button', { name: 'close chip' }),
+    );
+    expect(pushMock).toHaveBeenCalledWith('/?q=dough&extra=keep', {
+      scroll: false,
+    });
   });
 
   describe('loading more results', () => {

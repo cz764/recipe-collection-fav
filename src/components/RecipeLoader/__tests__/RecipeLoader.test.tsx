@@ -26,14 +26,14 @@ describe('RecipeLoader', () => {
     );
     expect(screen.getByText('2 recipes')).toBeVisible();
     expect(screen.getByText('Baozi')).toBeVisible();
-    expect(screen.getByText('cuisine: chinese')).toBeVisible();
+    expect(screen.getByText('Cuisine: Chinese')).toBeVisible();
   });
 
   it('shows the empty state when URL filters have no results', async () => {
     vi.mocked(fetchRecipes).mockResolvedValue(pageOf([]));
     render(await RecipeLoader({ searchParams: { type: 'unknown' } }));
     expect(screen.getByText('0 recipe')).toBeVisible();
-    expect(screen.getByText('type: unknown')).toBeVisible();
+    expect(screen.getByText('Type: Unknown')).toBeVisible();
     expect(screen.getByText('No recipes found.')).toBeVisible();
   });
 
