@@ -70,7 +70,7 @@ Last updated: October 12, 2026. This document records durable decisions and curr
 
 **Schema:** One `recipes` table (`supabase/migrations/`). Postgres enums mirror the cuisine, meal, dish type, tag, and language vocabularies in `src/constants/recipe.ts`; update both together. `ingredients` and `steps` are JSONB arrays; `prep`, `tags`, `type`, and `equipments` are arrays. `picture_path` and step `image_path` store bucket object paths (or absolute URLs). A unique `slug` column (dashed recipe name) backs the `/details/<slug>` route; fixtures carry their slugs explicitly so reseeding upserts the same rows. Row level security allows public reads only; writes go through the dashboard or the service-role seed script. Length limits on name and description are not enforced because existing descriptions exceed the old comment limits.
 
-**Data layer:** `toRecipe` validates every row at runtime against the shared vocabularies before it becomes a `Recipe`, and resolves image paths to public URLs. Invalid rows throw rather than being skipped, so schema drift is loud. Filtering, text search, and paging run in Node over the full collection loaded once per request: `filterRecipes` keeps the existing matcher semantics and `paginateRecipes` returns a `RecipePage` with `total` and `hasMore`. This follows the user's choice to defer database-side search design; moving filters into SQL is a contained change inside `fetchRecipes` when the collection grows. `getRecipeBySlug` serves the details page; an unknown slug renders the existing error view.
+**Data layer:** `toRecipe` validates every row at runtime against the shared vocabularies before it becomes a `Recipe`, and resolves image paths to public URLs. Invalid rows throw rather than being skipped, so schema drift is loud. Filtering, text search, and paging run in Node over the full collection loaded once per request: `filterRecipes` keeps the existing matcher semantics and `paginateRecipes` returns a `RecipePage` with `total` and `hasMore`. This follows the user's choice to defer database-side search design; moving filters into SQL is a contained change inside `fetchRecipes` when the collection grows. `getRecipeBySlug` serves the details page; an unknown slug calls `notFound()` and query failures reach the route error boundary (see Route error handling).
 
 **Configuration:** `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` are server-only (no `NEXT_PUBLIC_` prefix) and read from `.env.local`, which stays untracked; there is no committed example file by the user's choice. `next.config.ts` allows Next.js Image only for the project hostname and the recipe bucket path. `npm run seed:supabase` uploads `public/exampleRecipes` images and upserts the fixtures by slug using `SUPABASE_SECRET_KEY`. The fixtures remain as seed data and as the source for mock-based tests.
 
@@ -89,6 +89,16 @@ References: [Supabase Storage](https://supabase.com/docs/guides/storage/quicksta
 **Reason:** The user preferred infinite scroll over pagination, combined with filters and search, and wanted a cap so the page does not grow without bound.
 
 **Consequences:** `useRecipePages` accumulates pages, reports loading and error states, and ignores stale automatic triggers. The URL-keyed Suspense boundary still resets accumulated pages when filters change. Page numbers are not written to the URL, so a shared link always starts at page one. The earlier HeroUI pagination control and its tests are removed.
+
+## Route error handling
+
+**Status:** Accepted and implemented October 13, 2026; browser verification pending.
+
+**Decision:** `app/error.tsx` is the single route error boundary for both `/` and `/details/<slug>`. It logs the error, explains that recipes could not load, and offers Try again (Next.js `reset`) plus a link home. `app/not-found.tsx` covers unknown routes; `app/details/[slug]/not-found.tsx` gives a recipe-specific message. The details page no longer catches query errors itself: a missing row calls `notFound()`, and any thrown error (Supabase outage, missing env, invalid row) propagates to the boundary.
+
+**Reason:** Before this, `/` had no boundary and showed the Next.js default error page, and the details page reported every failure as a missing recipe, hiding outages. Not-found and failure are different user situations and need different messages.
+
+**Consequences:** The layout fetches nothing, so no `global-error.tsx` is added. The recipes route handler keeps returning a 500 JSON body, and Load more keeps its inline alert; the boundary applies only to server-rendered page content. Tests mock `next/navigation`'s `notFound` to assert which path the details page takes.
 
 ## Open work
 
