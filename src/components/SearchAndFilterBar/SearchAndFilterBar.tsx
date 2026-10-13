@@ -32,7 +32,7 @@ export function SearchAndFilterBar({
   ).filter((entry): entry is [RecipeFilterKey, string] => Boolean(entry[1]));
 
   return (
-    <div className='flex flex-col gap-1'>
+    <div className='flex flex-col gap-2'>
       <div className='flex justify-between'>
         <div className='w-full'>
           <SearchInput

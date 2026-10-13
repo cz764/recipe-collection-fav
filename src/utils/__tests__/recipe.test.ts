@@ -5,6 +5,7 @@ import {
   matchRecipe,
   paginateRecipes,
   parsePage,
+  validateRecipeQuery,
 } from '../index';
 import { makeRecipe } from '@/components/__tests__/mockData';
 
@@ -234,5 +235,40 @@ describe('parsePage and paginateRecipes', () => {
       hasMore: false,
     });
     expect(paginateRecipes(recipes, 0, 3).page).toBe(1);
+  });
+});
+
+describe('validateRecipeQuery', () => {
+  it('accepts normalized vocabulary values and keeps search text as typed', () => {
+    expect(
+      validateRecipeQuery({
+        cuisine: ' Latin-American ',
+        meal: 'DINNER',
+        type: 'side dish',
+        tag: 'one-pot',
+        q: ' Egg & Cheese ',
+      }),
+    ).toEqual({
+      cuisine: 'latin-american',
+      meal: 'dinner',
+      type: 'side dish',
+      tag: 'one-pot',
+      q: 'Egg & Cheese',
+    });
+  });
+
+  it('drops blank values and returns an empty filter set for no filters', () => {
+    expect(validateRecipeQuery({})).toEqual({});
+    expect(validateRecipeQuery({ cuisine: ' ', q: '  ', tag: '' })).toEqual({});
+  });
+
+  it.each([
+    { cuisine: 'martian' },
+    { meal: 'brunch' },
+    { type: 'drink' },
+    { tag: 'spicy' },
+    { cuisine: 'chinese', tag: 'spicy' },
+  ])('rejects %o so it never reaches the database', (query) => {
+    expect(validateRecipeQuery(query)).toBeUndefined();
   });
 });

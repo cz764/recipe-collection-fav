@@ -92,7 +92,10 @@ const manyRows = (count: number) =>
   Array.from({ length: count }, (_, index) => makeRow({ id: `${index + 1}` }));
 
 describe('fetchRecipes', () => {
-  beforeEach(() => installFakeClient(manyRows(ITEMS_PER_PAGE + 2)));
+  beforeEach(() => {
+    vi.mocked(getSupabaseClient).mockClear();
+    installFakeClient(manyRows(ITEMS_PER_PAGE + 2));
+  });
 
   it('returns the first page with the total match count and more remaining', async () => {
     const page = await fetchRecipes();
@@ -126,7 +129,19 @@ describe('fetchRecipes', () => {
     expect(chinese.total).toBe(1);
     expect(chinese.hasMore).toBe(false);
     expect((await fetchRecipes({ cuisine: 'latin-american' })).total).toBe(1);
-    expect((await fetchRecipes({ cuisine: 'invalid' })).recipes).toEqual([]);
+  });
+
+  it('returns an empty page for unknown vocabulary values without querying', async () => {
+    const page = await fetchRecipes({ cuisine: 'invalid', meal: 'dinner' });
+    expect(page).toEqual({
+      recipes: [],
+      page: 1,
+      pageSize: ITEMS_PER_PAGE,
+      total: 0,
+      hasMore: false,
+    });
+    expect(getSupabaseClient).not.toHaveBeenCalled();
+    expect((await fetchRecipes({ tag: 'spicy' }, { page: 3 })).page).toBe(3);
   });
 
   it('maps rows into recipes with public image URLs', async () => {

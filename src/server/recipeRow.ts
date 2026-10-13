@@ -5,6 +5,7 @@ import {
   TYPE_COLLECTIONS,
 } from '@/constants/recipe';
 import type { Ingredient, Recipe, Step } from '@/data/recipe';
+import { isOneOf } from '@/utils/vocabulary';
 
 /** Shape of a row in the recipes table. Columns are snake_case. */
 export interface RecipeRow {
@@ -41,11 +42,6 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const isStringArray = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every((item) => typeof item === 'string');
-
-const isOneOf = <T extends string>(
-  values: readonly T[],
-  value: unknown,
-): value is T => typeof value === 'string' && values.includes(value as T);
 
 const LANGUAGES = ['en', 'ch'] as const;
 

@@ -69,7 +69,7 @@ export function RecipeDisplaySection({
     pushQuery((params) => params.delete(key));
 
   return (
-    <div className='flex flex-col gap-2'>
+    <div className='flex flex-col gap-4'>
       <SearchAndFilterBar
         searchText={searchText}
         onSearchTextChange={setSearchText}

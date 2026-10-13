@@ -8,7 +8,11 @@ import { RECIPE_IMAGE_BUCKET, RECIPES_TABLE } from '@/constants/supabase';
 import { ITEMS_PER_PAGE } from '@/constants';
 import type { Recipe } from '@/data/recipe';
 import type { RecipePage, RecipeQuery } from '@/data/filter';
-import { filterRecipes, paginateRecipes } from '@/utils/recipes';
+import {
+  filterRecipes,
+  paginateRecipes,
+  validateRecipeQuery,
+} from '@/utils/recipes';
 import { selectFeaturedRecipes } from '@/utils/featured';
 
 const resolveImageUrl = (path: string): string => {
@@ -41,12 +45,18 @@ export async function fetchFeaturedRecipes(): Promise<Recipe[]> {
   return selectFeaturedRecipes(await loadRecipes(), new Date());
 }
 
-/** One page of recipes matching the URL filters, with the total match count. */
+/**
+ * One page of recipes matching the URL filters, with the total match count.
+ * Filters are validated against the recipe vocabularies first; an unknown
+ * value matches nothing and never reaches Supabase.
+ */
 export async function fetchRecipes(
   filters: RecipeQuery = {},
   { page = 1 }: { page?: number } = {},
 ): Promise<RecipePage> {
-  const matches = filterRecipes(await loadRecipes(), filters);
+  const validated = validateRecipeQuery(filters);
+  if (!validated) return paginateRecipes([], page, ITEMS_PER_PAGE);
+  const matches = filterRecipes(await loadRecipes(), validated);
   return paginateRecipes(matches, page, ITEMS_PER_PAGE);
 }
 

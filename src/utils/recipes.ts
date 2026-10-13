@@ -1,5 +1,12 @@
 import { Recipe } from '@/data/recipe';
-import type { RecipePage, RecipeQuery } from '@/data/filter';
+import type { RecipeFilters, RecipePage, RecipeQuery } from '@/data/filter';
+import {
+  CUISINES,
+  MEAL_TYPES,
+  RECIPE_TAGS,
+  TYPE_COLLECTIONS,
+} from '@/constants/recipe';
+import { isOneOf } from '@/utils/vocabulary';
 
 export const matchCuisine = (
   cuisine: Recipe['cuisine'],
@@ -77,6 +84,46 @@ export const filterRecipes = (
       (!normalizedMeal || recipe.meal === normalizedMeal) &&
       (!normalizedType || recipe.type.some((type) => type === normalizedType)),
   );
+};
+
+/**
+ * Checks URL filters against the recipe vocabularies before they reach the
+ * data layer. Values are trimmed and lower-cased like `filterRecipes`; blank
+ * values are dropped. Returns undefined when any present value is not in its
+ * vocabulary, which callers treat as "matches nothing" instead of querying
+ * with it. Postgres rejects unknown enum values, so this guard is what keeps
+ * `/?cuisine=invalid` an empty result page rather than a query error.
+ */
+export const validateRecipeQuery = (
+  query: RecipeQuery,
+): RecipeFilters | undefined => {
+  const normalize = (value: string | undefined) =>
+    value?.trim().toLowerCase() || undefined;
+  const filters: RecipeFilters = {};
+  const searchText = query.q?.trim();
+  if (searchText) filters.q = searchText;
+
+  const cuisine = normalize(query.cuisine);
+  if (cuisine !== undefined) {
+    if (!isOneOf(CUISINES, cuisine)) return undefined;
+    filters.cuisine = cuisine;
+  }
+  const meal = normalize(query.meal);
+  if (meal !== undefined) {
+    if (!isOneOf(MEAL_TYPES, meal)) return undefined;
+    filters.meal = meal;
+  }
+  const type = normalize(query.type);
+  if (type !== undefined) {
+    if (!isOneOf(TYPE_COLLECTIONS, type)) return undefined;
+    filters.type = type;
+  }
+  const tag = normalize(query.tag);
+  if (tag !== undefined) {
+    if (!isOneOf(RECIPE_TAGS, tag)) return undefined;
+    filters.tag = tag;
+  }
+  return filters;
 };
 
 /** Parses a 1-based page number from a query value; anything invalid becomes page 1. */
