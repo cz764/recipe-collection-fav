@@ -1,9 +1,11 @@
 // Seeds the Supabase project from the local example recipes and images.
 // Run with:  npm run seed:supabase   (reads .env.local via --env-file)
+// One recipe: npm run seed:supabase -- --slug margherita-pizza
 // Requires SUPABASE_URL and SUPABASE_SECRET_KEY; the secret key bypasses row
 // level security so it can write rows and upload to the public bucket.
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { parseArgs } from 'node:util';
 import { createClient } from '@supabase/supabase-js';
 import { exampleRecipes } from '../src/data/exampleRecipes.ts';
 import {
@@ -19,6 +21,31 @@ const CONTENT_TYPES = {
   '.avif': 'image/avif',
 };
 
+const { values } = parseArgs({
+  args: process.argv.slice(2),
+  options: { slug: { type: 'string' } },
+  strict: true,
+  allowPositionals: false,
+});
+
+const slugs = new Set();
+for (const { slug } of exampleRecipes) {
+  if (slugs.has(slug)) {
+    throw new Error(
+      `Duplicate slug "${slug}"; fixture slugs must be distinct.`,
+    );
+  }
+  slugs.add(slug);
+}
+
+const recipes =
+  values.slug === undefined
+    ? exampleRecipes
+    : exampleRecipes.filter((recipe) => recipe.slug === values.slug);
+if (values.slug !== undefined && recipes.length === 0) {
+  throw new Error(`No local recipe found with slug "${values.slug}".`);
+}
+
 const url = process.env.SUPABASE_URL;
 const secretKey = process.env.SUPABASE_SECRET_KEY;
 if (!url || !secretKey) {
@@ -32,16 +59,8 @@ const supabase = createClient(url, secretKey, {
   auth: { persistSession: false, autoRefreshToken: false },
 });
 
-const slugs = new Set();
-
-for (const recipe of exampleRecipes) {
+for (const recipe of recipes) {
   const { slug } = recipe;
-  if (slugs.has(slug)) {
-    throw new Error(
-      `Duplicate slug "${slug}"; fixture slugs must be distinct.`,
-    );
-  }
-  slugs.add(slug);
 
   const extension = path.extname(recipe.pictureUrl).toLowerCase();
   const objectPath = `recipes/${slug}${extension}`;
@@ -87,4 +106,4 @@ for (const recipe of exampleRecipes) {
   console.log(`Seeded ${slug}`);
 }
 
-console.log(`Done: ${exampleRecipes.length} recipes.`);
+console.log(`Done: ${recipes.length} recipes.`);

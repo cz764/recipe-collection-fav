@@ -1,6 +1,6 @@
 # Project decisions
 
-Last updated: October 12, 2026. This document records durable decisions and current open work. Implementation status is separate from acceptance; accepted future work is not implemented automatically.
+Last updated: November 23, 2026. This document records durable decisions and current open work. Implementation status is separate from acceptance; accepted future work is not implemented automatically.
 
 ## URL filters and data flow
 
@@ -76,7 +76,9 @@ Last updated: October 12, 2026. This document records durable decisions and curr
 
 **Testing:** Unit tests mock `getSupabaseClient` and cover row mapping, filters, paging, featured selection, and the route handler. Filter semantics live in `src/utils/__tests__/recipe.test.ts` on mock recipes. Integration tests against a real or local Supabase project are not set up.
 
-**Removed:** The Add recipe page. The user is the only author and adds records directly in Supabase; a web form was judged not worth the UX effort.
+**Recipe authoring:** Keep the local recipes and original images for reseeding. Add recipes in `src/data/exampleRecipes.ts`, then run `npm run seed:supabase -- --slug <slug>` to upload only that recipe and its image. The script validates arguments, duplicate local slugs, and the selected slug before uploads; it upserts the selected row by slug and replaces its image. Omitting `--slug` retains full reseeding. This avoids hand-editing JSONB or generating one-off SQL; the three-step workflow is documented in the README.
+
+**Removed:** The Add recipe page. The user is the only author; recipes are authored locally and uploaded with the seed script, or edited directly in Supabase. A web form was judged not worth the UX effort.
 
 References: [Supabase Storage](https://supabase.com/docs/guides/storage/quickstart), [bucket access](https://supabase.com/docs/guides/storage/buckets/fundamentals), [Next.js 15 Image](https://nextjs.org/docs/15/app/api-reference/components/image).
 

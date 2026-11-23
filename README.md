@@ -46,6 +46,22 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Add new recipe
+
+The seed script reads `SUPABASE_URL` and `SUPABASE_SECRET_KEY` from `.env.local`.
+
+1. Add a recipe to [`src/data/exampleRecipes.ts`](src/data/exampleRecipes.ts) with a unique `slug`. Follow the existing recipe format for ingredients and steps.
+2. Add its image under `public/exampleRecipes/` and set the recipe's `pictureUrl` to `/exampleRecipes/<filename>`.
+3. Run the seed script with the new recipe's slug:
+
+   ```bash
+   npm run seed:supabase -- --slug margherita-pizza
+   ```
+
+This uploads only the selected recipe's image and inserts or updates that recipe in Supabase. Ingredients and steps are converted to JSONB automatically. An existing recipe with the same slug and its image will be overwritten.
+
+To reseed all local recipes and images, run `npm run seed:supabase` without `--slug`.
+
 ## Deployment
 
 This website is deployed to: TBD.
