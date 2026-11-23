@@ -556,4 +556,76 @@ export const exampleRecipes: Recipe[] = [
       ],
     },
   },
+  {
+    id: '9',
+    name: 'Margherita Pizza',
+    slug: 'margherita-pizza',
+    description:
+      'A delicious Neapolitan style margherita pizza recipe, from Pizza Academy Foundation, we got it from a pizza making class.',
+    tags: ['vegetarian', 'bread', 'dough'],
+    source: 'https://kestepizzago.com/pages/about-us',
+    language: 'en',
+    totalTime: 120,
+    yieldServings: 4,
+    equipments: ['oven', 'pizza stone or sheet pan'],
+    cuisine: 'italian',
+    creditTo: 'Pizza Academy Foundation',
+    meal: 'dinner',
+    type: ['appetizer', 'entree'],
+    ingredients: [
+      { name: 'water', amount: 396, unit: 'g' },
+      { name: 'Caputo flour', amount: 667, unit: 'g' },
+      { name: 'dry yeast', amount: 2, unit: 'tsp' },
+      { name: 'sugar', amount: 1, unit: 'tsp' },
+      { name: 'olive oil', amount: 6, unit: 'g' },
+      { name: 'salt', amount: 1, unit: 'tbsp' },
+    ],
+    pictureUrl: '/exampleRecipes/margherita-pizza.jpg',
+    steps: {
+      prep: ['Dissolve the dry yeast in water', 'Add sugar and olive oil'],
+      steps: [
+        { detail: 'Add the Caputo flour and salt to combined water.' },
+        {
+          detail: 'Mix to form a shaggy dough. Knead for 13min until elastic.',
+        },
+        {
+          detail:
+            'Rest the dough in room temperature for around 2 hours. Or you can put it inside fridge if not ready to handle it yet.',
+        },
+        {
+          detail: 'Leave the dough in fridge for up to 3 days.',
+        },
+        {
+          detail:
+            'When you are ready, split the dough to 3 - 4 portions, each weight around 340g. (One pizza)',
+        },
+        {
+          detail: 'Leave in room temperature to warm up before you shape it.',
+        },
+        {
+          detail:
+            'Preheat oven to 500 or 550 F, if you have pizza stone, put it inside to preheat together.',
+        },
+        {
+          detail:
+            'Shape and stretch the dough to pizza size, about 10 inch round, apply a good amount of tomato sauce on top, 2 tbsp as a reference.',
+        },
+        {
+          detail:
+            'Transfer the pizza to oven and cook for 5min. Then bring it out to add toppings.',
+        },
+        {
+          detail:
+            'Add your desired toppings, i.e. high water content fresh mozzarella, olive oil, basil. Other examples like mushrooms, zucchini, pepperoni. Remember, less is more.',
+        },
+        {
+          detail:
+            'Put the pizza back to oven to finish cooking, if using sheet pan, cook for 8 ~ 10min. If using pizza stone, cook for 5 ~ 7 min.',
+        },
+        {
+          detail: 'Enjoy!',
+        },
+      ],
+    },
+  },
 ];
