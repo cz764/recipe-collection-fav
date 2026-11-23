@@ -76,11 +76,23 @@ Last updated: November 23, 2026. This document records durable decisions and cur
 
 **Testing:** Unit tests mock `getSupabaseClient` and cover row mapping, filters, paging, featured selection, and the route handler. Filter semantics live in `src/utils/__tests__/recipe.test.ts` on mock recipes. Integration tests against a real or local Supabase project are not set up.
 
-**Recipe authoring:** Keep the local recipes and original images for reseeding. Add recipes in `src/data/exampleRecipes.ts`, then run `npm run seed:supabase -- --slug <slug>` to upload only that recipe and its image. The script validates arguments, duplicate local slugs, and the selected slug before uploads; it upserts the selected row by slug and replaces its image. Omitting `--slug` retains full reseeding. This avoids hand-editing JSONB or generating one-off SQL; the three-step workflow is documented in the README.
+**Current recipe authoring:** Keep the local recipes and original images for reseeding until the [source-of-truth and recovery plan](#supabase-source-of-truth-and-recovery) is implemented. Add recipes in `src/data/exampleRecipes.ts`, then run `npm run seed:supabase -- --slug <slug>` to upload only that recipe and its image. The script validates arguments, duplicate local slugs, and the selected slug before uploads; it upserts the selected row by slug and replaces its image. Omitting `--slug` retains full reseeding. This avoids hand-editing JSONB or generating one-off SQL; the three-step workflow is documented in the README.
 
 **Removed:** The Add recipe page. The user is the only author; recipes are authored locally and uploaded with the seed script, or edited directly in Supabase. A web form was judged not worth the UX effort.
 
 References: [Supabase Storage](https://supabase.com/docs/guides/storage/quickstart), [bucket access](https://supabase.com/docs/guides/storage/buckets/fundamentals), [Next.js 15 Image](https://nextjs.org/docs/15/app/api-reference/components/image).
+
+## Supabase source of truth and recovery
+
+**Status:** Accepted future work; not implemented. The current slug-based seed workflow remains in use.
+
+**Decision:** Make Supabase the single editable recipe collection. The app already reads it at runtime; remove the local production recipes and images once recovery is verified. Keep schema migrations and small synthetic test fixtures in Git.
+
+**Authoring:** Replace collection-based seeding with a reusable script that imports one temporary recipe JSON file and its image, validates the recipe, and handles JSONB conversion. Discard the input files after confirming the upload and backup.
+
+**Recovery:** Generate dated backups containing recipe records (including IDs and timestamps) and actual image files, preserving object paths. Store them outside the Supabase project and application repository, retaining older snapshots. Database backups exclude Storage files ([Supabase documentation](https://supabase.com/docs/guides/platform/backups)). Start with backups after recipe changes; automate later. Verify restoration with the Git-tracked schema in a separate environment before removing local production data.
+
+**Open choices:** Backup destination, retention period, and automation schedule.
 
 ## Infinite results loading
 
