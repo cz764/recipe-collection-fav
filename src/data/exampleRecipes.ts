@@ -628,4 +628,54 @@ export const exampleRecipes: Recipe[] = [
       ],
     },
   },
+  {
+    id: '10',
+    name: 'Kulolo',
+    slug: 'kulolo',
+    description:
+      'A traditional Hawaiian desert that is made of 3 simple ingredients, main ingredient is Taro.',
+    tags: ['vegetarian'],
+    source: 'https://onohawaiianrecipes.com/recipes/kulolo/',
+    language: 'en',
+    totalTime: 180,
+    yieldServings: 8,
+    equipments: ['oven or steamer or pressure cooker'],
+    cuisine: 'american',
+    creditTo: 'Tani Nakamitsu',
+    meal: 'snack',
+    type: ['appetizer'],
+    ingredients: [
+      { name: 'grated raw taro', amount: 2, unit: 'cups' },
+      { name: 'coconut milk', amount: '1/2', unit: 'cup' },
+      { name: 'sugar(adjust to taste)', amount: '1/2', unit: 'cup' },
+      { name: 'ti leaves(optional)', amount: 4 },
+    ],
+    pictureUrl: '/exampleRecipes/hawaiian-kulolo.webp',
+    steps: {
+      prep: ['Line 6-inch pan with foil or parchment paper'],
+      steps: [
+        { detail: 'Combine raw taro, coconut milk, and sugar, mix well.' },
+        {
+          detail: 'Pour into prepared pan and cover with ti leaves or foil.',
+        },
+        {
+          detail:
+            'Cover the entire pan tightly with foil to prevent any moisture fromm dripping on it during cooking.',
+        },
+        {
+          detail: 'Steam: 5 - 6 hours.',
+        },
+        {
+          detail: 'Pressure cook: 150min.',
+        },
+        {
+          detail:
+            'Oven: 300 F for 1 ~2 hour until set and darkened. You need to add more liquid if using oven.',
+        },
+        {
+          detail: 'Cool completely, then cut into bite size, enjoy!',
+        },
+      ],
+    },
+  },
 ];
